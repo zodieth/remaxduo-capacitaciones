@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   title: z.string().min(1, {
-    message: "Title is required",
+    message: "El título es requerido",
   }),
 });
 
@@ -31,7 +31,7 @@ const CreatePage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: ""
+      title: "",
     },
   });
 
@@ -41,20 +41,19 @@ const CreatePage = () => {
     try {
       const response = await axios.post("/api/courses", values);
       router.push(`/teacher/courses/${response.data.id}`);
-      toast.success("Course created");
+      toast.success("Curso creado");
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo no funcionó correctamente");
     }
-  }
+  };
 
-  return ( 
+  return (
     <div className="max-w-5xl mx-auto flex md:items-center md:justify-center h-full p-6">
       <div>
-        <h1 className="text-2xl">
-          Name your course
-        </h1>
+        <h1 className="text-2xl">Nombre del curso</h1>
         <p className="text-sm text-slate-600">
-          What would you like to name your course? Don&apos;t worry, you can change this later.
+          Cómo te gustaría llamar este curso? No te preocupes, lo podés cambiar
+          más adelante.
         </p>
         <Form {...form}>
           <form
@@ -66,9 +65,7 @@ const CreatePage = () => {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Course title
-                  </FormLabel>
+                  <FormLabel>Título</FormLabel>
                   <FormControl>
                     <Input
                       disabled={isSubmitting}
@@ -77,7 +74,7 @@ const CreatePage = () => {
                     />
                   </FormControl>
                   <FormDescription>
-                    What will you teach in this course?
+                    Qué vas a enseñar en este curso?
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -85,25 +82,19 @@ const CreatePage = () => {
             />
             <div className="flex items-center gap-x-2">
               <Link href="/">
-                <Button
-                  type="button"
-                  variant="ghost"
-                >
-                  Cancel
+                <Button type="button" variant="ghost">
+                  Cancelar
                 </Button>
               </Link>
-              <Button
-                type="submit"
-                disabled={!isValid || isSubmitting}
-              >
-                Continue
+              <Button type="submit" disabled={!isValid || isSubmitting}>
+                Continuar
               </Button>
             </div>
           </form>
         </Form>
       </div>
     </div>
-   );
-}
- 
+  );
+};
+
 export default CreatePage;
