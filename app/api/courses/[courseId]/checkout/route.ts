@@ -74,16 +74,7 @@ export async function POST(
           stripeCustomerId: customer.id,
         },
       });
-
-      // ---------------------- comentar si se usa pasarela stripe
-      await db.purchase.create({
-        data: {
-          courseId: params.courseId,
-          userId: user.id,
-        },
-      });
     }
-    // ----------------------
 
     // const session = await stripe.checkout.sessions.create({
     //   customer: stripeCustomer.stripeCustomerId,
@@ -98,6 +89,14 @@ export async function POST(
     // });
 
     // return NextResponse.json({ url: session.url });
+
+    await db.purchase.create({
+      data: {
+        courseId: params.courseId,
+        userId: user.id,
+      },
+    });
+
     return NextResponse.json({
       url: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${course.id}?success=1`,
     });
