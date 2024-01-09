@@ -22,15 +22,15 @@ export const CourseEnrollButton = ({
     try {
       setIsLoading(true);
 
-      const response = await axios.post(`/api/courses/${courseId}/checkout`)
+      const response = await axios.post(`/api/courses/${courseId}/checkout`);
 
       window.location.assign(response.data.url);
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo no funcionó correctamente");
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Button
@@ -39,7 +39,8 @@ export const CourseEnrollButton = ({
       size="sm"
       className="w-full md:w-auto"
     >
-      Enroll for {formatPrice(price)}
+      Agregar
+      {/* {formatPrice(price)} */}
     </Button>
-  )
-}
+  );
+};

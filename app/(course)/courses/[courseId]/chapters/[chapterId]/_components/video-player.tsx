@@ -47,7 +47,7 @@ export const VideoPlayer = ({
           confetti.onOpen();
         }
 
-        toast.success("Progress updated");
+        toast.success("Progreso actualizado");
         router.refresh();
 
         if (nextChapterId) {
@@ -55,7 +55,7 @@ export const VideoPlayer = ({
         }
       }
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo no funcionó correctamente");
     }
   };
 
@@ -69,7 +69,7 @@ export const VideoPlayer = ({
       {isLocked && (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-800 flex-col gap-y-2 text-secondary">
           <Lock className="h-8 w-8" />
-          <p className="text-sm">This chapter is locked</p>
+          <p className="text-sm">Este capítulo está bloqueado</p>
         </div>
       )}
       {!isLocked && (
