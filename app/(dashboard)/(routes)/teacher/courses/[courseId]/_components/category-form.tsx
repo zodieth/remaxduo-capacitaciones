@@ -89,7 +89,7 @@ export const CategoryForm = ({
             !initialData.categoryId && "text-slate-500 italic"
           )}
         >
-          {selectedOption?.label || "No category"}
+          {selectedOption?.label || "Sin categoría"}
         </p>
       )}
       {isEditing && (
