@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 import {
   Form,
   FormControl,
-  FormField,
   FormLabel,
   FormMessage,
   FormItem,
@@ -17,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DeleteConfirmationDialog } from "./deleteConfirmationDialog";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
 
 const api = {
   fetchCategories: async (): Promise<Category[]> => {
@@ -190,34 +190,38 @@ const CategoriesABM = () => {
           )}
         </form>
       </Form>
-      <ul className="mt-4">
-        {categories.map((category, index) => (
-          <li
-            key={category.id}
-            className={`flex justify-between items-center p-2 rounded ${
-              index === editingIndex ? "bg-blue-100" : "bg-gray-100"
-            }`}
-          >
-            {category.name}
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => startEditing(index)}
-                className="text-sm"
-              >
-                Editar
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => openConfirmationDialog(index)}
-                className="text-sm bg-red-500 hover:bg-red-700 text-white"
-              >
-                Eliminar
-              </Button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {categories.length === 0 ? (
+        <LoadingSpinner />
+      ) : (
+        <ul className="mt-4">
+          {categories.map((category, index) => (
+            <li
+              key={category.id}
+              className={`flex justify-between items-center p-1 rounded mt-1 ${
+                index === editingIndex ? "bg-blue-100" : "bg-gray-100"
+              }`}
+            >
+              {category.name}
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => startEditing(index)}
+                  className="text-sm"
+                >
+                  Editar
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => openConfirmationDialog(index)}
+                  className="text-sm bg-red-500 hover:bg-red-700 text-white"
+                >
+                  Eliminar
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
       <DeleteConfirmationDialog
         openDialog={openDialog}
         setOpenDialog={setOpenDialog}
