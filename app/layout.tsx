@@ -8,8 +8,8 @@ import { ConfettiProvider } from "@/components/providers/confetti-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Capacitaciones Remax Duo",
-  description: "Capacitaciones Remax Duo",
+  title: "Capacitaciones Remax Up",
+  description: "Capacitaciones Remax Up",
 };
 
 export default function RootLayout({
