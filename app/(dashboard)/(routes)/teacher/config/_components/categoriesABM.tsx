@@ -5,6 +5,8 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
+import { Trash } from "lucide-react";
+import { Pencil } from "lucide-react";
 
 import {
   Form,
@@ -15,7 +17,8 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DeleteConfirmationDialog } from "./deleteConfirmationDialog";
+// import { DeleteConfirmationDialog } from "./deleteConfirmationDialog";
+import { ConfirmModal } from "@/components/modals/confirm-modal";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 
 const api = {
@@ -85,8 +88,8 @@ type Category = {
 const CategoriesABM = () => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [openDialog, setOpenDialog] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -146,20 +149,6 @@ const CategoriesABM = () => {
     setCategories((prevCategories) =>
       prevCategories.filter((_, i) => i !== index)
     );
-    toast.success("Categoría eliminada");
-  };
-
-  const openConfirmationDialog = (index: number) => {
-    setOpenDialog(true);
-    setCategoryToDelete(index);
-  };
-
-  const confirmDelete = async () => {
-    if (categoryToDelete !== null) {
-      await handleDelete(categoryToDelete);
-    }
-    setOpenDialog(false);
-    setCategoryToDelete(null);
   };
 
   const onCancelEdit = () => {
@@ -167,8 +156,24 @@ const CategoriesABM = () => {
     reset({ name: "" });
   };
 
+  const onDelete = async () => {
+    try {
+      setIsLoading(true);
+
+      if (categoryToDelete !== null) {
+        await handleDelete(categoryToDelete);
+      }
+
+      toast.success("Categoría eliminada");
+    } catch {
+      toast.error("Algo no funcionó correctamente");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="space-y-4 w-1/2 border border-gray-300 rounded-lg p-6">
+    <div className="space-y-4 w-[75%] border border-gray-300 rounded-lg p-6 md:w-1/2">
       <h1 className="font-bold text-xl">Categorías</h1>
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -201,32 +206,29 @@ const CategoriesABM = () => {
                 index === editingIndex ? "bg-blue-100" : "bg-gray-100"
               }`}
             >
-              {category.name}
+              <div className="mx-2 text-sm"> {category.name}</div>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
                   onClick={() => startEditing(index)}
                   className="text-sm"
                 >
-                  Editar
+                  <Pencil className="h-4 w-4 " />
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => openConfirmationDialog(index)}
-                  className="text-sm bg-red-500 hover:bg-red-700 text-white"
-                >
-                  Eliminar
-                </Button>
+                <ConfirmModal onConfirm={onDelete}>
+                  <Button
+                    size="sm"
+                    disabled={isLoading}
+                    onClick={() => setCategoryToDelete(index)}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </ConfirmModal>
               </div>
             </li>
           ))}
         </ul>
       )}
-      <DeleteConfirmationDialog
-        openDialog={openDialog}
-        setOpenDialog={setOpenDialog}
-        confirmDelete={confirmDelete}
-      />
     </div>
   );
 };
