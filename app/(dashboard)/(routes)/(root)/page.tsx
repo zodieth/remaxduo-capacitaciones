@@ -8,32 +8,33 @@ import { CoursesList } from "@/components/courses-list";
 import { InfoCard } from "./_components/info-card";
 
 export default async function Dashboard() {
-  const { userId } = auth();
+	const { userId } = auth();
+	console.log(userId);
 
-  if (!userId) {
-    return redirect("/");
-  }
+	if (!userId) {
+		return redirect("/");
+	}
 
-  const { completedCourses, coursesInProgress } = await getDashboardCourses(
-    userId
-  );
+	const { completedCourses, coursesInProgress } = await getDashboardCourses(
+		userId
+	);
 
-  return (
-    <div className="p-6 space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <InfoCard
-          icon={Clock}
-          label="En progreso"
-          numberOfItems={coursesInProgress.length}
-        />
-        <InfoCard
-          icon={CheckCircle}
-          label="Completado"
-          numberOfItems={completedCourses.length}
-          variant="success"
-        />
-      </div>
-      <CoursesList items={[...coursesInProgress, ...completedCourses]} />
-    </div>
-  );
+	return (
+		<div className="p-6 space-y-4">
+			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+				<InfoCard
+					icon={Clock}
+					label="En progreso"
+					numberOfItems={coursesInProgress.length}
+				/>
+				<InfoCard
+					icon={CheckCircle}
+					label="Completado"
+					numberOfItems={completedCourses.length}
+					variant="success"
+				/>
+			</div>
+			<CoursesList items={[...coursesInProgress, ...completedCourses]} />
+		</div>
+	);
 }
