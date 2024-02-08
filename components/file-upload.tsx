@@ -1,28 +1,48 @@
 "use client";
 
-import toast from "react-hot-toast";
+import { useState } from "react";
 
-import { UploadDropzone } from "@/lib/uploadthing";
-import { ourFileRouter } from "@/app/api/uploadthing/core";
+export function FileUpload() {
+  const [file, setFile] = useState<File>();
 
-interface FileUploadProps {
-  onChange: (url?: string) => void;
-  endpoint: keyof typeof ourFileRouter;
-};
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!file) return;
 
-export const FileUpload = ({
-  onChange,
-  endpoint
-}: FileUploadProps) => {
+    try {
+      const data = new FormData();
+      data.set("file", file);
+
+      const res = await fetch("/api/fileUpload", {
+        method: "POST",
+        body: data,
+      });
+      // handle the error
+      if (!res.ok) throw new Error(await res.text());
+    } catch (e: any) {
+      // Handle errors here
+      console.error(e);
+    }
+  };
+
   return (
-    <UploadDropzone
-      endpoint={endpoint}
-      onClientUploadComplete={(res) => {
-        onChange(res?.[0].url);
-      }}
-      onUploadError={(error: Error) => {
-        toast.error(`${error?.message}`);
-      }}
-    />
-  )
+    <form onSubmit={onSubmit}>
+      <input
+        type="file"
+        name="file"
+        onChange={(e) => setFile(e.target.files?.[0])}
+      />
+      <input type="submit" value="Upload" />
+    </form>
+  );
 }
+
+// return (
+//   <UploadDropzone
+//     endpoint={endpoint}
+//     onClientUploadComplete={(res) => {
+//       onChange(res?.[0].url);
+//     }}
+//     onUploadError={(error: Error) => {
+//       toast.error(error.message);
+//     }
