@@ -92,7 +92,7 @@ const api = {
 const formSchema = z.object({
 	title: z.string().min(1, "Ingrese un título"),
 	url: z.string().url("Ingrese una URL válida"),
-	description: z.string().min(1, "Ingrese una descripción"),
+	description: z.string().optional(),
 });
 
 interface FormValues {
