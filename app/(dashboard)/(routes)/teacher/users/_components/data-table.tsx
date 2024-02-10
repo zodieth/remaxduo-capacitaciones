@@ -67,6 +67,7 @@ export function DataTable<TData, TValue>({
 					className="max-w-sm"
 				/>
 				<Link href="/teacher/users/create">
+					{/* en vez de a una pag externa, que sea con un modal */}
 					<Button>
 						<PlusCircle className="h-4 w-4 mr-2" />
 						Crear usuario

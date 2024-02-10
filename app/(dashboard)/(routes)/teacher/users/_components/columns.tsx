@@ -81,11 +81,11 @@ export const columns: ColumnDef<User>[] = [
 	{
 		accessorKey: "actions",
 		header: ({ column }) => {
-			return <Button variant="ghost">Editar</Button>;
+			return <Button variant="ghost"></Button>;
 		},
 		cell: () => {
 			return (
-				<div className="flex gap-2">
+				<div className="flex gap-2 justify-end">
 					<Button variant="outline">
 						<Pencil className="h-4 w-4" />
 					</Button>
