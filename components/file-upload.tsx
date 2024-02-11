@@ -1,8 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "./ui/button";
 
-export function FileUpload() {
+export function FileUpload({
+  endpoint,
+  onChange,
+}: {
+  endpoint: string;
+  onChange: (url: string) => void;
+}) {
   const [file, setFile] = useState<File>();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -29,10 +36,15 @@ export function FileUpload() {
     <form onSubmit={onSubmit}>
       <input
         type="file"
+        id="fileInput"
         name="file"
-        onChange={(e) => setFile(e.target.files?.[0])}
+        style={{ display: "none" }}
+        onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
       />
-      <input type="submit" value="Upload" />
+      <label htmlFor="fileInput" className="button">
+        Subir Archivo Personalizado
+      </label>
+      <Button type="submit">Subir archivo</Button>
     </form>
   );
 }
