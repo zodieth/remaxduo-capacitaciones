@@ -1,8 +1,8 @@
 "use client";
 
+import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Trash, Pencil } from "lucide-react";
-
+import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface User {
@@ -74,24 +74,6 @@ export const columns: ColumnDef<User>[] = [
 			return (
 				<div className="flex items-center justify-start text-white">
 					<p className={backgroundColor}>{row.original.role}</p>
-				</div>
-			);
-		},
-	},
-	{
-		accessorKey: "actions",
-		header: ({ column }) => {
-			return <Button variant="ghost"></Button>;
-		},
-		cell: () => {
-			return (
-				<div className="flex gap-2 justify-end">
-					<Button variant="outline">
-						<Pencil className="h-4 w-4" />
-					</Button>
-					<Button variant="outline">
-						<Trash className="h-4 w-4" />
-					</Button>
 				</div>
 			);
 		},

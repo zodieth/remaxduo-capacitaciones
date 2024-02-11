@@ -12,9 +12,8 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import Link from "next/link";
-import { PlusCircle } from "lucide-react";
-
+import { PlusCircle, Trash, Pencil } from "lucide-react";
+import { ConfirmModal } from "@/components/modals/confirm-modal";
 import {
 	Table,
 	TableBody,
@@ -25,6 +24,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { UserManagement } from "./user-manage";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -55,24 +55,30 @@ export function DataTable<TData, TValue>({
 		},
 	});
 
+	const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+
+	const handleToggleDropdown = () => {
+		setIsDropdownOpen((prevState) => !prevState);
+	};
+
 	return (
 		<div>
 			<div className="flex items-center py-4 justify-between">
 				<Input
 					placeholder="Filtrar usuarios..."
-					value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+					value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
 					onChange={(event) =>
-						table.getColumn("title")?.setFilterValue(event.target.value)
+						table.getColumn("name")?.setFilterValue(event.target.value)
 					}
 					className="max-w-sm"
 				/>
-				<Link href="/teacher/users/create">
-					{/* en vez de a una pag externa, que sea con un modal */}
-					<Button>
+				<div className="relative">
+					<Button onClick={handleToggleDropdown}>
 						<PlusCircle className="h-4 w-4 mr-2" />
 						Crear usuario
 					</Button>
-				</Link>
+					<div>{isDropdownOpen && <UserManagement />}</div>
+				</div>
 			</div>
 			<div className="rounded-md border">
 				<Table>
@@ -109,6 +115,22 @@ export function DataTable<TData, TValue>({
 											)}
 										</TableCell>
 									))}
+									<TableCell>
+										<div className="flex gap-2 justify-end">
+											<Button
+												variant="outline"
+												onClick={handleToggleDropdown}
+												className="text-sm"
+											>
+												<Pencil className="h-4 w-4 " />
+											</Button>
+											{/* <ConfirmModal onConfirm={onDelete}> */}
+											<Button onClick={handleToggleDropdown}>
+												<Trash className="h-4 w-4" />
+											</Button>
+											{/* </ConfirmModal> */}
+										</div>
+									</TableCell>
 								</TableRow>
 							))
 						) : (
@@ -124,7 +146,7 @@ export function DataTable<TData, TValue>({
 					</TableBody>
 				</Table>
 			</div>
-			<div className="flex items-center justify-end space-x-2 py-4">
+			<div className="flex items-center justify-end space-x-2 py-4 absolute bottom-4 right-4">
 				<Button
 					variant="outline"
 					size="sm"
