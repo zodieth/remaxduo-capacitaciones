@@ -15,6 +15,7 @@ const CourseLayout = async ({
   params: { courseId: string };
 }) => {
   const { userId } = auth();
+  console.log(userId);
 
   if (!userId) {
     return redirect("/");
