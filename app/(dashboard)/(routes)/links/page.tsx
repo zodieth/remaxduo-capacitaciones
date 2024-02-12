@@ -42,7 +42,7 @@ const UsefulLinks = () => {
       <div className="p-6 w-full border border-gray-300 rounded-lg grid md:grid-cols-3 gap-4">
         {usefulLinks.map(usefulLink => (
           <div key={usefulLink.id}>
-            <a href={usefulLink.url}>
+            <a href={usefulLink.url} target="_blank" rel="noopener noreferrer">
               <Button className="w-full flex justify-between items-center">
                 <h2 className="text-left">{usefulLink.title}</h2>
                 <ArrowUpRightSquare className="w-6 h-6" />
