@@ -11,53 +11,53 @@ import { DataTable } from "./_components/data-table";
 import { columns } from "./_components/columns";
 
 const CoursesPage = async () => {
-	const { userId } = auth();
+  const { userId } = auth();
 
-	if (!userId) {
-		return redirect("/");
-	}
+  if (!userId) {
+    return redirect("/");
+  }
 
-	// const users = await db.user.findMany({
-	// 	where: {
-	// 		userId,
-	// 	},
-	// 	orderBy: {
-	// 		createdAt: "desc",
-	// 	},
-	// });
+  // const users = await db.user.findMany({
+  // 	where: {
+  // 		userId,
+  // 	},
+  // 	orderBy: {
+  // 		createdAt: "desc",
+  // 	},
+  // });
 
-	const users = [
-		{
-			image: <User />,
-			name: "Alina Piccardo",
-			email: "apiccardo@ltmsoftware.com",
-			role: "administrador",
-		},
-		{
-			image: <User />,
-			name: "Rodrigo Marchese",
-			email: "rmarchese@ltmsoftware.com",
-			role: "administrador",
-		},
-		{
-			image: <User />,
-			name: "Camila Cairo",
-			email: "ccairo@ltmsoftware.com",
-			role: "agente",
-		},
-		{
-			image: <User />,
-			name: "Mora Piccardo",
-			email: "mpiccardo@ltmsoftware.com",
-			role: "agente",
-		},
-	];
+  const users = [
+    {
+      image: <User />,
+      name: "Alina Piccardo",
+      email: "apiccardo@ltmsoftware.com",
+      role: "administrador",
+    },
+    {
+      image: <User />,
+      name: "Rodrigo Marchese",
+      email: "rmarchese@ltmsoftware.com",
+      role: "administrador",
+    },
+    {
+      image: <User />,
+      name: "Camila Cairo",
+      email: "ccairo@ltmsoftware.com",
+      role: "agente",
+    },
+    {
+      image: <User />,
+      name: "Mora Piccardo",
+      email: "mpiccardo@ltmsoftware.com",
+      role: "agente",
+    },
+  ];
 
-	return (
-		<div className="p-6">
-			<DataTable columns={columns} data={users} />
-		</div>
-	);
+  return (
+    <div className="p-6">
+      <DataTable columns={columns} data={users} />
+    </div>
+  );
 };
 
 export default CoursesPage;

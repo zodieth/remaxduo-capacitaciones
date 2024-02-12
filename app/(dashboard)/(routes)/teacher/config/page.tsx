@@ -4,18 +4,18 @@ import CategoriesABM from "./_components/categoriesABM";
 import UsefulLinksABM from "./_components/usefulLinksABM";
 
 const ConfigPage = async () => {
-	const { userId } = auth();
+  const { userId } = auth();
 
-	if (!userId) {
-		return redirect("/");
-	}
+  if (!userId) {
+    return redirect("/");
+  }
 
-	return (
-		<div className="p-6">
-			<CategoriesABM />
-			<UsefulLinksABM />
-		</div>
-	);
+  return (
+    <div className="p-6">
+      <CategoriesABM />
+      <UsefulLinksABM />
+    </div>
+  );
 };
 
 export default ConfigPage;
