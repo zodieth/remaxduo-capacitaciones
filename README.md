@@ -1,3 +1,12 @@
+## Database
+
+`npx prisma generate` para generar el cliente de la base de datos.
+`npx prisma db push` para aplicar los cambios en el esquema de la base de datos.
+
+Al usar prisma, si pones `npx prisma studio` , se ejecutará un servidor local que te permitirá ver y modificar la base de datos.
+(Para esto, primero debes haber ejecutado `npx prisma generate`)
+[ `localhost:5555` ]
+
 ## Info
 
 Files will be uploaded to the `./public/FilesUploaded` directory.
