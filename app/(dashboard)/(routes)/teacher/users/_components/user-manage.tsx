@@ -42,7 +42,13 @@ type User = {
   password: string;
 };
 
-export const UserManagement = () => {
+type UserManagementProps = {
+  onCancel: (value: boolean) => void;
+};
+
+export const UserManagement = ({
+  onCancel,
+}: UserManagementProps) => {
   const [users, setUsers] = useState<User[]>([]);
   const [editingIndex, setEditingIndex] = useState<
     number | null
@@ -128,6 +134,7 @@ export const UserManagement = () => {
   };
 
   const onCancelEdit = () => {
+    onCancel(false);
     setEditingIndex(null);
     reset({
       name: "",

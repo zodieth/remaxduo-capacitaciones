@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserManagement } from "./user-manage";
+import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -35,9 +36,9 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] =
-    React.useState<ColumnFiltersState>([]);
+    useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
@@ -54,8 +55,7 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const [isDropdownOpen, setIsDropdownOpen] =
-    React.useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleToggleDropdown = () => {
     setIsDropdownOpen(prevState => !prevState);
@@ -79,11 +79,15 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
         <div className="relative">
-          <Button onClick={handleToggleDropdown}>
+          <Button onClick={() => setIsDropdownOpen(true)}>
             <PlusCircle className="h-4 w-4 mr-2" />
             Crear usuario
           </Button>
-          <div>{isDropdownOpen && <UserManagement />}</div>
+          <div>
+            {isDropdownOpen && (
+              <UserManagement onCancel={setIsDropdownOpen} />
+            )}
+          </div>
         </div>
       </div>
       <div className="rounded-md border">
