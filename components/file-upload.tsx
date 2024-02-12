@@ -9,12 +9,20 @@ export function FileUpload({
   courseId,
 }: {
   endpoint?: string;
-  onChange: ({ url, name }: { url: string; name?: string }) => void;
+  onChange: ({
+    url,
+    name,
+  }: {
+    url: string;
+    name?: string;
+  }) => void;
   courseId?: string;
 }) {
   const [files, setFiles] = useState<File[]>([]);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     if (files.length === 0) return;
 
@@ -39,12 +47,15 @@ export function FileUpload({
         const filesArray = filesResponse.files;
 
         if (Array.isArray(filesArray)) {
-          filesArray.forEach((file) => {
+          filesArray.forEach(file => {
             onChange(file);
             console.log("File", file);
           });
         } else {
-          console.error("La respuesta no es un array", filesArray);
+          console.error(
+            "La respuesta no es un array",
+            filesArray
+          );
         }
       } else {
         throw new Error(await res.text());
@@ -63,8 +74,10 @@ export function FileUpload({
           name="files"
           multiple
           className="hidden"
-          onChange={(e) =>
-            setFiles(e.target.files ? Array.from(e.target.files) : [])
+          onChange={e =>
+            setFiles(
+              e.target.files ? Array.from(e.target.files) : []
+            )
           }
         />
         <label
@@ -76,7 +89,8 @@ export function FileUpload({
         <Button
           type="submit"
           className={`ml-5 mt-4 py-2 px-4 font-bold rounded ${
-            files.length === 0 && "bg-gray-500 text-gray-100 cursor-not-allowed"
+            files.length === 0 &&
+            "bg-gray-500 text-gray-100 cursor-not-allowed"
           }`}
           disabled={files.length === 0}
         >
@@ -84,7 +98,9 @@ export function FileUpload({
         </Button>
       </form>
       <div className="mt-4">
-        <h3 className="text-lg font-semibold">Archivos seleccionados:</h3>
+        <h3 className="text-lg font-semibold">
+          Archivos seleccionados:
+        </h3>
         <ul>
           {files.map((file, index) => (
             <li

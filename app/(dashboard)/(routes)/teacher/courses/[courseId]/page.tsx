@@ -20,7 +20,11 @@ import { AttachmentForm } from "./_components/attachment-form";
 import { ChaptersForm } from "./_components/chapters-form";
 import { Actions } from "./_components/actions";
 
-const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
+const CourseIdPage = async ({
+  params,
+}: {
+  params: { courseId: string };
+}) => {
   const { userId } = auth();
 
   if (!userId) {
@@ -62,7 +66,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
     course.imageUrl,
     // course.price,
     course.categoryId,
-    course.chapters.some((chapter) => chapter.isPublished),
+    course.chapters.some(chapter => chapter.isPublished),
   ];
 
   const totalFields = requiredFields.length;
@@ -95,15 +99,26 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
           <div>
             <div className="flex items-center gap-x-2">
               <IconBadge icon={LayoutDashboard} />
-              <h2 className="text-xl">Customización del curso</h2>
+              <h2 className="text-xl">
+                Customización del curso
+              </h2>
             </div>
-            <TitleForm initialData={course} courseId={course.id} />
-            <DescriptionForm initialData={course} courseId={course.id} />
-            <ImageForm initialData={course} courseId={course.id} />
+            <TitleForm
+              initialData={course}
+              courseId={course.id}
+            />
+            <DescriptionForm
+              initialData={course}
+              courseId={course.id}
+            />
+            <ImageForm
+              initialData={course}
+              courseId={course.id}
+            />
             <CategoryForm
               initialData={course}
               courseId={course.id}
-              options={categories.map((category) => ({
+              options={categories.map(category => ({
                 label: category.name,
                 value: category.id,
               }))}
@@ -115,7 +130,10 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
                 <IconBadge icon={ListChecks} />
                 <h2 className="text-xl">Capítulos del curso</h2>
               </div>
-              <ChaptersForm initialData={course} courseId={course.id} />
+              <ChaptersForm
+                initialData={course}
+                courseId={course.id}
+              />
             </div>
             {/* <div>
               <div className="flex items-center gap-x-2">
@@ -129,7 +147,10 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
                 <IconBadge icon={File} />
                 <h2 className="text-xl">Archivos & Agregados</h2>
               </div>
-              <AttachmentForm initialData={course} courseId={course.id} />
+              <AttachmentForm
+                initialData={course}
+                courseId={course.id}
+              />
             </div>
           </div>
         </div>

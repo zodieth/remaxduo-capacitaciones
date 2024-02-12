@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 const TeacherLayout = ({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) => {
@@ -13,7 +13,7 @@ const TeacherLayout = ({
     return redirect("/");
   }
 
-  return <>{children}</>
-}
- 
+  return <>{children}</>;
+};
+
 export default TeacherLayout;

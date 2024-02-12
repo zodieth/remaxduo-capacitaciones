@@ -2,7 +2,10 @@
 
 import * as React from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { cva, type VariantProps } from "class-variance-authority";
+import {
+  cva,
+  type VariantProps,
+} from "class-variance-authority";
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -56,7 +59,9 @@ const sheetVariants = cva(
 );
 
 interface SheetContentProps
-  extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
+  extends React.ComponentPropsWithoutRef<
+      typeof SheetPrimitive.Content
+    >,
     VariantProps<typeof sheetVariants> {}
 
 const SheetContent = React.forwardRef<
@@ -114,7 +119,10 @@ const SheetTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold text-foreground", className)}
+    className={cn(
+      "text-lg font-semibold text-foreground",
+      className
+    )}
     {...props}
   />
 ));
@@ -122,7 +130,9 @@ SheetTitle.displayName = SheetPrimitive.Title.displayName;
 
 const SheetDescription = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>
+  React.ComponentPropsWithoutRef<
+    typeof SheetPrimitive.Description
+  >
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Description
     ref={ref}
@@ -130,7 +140,8 @@ const SheetDescription = React.forwardRef<
     {...props}
   />
 ));
-SheetDescription.displayName = SheetPrimitive.Description.displayName;
+SheetDescription.displayName =
+  SheetPrimitive.Description.displayName;
 
 export {
   Sheet,

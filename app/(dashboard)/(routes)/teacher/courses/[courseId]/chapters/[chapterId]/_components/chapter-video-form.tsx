@@ -30,11 +30,13 @@ export const ChapterVideoForm = ({
 }: ChapterVideoFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const toggleEdit = () => setIsEditing((current) => !current);
+  const toggleEdit = () => setIsEditing(current => !current);
 
   const router = useRouter();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
       await axios.patch(
         `/api/courses/${courseId}/chapters/${chapterId}`,
@@ -75,7 +77,9 @@ export const ChapterVideoForm = ({
           </div>
         ) : (
           <div className="relative aspect-video mt-2">
-            <MuxPlayer playbackId={initialData?.muxData?.playbackId || ""} />
+            <MuxPlayer
+              playbackId={initialData?.muxData?.playbackId || ""}
+            />
           </div>
         ))}
       {isEditing && (
@@ -89,13 +93,15 @@ export const ChapterVideoForm = ({
               }
             }}
           />
-          <div className="text-xs text-muted-foreground mt-4">Subir video</div>
+          <div className="text-xs text-muted-foreground mt-4">
+            Subir video
+          </div>
         </div>
       )}
       {initialData.videoUrl && !isEditing && (
         <div className="text-xs text-muted-foreground mt-2">
-          Los videos pueden tomar unos minutos en proesar. Refresca la página si
-          el video no aparece.
+          Los videos pueden tomar unos minutos en proesar.
+          Refresca la página si el video no aparece.
         </div>
       )}
     </div>

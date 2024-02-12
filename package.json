@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.23.5",
@@ -61,6 +64,8 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
+    "husky": "^8.0.0",
+    "prettier": "^3.2.5",
     "prisma": "^5.3.0"
   }
 }

@@ -1,6 +1,12 @@
 "use client";
 
-import { BarChart, Compass, Layout, List, Settings } from "lucide-react";
+import {
+  BarChart,
+  Compass,
+  Layout,
+  List,
+  Settings,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { SidebarItem } from "./sidebar-item";
@@ -45,7 +51,7 @@ export const SidebarRoutes = () => {
 
   return (
     <div className="flex flex-col w-full">
-      {routes.map((route) => (
+      {routes.map(route => (
         <SidebarItem
           key={route.href}
           icon={route.icon}

@@ -23,14 +23,19 @@ const formSchema = z.object({
   }),
 });
 
-export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
+export const ImageForm = ({
+  initialData,
+  courseId,
+}: ImageFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const toggleEdit = () => setIsEditing((current) => !current);
+  const toggleEdit = () => setIsEditing(current => !current);
 
   const router = useRouter();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Curso actualizado");
