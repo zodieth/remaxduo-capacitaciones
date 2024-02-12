@@ -28,24 +28,28 @@ const CoursesPage = async () => {
 
   const users = [
     {
+      id: "alina1",
       image: <User />,
       name: "Alina Piccardo",
       email: "apiccardo@ltmsoftware.com",
       role: "administrador",
     },
     {
+      id: "rodri31",
       image: <User />,
       name: "Rodrigo Marchese",
       email: "rmarchese@ltmsoftware.com",
       role: "administrador",
     },
     {
+      id: "camila3331",
       image: <User />,
       name: "Camila Cairo",
       email: "ccairo@ltmsoftware.com",
       role: "agente",
     },
     {
+      id: "mora98821",
       image: <User />,
       name: "Mora Piccardo",
       email: "mpiccardo@ltmsoftware.com",

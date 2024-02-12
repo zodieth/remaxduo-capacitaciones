@@ -26,6 +26,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserManagement } from "./user-manage";
 import { useState } from "react";
+import { User } from "./user-manage";
+import { boolean } from "zod";
+import { isCancel } from "axios";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,7 +42,11 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] =
     useState<ColumnFiltersState>([]);
+  const [selectedUser, setSelectedUser] = useState<
+    User | undefined
+  >(undefined);
 
+  console.log(selectedUser);
   const table = useReactTable({
     data,
     columns,
@@ -59,6 +66,16 @@ export function DataTable<TData, TValue>({
 
   const handleToggleDropdown = () => {
     setIsDropdownOpen(prevState => !prevState);
+  };
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setIsDropdownOpen(true);
+  };
+
+  const handleFormCancel = (isCanceled: boolean) => {
+    setIsDropdownOpen(!isCanceled);
+    isCanceled && setSelectedUser(undefined);
   };
 
   return (
@@ -85,7 +102,10 @@ export function DataTable<TData, TValue>({
           </Button>
           <div>
             {isDropdownOpen && (
-              <UserManagement onCancel={setIsDropdownOpen} />
+              <UserManagement
+                onCancel={handleFormCancel}
+                user={selectedUser}
+              />
             )}
           </div>
         </div>
@@ -131,7 +151,9 @@ export function DataTable<TData, TValue>({
                     <div className="flex gap-2 justify-end">
                       <Button
                         variant="outline"
-                        onClick={handleToggleDropdown}
+                        onClick={() =>
+                          handleEditUser(row.original as User)
+                        }
                         className="text-sm"
                       >
                         <Pencil className="h-4 w-4 " />

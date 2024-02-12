@@ -34,7 +34,7 @@ interface FormValues {
   password: string;
 }
 
-type User = {
+export type User = {
   id: string;
   name: string;
   email: string;
@@ -44,15 +44,16 @@ type User = {
 
 type UserManagementProps = {
   onCancel: (value: boolean) => void;
+  user?: User | undefined;
 };
 
 export const UserManagement = ({
   onCancel,
+  user,
 }: UserManagementProps) => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [editingIndex, setEditingIndex] = useState<
-    number | null
-  >(null);
+  const [editUser, setEditUser] = useState<User | undefined>(
+    user
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [linkToDelete, setLinkToDelete] = useState<
     number | null
@@ -70,9 +71,9 @@ export const UserManagement = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      role: "",
+      name: (user as User)?.name || "",
+      email: (user as User)?.email || "",
+      role: (user as User)?.role || "",
       password: "",
     },
   });
@@ -84,64 +85,54 @@ export const UserManagement = ({
 
   const onSubmit: SubmitHandler<FormValues> = data => {
     console.log(data);
-    if (editingIndex === null) {
+    if (!user) {
       // create
       const newUser = {
         id: "1",
         ...data,
       };
-      setUsers([newUser, ...users]);
+      //TODO crear user
       toast.success("Usuario creado");
     } else {
+      //TODO edit user
       // update
-      const userId = users[editingIndex].id;
-      const updatedUser = users.map((user, index) =>
-        index === editingIndex
-          ? {
-              ...user,
-              name: data.name,
-              email: data.email,
-              role: data.role,
-              password: data.password,
-            }
-          : user
-      );
-      setUsers(updatedUser);
-      setEditingIndex(null);
+      // const userId = users[editingId].id;
+      // const updatedUser = users.map((user, index) =>
+      //   index === editingId
+      //     ? {
+      //         ...user,
+      //         name: data.name,
+      //         email: data.email,
+      //         role: data.role,
+      //         password: data.password,
+      //       }
+      //     : user
+      // );
+      // setUsers(updatedUser);
       toast.success("Usuario actualizado");
     }
+    onCancel(true);
     reset({
       name: "",
       email: "",
       role: "",
       password: "",
-    });
-  };
-
-  const startEditing = (index: number) => {
-    setEditingIndex(index);
-    reset({
-      name: users[index].name,
-      email: users[index].email,
-      role: users[index].role,
-      password: users[index].password,
     });
   };
 
   const handleDelete = (index: number) => {
-    const updatedUsers = users.filter((_, i) => i !== index);
-    setUsers(updatedUsers);
+    //TODO delete user
   };
 
   const onCancelEdit = () => {
-    onCancel(false);
-    setEditingIndex(null);
+    setEditUser(undefined);
     reset({
       name: "",
       email: "",
       role: "",
       password: "",
     });
+    onCancel(true);
   };
 
   const onDelete = () => {
@@ -164,6 +155,7 @@ export const UserManagement = ({
               <Input
                 id="name"
                 placeholder="Nombre y Apellido"
+                value={(user as User)?.name || ""}
                 {...register("name")}
               />
             </FormControl>
@@ -177,6 +169,7 @@ export const UserManagement = ({
               <Input
                 id="email"
                 placeholder="ejemplo@email.com"
+                value={(user as User)?.email || ""}
                 {...register("email")}
               />
             </FormControl>
@@ -190,6 +183,7 @@ export const UserManagement = ({
               <select
                 id="role"
                 {...register("role")}
+                value={(user as User)?.role || ""}
                 className="input border w-fit py-2 px-1 rounded-md"
               >
                 <option value="agente">Agente</option>
@@ -229,9 +223,7 @@ export const UserManagement = ({
           </FormItem>
           <div className="flex mt-4">
             <Button type="submit" className="mr-3">
-              {editingIndex === null
-                ? "Crear Usuario"
-                : "Actualizar Usuario"}
+              {!user ? "Crear Usuario" : "Actualizar Usuario"}
             </Button>
             <Button
               type="button"
