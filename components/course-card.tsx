@@ -1,10 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 
 import { IconBadge } from "@/components/icon-badge";
 import { formatPrice } from "@/lib/format";
 import { CourseProgress } from "@/components/course-progress";
+import Image from "next/image";
 
 interface CourseCardProps {
   id: string;
@@ -33,7 +33,7 @@ export const CourseCard = ({
             fill
             className="object-cover"
             alt={title}
-            src={imageUrl}
+            src={imageUrl || "/placeholder.png"}
           />
         </div>
         <div className="flex flex-col pt-2">

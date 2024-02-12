@@ -9,6 +9,7 @@ import { InfoCard } from "./_components/info-card";
 
 export default async function Dashboard() {
   const { userId } = auth();
+  console.log(userId);
 
   if (!userId) {
     return redirect("/");
