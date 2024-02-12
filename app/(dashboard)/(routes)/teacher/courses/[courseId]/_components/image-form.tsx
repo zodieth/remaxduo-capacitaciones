@@ -80,7 +80,8 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
         <div>
           <FileUpload
             endpoint="courseImage"
-            onChange={(url) => {
+            courseId={courseId}
+            onChange={({ url }) => {
               if (url) {
                 onSubmit({ imageUrl: url });
               }
