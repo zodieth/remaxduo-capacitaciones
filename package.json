@@ -7,7 +7,21 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky install"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "dependencies": {
     "@clerk/nextjs": "^4.23.5",
@@ -37,6 +51,7 @@
     "cmdk": "^0.2.0",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.12",
+    "fs": "^0.0.1-security",
     "lucide-react": "^0.276.0",
     "next": "13.4.12",
     "postcss": "8.4.29",
@@ -60,6 +75,9 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
-    "prisma": "^5.9.1"
+    "prisma": "^5.9.1",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5"
   }
 }

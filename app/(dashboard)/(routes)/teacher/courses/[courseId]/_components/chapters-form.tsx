@@ -32,12 +32,15 @@ const formSchema = z.object({
   title: z.string().min(1),
 });
 
-export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
+export const ChaptersForm = ({
+  initialData,
+  courseId,
+}: ChaptersFormProps) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const toggleCreating = () => {
-    setIsCreating((current) => !current);
+    setIsCreating(current => !current);
   };
 
   const router = useRouter();
@@ -51,9 +54,14 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
-      await axios.post(`/api/courses/${courseId}/chapters`, values);
+      await axios.post(
+        `/api/courses/${courseId}/chapters`,
+        values
+      );
       toast.success("Capítulo creado");
       toggleCreating();
       router.refresh();
@@ -62,13 +70,18 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
     }
   };
 
-  const onReorder = async (updateData: { id: string; position: number }[]) => {
+  const onReorder = async (
+    updateData: { id: string; position: number }[]
+  ) => {
     try {
       setIsUpdating(true);
 
-      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
-        list: updateData,
-      });
+      await axios.put(
+        `/api/courses/${courseId}/chapters/reorder`,
+        {
+          list: updateData,
+        }
+      );
       toast.success("Capítulos reorganizados");
       router.refresh();
     } catch {
@@ -124,7 +137,10 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
                 </FormItem>
               )}
             />
-            <Button disabled={!isValid || isSubmitting} type="submit">
+            <Button
+              disabled={!isValid || isSubmitting}
+              type="submit"
+            >
               Crear
             </Button>
           </form>
@@ -134,7 +150,8 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
         <div
           className={cn(
             "text-sm mt-2",
-            !initialData.chapters.length && "text-slate-500 italic"
+            !initialData.chapters.length &&
+              "text-slate-500 italic"
           )}
         >
           {!initialData.chapters.length && "No chapters"}

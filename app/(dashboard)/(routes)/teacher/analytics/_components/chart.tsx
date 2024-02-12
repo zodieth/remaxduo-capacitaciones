@@ -17,9 +17,7 @@ interface ChartProps {
   }[];
 }
 
-export const Chart = ({
-  data
-}: ChartProps) => {
+export const Chart = ({ data }: ChartProps) => {
   return (
     <Card>
       <ResponsiveContainer width="100%" height={350}>
@@ -36,7 +34,7 @@ export const Chart = ({
             fontSize={12}
             tickLine={false}
             axisLine={false}
-            tickFormatter={(value) => `$${value}`}
+            tickFormatter={value => `$${value}`}
           />
           <Bar
             dataKey="total"
@@ -46,5 +44,5 @@ export const Chart = ({
         </BarChart>
       </ResponsiveContainer>
     </Card>
-  )
-}
+  );
+};

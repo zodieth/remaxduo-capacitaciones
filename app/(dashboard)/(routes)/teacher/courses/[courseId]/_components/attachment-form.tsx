@@ -2,7 +2,14 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { Pencil, PlusCircle, ImageIcon, File, Loader2, X } from "lucide-react";
+import {
+  Pencil,
+  PlusCircle,
+  ImageIcon,
+  File,
+  Loader2,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -19,6 +26,7 @@ interface AttachmentFormProps {
 
 const formSchema = z.object({
   url: z.string().min(1),
+  name: z.string().min(1),
 });
 
 export const AttachmentForm = ({
@@ -26,15 +34,22 @@ export const AttachmentForm = ({
   courseId,
 }: AttachmentFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(
+    null
+  );
 
-  const toggleEdit = () => setIsEditing((current) => !current);
+  const toggleEdit = () => setIsEditing(current => !current);
 
   const router = useRouter();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
-      await axios.post(`/api/courses/${courseId}/attachments`, values);
+      await axios.post(
+        `/api/courses/${courseId}/attachments`,
+        values
+      );
       toast.success("Curso actualizado");
       toggleEdit();
       router.refresh();
@@ -46,7 +61,9 @@ export const AttachmentForm = ({
   const onDelete = async (id: string) => {
     try {
       setDeletingId(id);
-      await axios.delete(`/api/courses/${courseId}/attachments/${id}`);
+      await axios.delete(
+        `/api/courses/${courseId}/attachments/${id}`
+      );
       toast.success("Archivo eliminado");
       router.refresh();
     } catch {
@@ -79,13 +96,15 @@ export const AttachmentForm = ({
           )}
           {initialData.attachments.length > 0 && (
             <div className="space-y-2">
-              {initialData.attachments.map((attachment) => (
+              {initialData.attachments.map(attachment => (
                 <div
                   key={attachment.id}
                   className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md"
                 >
                   <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                  <p className="text-xs line-clamp-1">{attachment.name}</p>
+                  <p className="text-xs line-clamp-1">
+                    {attachment.name}
+                  </p>
                   {deletingId === attachment.id && (
                     <div>
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -109,14 +128,16 @@ export const AttachmentForm = ({
         <div>
           <FileUpload
             endpoint="courseAttachment"
-            onChange={(url) => {
-              if (url) {
-                onSubmit({ url: url });
+            courseId={courseId}
+            onChange={({ url, name }) => {
+              if (url && name) {
+                onSubmit({ url: url, name: name });
               }
             }}
           />
           <div className="text-xs text-muted-foreground mt-4">
-            Agrega lo que tus estudiantes necesiten para el curso.
+            Agrega lo que tus estudiantes necesiten para el
+            curso.
           </div>
         </div>
       )}

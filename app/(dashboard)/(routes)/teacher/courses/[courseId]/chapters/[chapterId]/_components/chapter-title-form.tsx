@@ -38,7 +38,7 @@ export const ChapterTitleForm = ({
 }: ChapterTitleFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const toggleEdit = () => setIsEditing((current) => !current);
+  const toggleEdit = () => setIsEditing(current => !current);
 
   const router = useRouter();
 
@@ -49,7 +49,9 @@ export const ChapterTitleForm = ({
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
       await axios.patch(
         `/api/courses/${courseId}/chapters/${chapterId}`,
@@ -78,7 +80,9 @@ export const ChapterTitleForm = ({
           )}
         </Button>
       </div>
-      {!isEditing && <p className="text-sm mt-2">{initialData.title}</p>}
+      {!isEditing && (
+        <p className="text-sm mt-2">{initialData.title}</p>
+      )}
       {isEditing && (
         <Form {...form}>
           <form
@@ -102,7 +106,10 @@ export const ChapterTitleForm = ({
               )}
             />
             <div className="flex items-center gap-x-2">
-              <Button disabled={!isValid || isSubmitting} type="submit">
+              <Button
+                disabled={!isValid || isSubmitting}
+                type="submit"
+              >
                 Gardar
               </Button>
             </div>

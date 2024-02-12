@@ -41,7 +41,7 @@ export const ChapterAccessForm = ({
 }: ChapterAccessFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const toggleEdit = () => setIsEditing((current) => !current);
+  const toggleEdit = () => setIsEditing(current => !current);
 
   const router = useRouter();
 
@@ -54,7 +54,9 @@ export const ChapterAccessForm = ({
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
       await axios.patch(
         `/api/courses/${courseId}/chapters/${chapterId}`,
@@ -116,15 +118,18 @@ export const ChapterAccessForm = ({
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormDescription>
-                      Click en este cuadro si quieres que el capítulo sea
-                      gratuito
+                      Click en este cuadro si quieres que el
+                      capítulo sea gratuito
                     </FormDescription>
                   </div>
                 </FormItem>
               )}
             />
             <div className="flex items-center gap-x-2">
-              <Button disabled={!isValid || isSubmitting} type="submit">
+              <Button
+                disabled={!isValid || isSubmitting}
+                type="submit"
+              >
                 Guardar
               </Button>
             </div>

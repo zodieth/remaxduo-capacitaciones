@@ -46,7 +46,10 @@ const ChapterIdPage = async ({
   return (
     <div>
       {userProgress?.isCompleted && (
-        <Banner variant="success" label="Ya completaste este capítulo." />
+        <Banner
+          variant="success"
+          label="Ya completaste este capítulo."
+        />
       )}
       {isLocked && (
         <Banner
@@ -68,7 +71,9 @@ const ChapterIdPage = async ({
         </div>
         <div>
           <div className="p-4 flex flex-col md:flex-row items-center justify-between">
-            <h2 className="text-2xl font-semibold mb-2">{chapter.title}</h2>
+            <h2 className="text-2xl font-semibold mb-2">
+              {chapter.title}
+            </h2>
             {purchase ? (
               <CourseProgressButton
                 chapterId={params.chapterId}
@@ -91,7 +96,7 @@ const ChapterIdPage = async ({
             <>
               <Separator />
               <div className="p-4">
-                {attachments.map((attachment) => (
+                {attachments.map(attachment => (
                   <a
                     href={attachment.url}
                     target="_blank"
@@ -99,7 +104,9 @@ const ChapterIdPage = async ({
                     className="flex items-center p-3 w-full bg-sky-200 border text-sky-700 rounded-md hover:underline"
                   >
                     <File />
-                    <p className="line-clamp-1">{attachment.name}</p>
+                    <p className="line-clamp-1">
+                      {attachment.name}
+                    </p>
                   </a>
                 ))}
               </div>

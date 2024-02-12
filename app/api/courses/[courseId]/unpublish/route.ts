@@ -11,7 +11,9 @@ export async function PATCH(
     const { userId } = auth();
 
     if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     const course = await db.course.findUnique({
@@ -32,12 +34,14 @@ export async function PATCH(
       },
       data: {
         isPublished: false,
-      }
+      },
     });
 
     return NextResponse.json(unpublishedCourse);
   } catch (error) {
     console.log("[COURSE_ID_UNPUBLISH]", error);
-    return new NextResponse("Internal Error", { status: 500 });
-  } 
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
+  }
 }
