@@ -9,7 +9,9 @@ export async function POST(req: Request) {
     const { name } = await req.json();
 
     if (!userId || !isTeacher(userId)) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     const category = await db.category.create({
@@ -21,7 +23,9 @@ export async function POST(req: Request) {
     return NextResponse.json(category);
   } catch (error) {
     console.log("[CATEGORY]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }
 
@@ -32,7 +36,9 @@ export async function GET(req: Request) {
     return NextResponse.json(categories);
   } catch (error) {
     console.log("[CATEGORY]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }
 
@@ -42,7 +48,9 @@ export async function PUT(req: Request) {
     const { id, name } = await req.json();
 
     if (!userId || !isTeacher(userId)) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     const category = await db.category.update({
@@ -53,7 +61,9 @@ export async function PUT(req: Request) {
     return NextResponse.json(category);
   } catch (error) {
     console.log("[CATEGORY]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }
 
@@ -63,7 +73,9 @@ export async function DELETE(req: Request) {
     const { id } = await req.json();
 
     if (!userId || !isTeacher(userId)) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     await db.category.delete({ where: { id } });
@@ -71,6 +83,8 @@ export async function DELETE(req: Request) {
     return new NextResponse("Deleted", { status: 200 });
   } catch (error) {
     console.log("[CATEGORY]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }

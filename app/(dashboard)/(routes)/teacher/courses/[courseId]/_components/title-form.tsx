@@ -32,10 +32,13 @@ const formSchema = z.object({
   }),
 });
 
-export const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
+export const TitleForm = ({
+  initialData,
+  courseId,
+}: TitleFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const toggleEdit = () => setIsEditing((current) => !current);
+  const toggleEdit = () => setIsEditing(current => !current);
 
   const router = useRouter();
 
@@ -46,7 +49,9 @@ export const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Curso actualizado");
@@ -72,7 +77,9 @@ export const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
           )}
         </Button>
       </div>
-      {!isEditing && <p className="text-sm mt-2">{initialData.title}</p>}
+      {!isEditing && (
+        <p className="text-sm mt-2">{initialData.title}</p>
+      )}
       {isEditing && (
         <Form {...form}>
           <form
@@ -96,7 +103,10 @@ export const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
               )}
             />
             <div className="flex items-center gap-x-2">
-              <Button disabled={!isValid || isSubmitting} type="submit">
+              <Button
+                disabled={!isValid || isSubmitting}
+                type="submit"
+              >
                 Guardar
               </Button>
             </div>

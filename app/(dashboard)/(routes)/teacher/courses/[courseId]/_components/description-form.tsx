@@ -38,7 +38,7 @@ export const DescriptionForm = ({
 }: DescriptionFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const toggleEdit = () => setIsEditing((current) => !current);
+  const toggleEdit = () => setIsEditing(current => !current);
 
   const router = useRouter();
 
@@ -51,7 +51,9 @@ export const DescriptionForm = ({
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Curso actualizado");
@@ -110,7 +112,10 @@ export const DescriptionForm = ({
               )}
             />
             <div className="flex items-center gap-x-2">
-              <Button disabled={!isValid || isSubmitting} type="submit">
+              <Button
+                disabled={!isValid || isSubmitting}
+                type="submit"
+              >
                 Guardar
               </Button>
             </div>

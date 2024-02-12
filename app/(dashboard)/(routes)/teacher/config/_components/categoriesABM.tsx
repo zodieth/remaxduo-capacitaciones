@@ -30,7 +30,9 @@ const api = {
     }
     return response.json();
   },
-  createCategory: async (categoryName: string): Promise<Category> => {
+  createCategory: async (
+    categoryName: string
+  ): Promise<Category> => {
     const response = await fetch("/api/category", {
       method: "POST",
       headers: {
@@ -44,7 +46,10 @@ const api = {
     }
     return response.json();
   },
-  updateCategory: async (id: string, newName: string): Promise<void> => {
+  updateCategory: async (
+    id: string,
+    newName: string
+  ): Promise<void> => {
     const response = await fetch("/api/category", {
       method: "PUT",
       headers: {
@@ -86,9 +91,13 @@ type Category = {
 };
 
 const CategoriesABM = () => {
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingIndex, setEditingIndex] = useState<
+    number | null
+  >(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<
+    number | null
+  >(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -120,16 +129,22 @@ const CategoriesABM = () => {
     fetchCategories();
   }, []);
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async data => {
     if (editingIndex === null) {
       const newCategory = await api.createCategory(data.name);
-      setCategories((prevCategories) => [...prevCategories, newCategory]);
+      setCategories(prevCategories => [
+        ...prevCategories,
+        newCategory,
+      ]);
       toast.success("Categoría creada");
     } else {
       const categoryId = categories[editingIndex].id;
       await api.updateCategory(categoryId, data.name);
-      const updatedCategories = categories.map((category, index) =>
-        index === editingIndex ? { ...category, name: data.name } : category
+      const updatedCategories = categories.map(
+        (category, index) =>
+          index === editingIndex
+            ? { ...category, name: data.name }
+            : category
       );
       setCategories(updatedCategories);
       setEditingIndex(null);
@@ -146,7 +161,7 @@ const CategoriesABM = () => {
   const handleDelete = async (index: number) => {
     const categoryId = categories[index].id;
     await api.deleteCategory(categoryId);
-    setCategories((prevCategories) =>
+    setCategories(prevCategories =>
       prevCategories.filter((_, i) => i !== index)
     );
   };
@@ -185,13 +200,19 @@ const CategoriesABM = () => {
                 {...register("name")}
               />
             </FormControl>
-            {errors.name && <FormMessage>{errors.name.message}</FormMessage>}
+            {errors.name && (
+              <FormMessage>{errors.name.message}</FormMessage>
+            )}
           </FormItem>
           <Button type="submit" className="mt-4 mr-3">
-            {editingIndex === null ? "Crear Categoría" : "Actualizar Categoría"}
+            {editingIndex === null
+              ? "Crear Categoría"
+              : "Actualizar Categoría"}
           </Button>
           {editingIndex !== null && (
-            <Button onClick={() => onCancelEdit()}>Cancelar</Button>
+            <Button onClick={() => onCancelEdit()}>
+              Cancelar
+            </Button>
           )}
         </form>
       </Form>
@@ -203,10 +224,15 @@ const CategoriesABM = () => {
             <li
               key={category.id}
               className={`flex justify-between items-center p-1 rounded mt-1 ${
-                index === editingIndex ? "bg-blue-100" : "bg-gray-100"
+                index === editingIndex
+                  ? "bg-blue-100"
+                  : "bg-gray-100"
               }`}
             >
-              <div className="mx-2 text-sm"> {category.name}</div>
+              <div className="mx-2 text-sm">
+                {" "}
+                {category.name}
+              </div>
               <div className="flex gap-2">
                 <Button
                   variant="outline"

@@ -11,12 +11,16 @@ export async function POST(request: NextRequest) {
     const { userId } = auth();
 
     if (!userId || !isTeacher(userId)) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     const data = await request.formData();
 
-    const files: File[] = data.getAll("files") as unknown as File[];
+    const files: File[] = data.getAll(
+      "files"
+    ) as unknown as File[];
     const endpoint = data.get("endpoint") as string | undefined;
     const courseId = data.get("courseId") as string | undefined;
 
@@ -38,7 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     const uploadedFilesInfo = await Promise.all(
-      files.map(async (file) => {
+      files.map(async file => {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
         const filePath = path.join(folder, file.name);
@@ -51,9 +55,14 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    return NextResponse.json({ success: true, files: uploadedFilesInfo });
+    return NextResponse.json({
+      success: true,
+      files: uploadedFilesInfo,
+    });
   } catch (error) {
     console.error("[FILE UPLOAD]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }
