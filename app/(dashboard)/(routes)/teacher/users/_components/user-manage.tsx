@@ -15,18 +15,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 
-const formSchema = z.object({
-  name: z.string().nonempty("El nombre no puede estar vacío"),
-  email: z
-    .string()
-    .email("El email no es válido")
-    .min(1, "El email no puede estar vacío"),
-  role: z.string().nonempty("El rol no puede estar vacío"),
-  password: z
-    .string()
-    .nonempty("La contraseña no puede estar vacía"),
-});
-
 interface FormValues {
   name: string;
   email: string;
@@ -35,29 +23,75 @@ interface FormValues {
 }
 
 export type User = {
-  id: string;
+  id?: string;
   name: string;
   email: string;
   role: string;
-  password: string;
+  password?: string;
 };
 
 type UserManagementProps = {
   onCancel: (value: boolean) => void;
   user?: User | undefined;
+  handleRefreshUsers: (user: any) => void;
+};
+
+const api = {
+  createUser: async (user: User) => {
+    const response = await fetch("/api/user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+    if (!response.ok) {
+      toast.error("Error al crear el usuario");
+      throw new Error("Error al crear el usuario");
+    }
+    return response.json();
+  },
+  updateUser: async (user: User) => {
+    const response = await fetch(`/api/user/${user.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+    if (!response.ok) {
+      toast.error("Error al actualizar el usuario");
+      throw new Error("Error al actualizar el usuario");
+    }
+    return response.json();
+  },
 };
 
 export const UserManagement = ({
   onCancel,
   user,
+  handleRefreshUsers,
 }: UserManagementProps) => {
   const [editUser, setEditUser] = useState<User | undefined>(
     user
   );
-  const [isLoading, setIsLoading] = useState(false);
-  const [linkToDelete, setLinkToDelete] = useState<
-    number | null
-  >(null);
+
+  const formSchema = z.object({
+    name: z.string().nonempty("El nombre no puede estar vacío"),
+    email: z
+      .string()
+      .email("El email no es válido")
+      .min(1, "El email no puede estar vacío"),
+    role: z
+      .string()
+      .nonempty("El rol no puede estar vacío")
+      .default("USER"),
+    password: user
+      ? z.string().optional()
+      : z
+          .string()
+          .nonempty("La contraseña no puede estar vacía"),
+  });
 
   const {
     register,
@@ -71,10 +105,10 @@ export const UserManagement = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: (user as User)?.name || "",
-      email: (user as User)?.email || "",
-      role: (user as User)?.role || "",
-      password: "",
+      name: (editUser as User)?.name,
+      email: (editUser as User)?.email,
+      role: (editUser as User)?.role,
+      password: undefined,
     },
   });
 
@@ -84,32 +118,32 @@ export const UserManagement = ({
   };
 
   const onSubmit: SubmitHandler<FormValues> = data => {
-    console.log(data);
     if (!user) {
-      // create
-      const newUser = {
-        id: "1",
-        ...data,
-      };
-      //TODO crear user
-      toast.success("Usuario creado");
+      api.createUser(data).then(
+        res => {
+          toast.success("Usuario creado");
+          handleRefreshUsers({
+            ...data,
+            id: res.id,
+          });
+        },
+        err => {
+          console.log("error", err);
+        }
+      );
     } else {
-      //TODO edit user
-      // update
-      // const userId = users[editingId].id;
-      // const updatedUser = users.map((user, index) =>
-      //   index === editingId
-      //     ? {
-      //         ...user,
-      //         name: data.name,
-      //         email: data.email,
-      //         role: data.role,
-      //         password: data.password,
-      //       }
-      //     : user
-      // );
-      // setUsers(updatedUser);
-      toast.success("Usuario actualizado");
+      api.updateUser({ ...data, id: user.id }).then(
+        res => {
+          toast.success("Usuario actualizado");
+          handleRefreshUsers({
+            ...data,
+            id: res.id,
+          });
+        },
+        err => {
+          console.log("error", err);
+        }
+      );
     }
     onCancel(true);
     reset({
@@ -118,10 +152,6 @@ export const UserManagement = ({
       role: "",
       password: "",
     });
-  };
-
-  const handleDelete = (index: number) => {
-    //TODO delete user
   };
 
   const onCancelEdit = () => {
@@ -135,17 +165,19 @@ export const UserManagement = ({
     onCancel(true);
   };
 
-  const onDelete = () => {
-    setIsLoading(true);
-    if (linkToDelete !== null) {
-      handleDelete(linkToDelete);
-    }
-    toast.success("Usuario eliminado");
-    setLinkToDelete(null);
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    // @ts-ignore
+    setEditUser(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   return (
-    <div className="mt-4 absolute top-10 right-0 border border-solid bg-white shadow-lg rounded-md p-4 w-[400px] md:w-[700px] min-h-1/2">
+    <div className="mt-4 absolute top-10 right-0 border border-solid bg-white shadow-lg rounded-md p-4 w-[400px] md:w-[700px] min-h-1/2 z-10">
       <h1 className="text-lg font-semibold mb-2">Usuario:</h1>
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -155,8 +187,10 @@ export const UserManagement = ({
               <Input
                 id="name"
                 placeholder="Nombre y Apellido"
-                value={(user as User)?.name || ""}
-                {...register("name")}
+                value={(editUser as User)?.name}
+                {...register("name", {
+                  onChange: handleInputChange,
+                })}
               />
             </FormControl>
             {errors.name && (
@@ -169,8 +203,10 @@ export const UserManagement = ({
               <Input
                 id="email"
                 placeholder="ejemplo@email.com"
-                value={(user as User)?.email || ""}
-                {...register("email")}
+                value={(editUser as User)?.email}
+                {...register("email", {
+                  onChange: handleInputChange,
+                })}
               />
             </FormControl>
             {errors.email && (
@@ -182,14 +218,14 @@ export const UserManagement = ({
             <FormControl>
               <select
                 id="role"
-                {...register("role")}
-                value={(user as User)?.role || ""}
+                {...register("role", {
+                  onChange: handleInputChange,
+                })}
+                value={(editUser as User)?.role}
                 className="input border w-fit py-2 px-1 rounded-md"
               >
-                <option value="agente">Agente</option>
-                <option value="administrador">
-                  Administrador
-                </option>
+                <option value="USER">Agente</option>
+                <option value="ADMIN">Administrador</option>
               </select>
             </FormControl>
             {errors.role && (
@@ -197,14 +233,23 @@ export const UserManagement = ({
             )}
           </FormItem>
           <FormItem className="mt-4">
-            <FormLabel>Contraseña</FormLabel>
+            {!user ? (
+              <FormLabel>Contraseña</FormLabel>
+            ) : (
+              <FormLabel>
+                Reestablecer contraseña (ingrese la nueva si lo
+                desea)
+              </FormLabel>
+            )}
             <div className="flex">
               <FormControl>
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Contraseña"
-                  {...register("password")}
+                  {...register("password", {
+                    onChange: handleInputChange,
+                  })}
                 />
               </FormControl>
               <button

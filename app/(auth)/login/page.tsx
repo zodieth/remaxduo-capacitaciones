@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Logo } from "@/app/(dashboard)/_components/logo";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -39,24 +39,23 @@ export const LoginPage = () => {
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-12 rounded-lg shadow-lg" // Aumentado padding y sombra
+        className="bg-white p-12 rounded-lg shadow-lg w-2/3 md:w-1/3"
       >
-        <h2 className="text-3xl font-bold mb-10 text-center">
-          {" "}
-        </h2>
-
+        <div className="flex justify-center mb-16 mt-6">
+          <Logo />
+        </div>
         <div className="mb-6">
           {" "}
           <label
             htmlFor="email"
-            className="block text-lg font-medium text-gray-700" // Aumentado tamaño de texto
+            className="block text-lg font-medium text-gray-700"
           >
             Email
           </label>
           <input
             type="email"
             {...register("email", { required: true })}
-            className="mt-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-lg sm:text-lg border-gray-300 rounded-md" // Aumentado margin-top, sombra y tamaño de texto
+            className="py-2 px-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-lg border border-gray-300 rounded-md"
           />
           {errors.email && (
             <span className="text-sm text-red-500"> </span>
@@ -67,14 +66,14 @@ export const LoginPage = () => {
           {" "}
           <label
             htmlFor="password"
-            className="block text-lg font-medium text-gray-700" // Aumentado tamaño de texto
+            className="block text-lg font-medium text-gray-700"
           >
             Contraseña
           </label>
           <input
             type="password"
             {...register("password", { required: true })}
-            className="mt-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-lg sm:text-lg border-gray-300 rounded-md" // Aumentado margin-top, sombra y tamaño de texto
+            className="py-2 px-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-lg border border-gray-300 rounded-md"
           />
           {errors.password && (
             <span className="text-sm text-red-500"> </span>
@@ -83,7 +82,7 @@ export const LoginPage = () => {
 
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white text-lg py-3 rounded hover:bg-indigo-700" // Aumentado padding vertical y tamaño de texto
+          className="w-full bg-blue-950 text-white text-lg py-3 rounded-md hover:bg-blue-700"
         >
           Iniciar sesión
         </button>

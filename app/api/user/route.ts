@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { isTeacher } from "@/lib/teacher";
+import { isAdmin } from "@/lib/isAdminCheck";
 import * as bcrypt from "bcryptjs";
 import { getServerSessionFunc } from "../auth/_components/getSessionFunction";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await getServerSessionFunc();
+    const { userId, role: userRole } =
+      await getServerSessionFunc();
     const { name, email, role, password } = await req.json();
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!userId || !isTeacher(userId)) {
+    if (!userId || !isAdmin(userRole)) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
@@ -40,28 +41,6 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(user);
-  } catch (error) {
-    console.log("[CATEGORY]", error);
-    return new NextResponse("Internal Error", {
-      status: 500,
-    });
-  }
-}
-
-// get users
-export async function GET(req: Request) {
-  try {
-    const { userId } = await getServerSessionFunc();
-
-    if (!userId || !isTeacher(userId)) {
-      return new NextResponse("Unauthorized", {
-        status: 401,
-      });
-    }
-
-    const users = await db.user.findMany();
-
-    return NextResponse.json(users);
   } catch (error) {
     console.log("[USER]", error);
     return new NextResponse("Internal Error", {
