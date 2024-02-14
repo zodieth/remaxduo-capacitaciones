@@ -177,7 +177,7 @@ export const UserManagement = ({
   };
 
   return (
-    <div className="mt-4 absolute top-10 right-0 border border-solid bg-white shadow-lg rounded-md p-4 w-[400px] md:w-[700px] min-h-1/2">
+    <div className="mt-4 absolute top-10 right-0 border border-solid bg-white shadow-lg rounded-md p-4 w-[400px] md:w-[700px] min-h-1/2 z-10">
       <h1 className="text-lg font-semibold mb-2">Usuario:</h1>
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>

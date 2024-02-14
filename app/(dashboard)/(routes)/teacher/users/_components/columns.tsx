@@ -70,16 +70,25 @@ export const columns: ColumnDef<User>[] = [
       );
     },
     cell: ({ row }) => {
-      const isAdmin = row.original.role === "administrador";
-      const isAgent = row.original.role === "agente";
+      const isAdmin = row.original.role === "ADMIN";
+      const isAgent = row.original.role === "USER";
+
+      let roleName;
+      if (isAdmin) {
+        roleName = "Administrador";
+      } else if (isAgent) {
+        roleName = "Agente";
+      }
+
       const backgroundColor = isAdmin
         ? "bg-red-600 rounded-full px-2 py-1"
         : isAgent
           ? "bg-blue-800 rounded-full px-2 py-1"
           : "";
+
       return (
         <div className="flex items-center justify-start text-white">
-          <p className={backgroundColor}>{row.original.role}</p>
+          <p className={backgroundColor}>{roleName}</p>
         </div>
       );
     },

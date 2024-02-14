@@ -13,7 +13,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { PlusCircle, Trash, Pencil } from "lucide-react";
+import {
+  PlusCircle,
+  Trash,
+  Pencil,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -126,7 +132,24 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4 justify-between">
+      <div className="flex w-full items-center py-4 justify-end">
+        <div className="relative justify-end text-end w-1/2">
+          <Button onClick={() => setIsDropdownOpen(true)}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Crear usuario
+          </Button>
+          <div className="text-start">
+            {isDropdownOpen && (
+              <UserManagement
+                onCancel={handleFormCancel}
+                user={selectedUser}
+                handleRefreshUsers={handleRefreshUsers}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center justify-between space-x-2 w-full pb-4">
         <Input
           placeholder="Filtrar usuarios..."
           value={
@@ -141,20 +164,23 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <div className="relative">
-          <Button onClick={() => setIsDropdownOpen(true)}>
-            <PlusCircle className="h-4 w-4 mr-2" />
-            Crear usuario
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ChevronLeft />
           </Button>
-          <div>
-            {isDropdownOpen && (
-              <UserManagement
-                onCancel={handleFormCancel}
-                user={selectedUser}
-                handleRefreshUsers={handleRefreshUsers}
-              />
-            )}
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <ChevronRight />
+          </Button>
         </div>
       </div>
       <div className="rounded-md border">
@@ -205,7 +231,6 @@ export function DataTable<TData, TValue>({
                       >
                         <Pencil className="h-4 w-4 " />
                       </Button>
-                      {/* <ConfirmModal onConfirm={onDelete}> */}
                       <Button
                         onClick={() =>
                           handleDelete(row.original as User)
@@ -213,7 +238,6 @@ export function DataTable<TData, TValue>({
                       >
                         <Trash className="h-4 w-4" />
                       </Button>
-                      {/* </ConfirmModal> */}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -230,24 +254,6 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4 absolute bottom-4 right-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previo
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Siguiente
-        </Button>
       </div>
     </div>
   );
