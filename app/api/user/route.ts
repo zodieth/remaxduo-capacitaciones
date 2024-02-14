@@ -41,28 +41,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json(user);
   } catch (error) {
-    console.log("[CATEGORY]", error);
-    return new NextResponse("Internal Error", {
-      status: 500,
-    });
-  }
-}
-
-// get users
-export async function GET(req: Request) {
-  try {
-    const { userId } = await getServerSessionFunc();
-
-    if (!userId || !isTeacher(userId)) {
-      return new NextResponse("Unauthorized", {
-        status: 401,
-      });
-    }
-
-    const users = await db.user.findMany();
-
-    return NextResponse.json(users);
-  } catch (error) {
     console.log("[USER]", error);
     return new NextResponse("Internal Error", {
       status: 500,

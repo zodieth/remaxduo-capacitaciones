@@ -26,21 +26,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserManagement } from "./user-manage";
 import { User } from "./user-manage";
+import toast from "react-hot-toast";
+import { User as UserIcon } from "lucide-react";
+
+const api = {
+  deleteUser: async (id: string): Promise<void> => {
+    const response = await fetch(`/api/user/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error("Error al eliminar el usuario");
+    }
+  },
+};
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data: TData[] | User[];
 }
-
-const api = {
-  fetchUsers: async () => {
-    const response = await fetch("/api/user");
-    if (!response.ok) {
-      throw new Error("Error al cargar los usuarios");
-    }
-    return response.json();
-  },
-};
 
 export function DataTable<TData, TValue>({
   columns,
@@ -54,15 +57,10 @@ export function DataTable<TData, TValue>({
   >(undefined);
   const [users, setUsers] = useState<User[]>([]);
 
-  console.log(selectedUser);
-  useEffect(() => {
-    api.fetchUsers().then(users => {
-      setUsers(users);
-    });
-  }, []);
+  useEffect(() => setUsers(data as any), [data]);
 
   const table = useReactTable({
-    users,
+    data: users as any,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -78,10 +76,6 @@ export function DataTable<TData, TValue>({
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const handleToggleDropdown = () => {
-    setIsDropdownOpen(prevState => !prevState);
-  };
-
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
     setIsDropdownOpen(true);
@@ -90,6 +84,44 @@ export function DataTable<TData, TValue>({
   const handleFormCancel = (isCanceled: boolean) => {
     setIsDropdownOpen(!isCanceled);
     isCanceled && setSelectedUser(undefined);
+    setUsers(users);
+  };
+
+  const handleDelete = (user: User) => {
+    const id = user.id;
+
+    id &&
+      api
+        .deleteUser(id)
+        .then(() => toast.success("Usuario eliminado"));
+
+    const newData = users.filter((user: User) => user.id !== id);
+    setUsers(newData);
+  };
+
+  const handleRefreshUsers = (user: any) => {
+    console.log("user", user);
+    // check if user is alrready in users list by id
+    // if it is, update the user in the users list
+    const userExists = users.find((u: User) => u.id === user.id);
+    console.log("userExists", userExists);
+    let updatedUsers = users;
+
+    if (!userExists) {
+      // add the user to the users list
+      updatedUsers = [...users, user];
+      console.log("updatedUsers", updatedUsers);
+    } else {
+      // update the user in the users list
+      updatedUsers = users.map((u: User) => {
+        if (u.id === user.id) {
+          return user;
+        }
+        return u;
+      });
+      console.log("updatedUsers", updatedUsers);
+    }
+    setUsers(updatedUsers);
   };
 
   return (
@@ -119,6 +151,7 @@ export function DataTable<TData, TValue>({
               <UserManagement
                 onCancel={handleFormCancel}
                 user={selectedUser}
+                handleRefreshUsers={handleRefreshUsers}
               />
             )}
           </div>
@@ -173,7 +206,11 @@ export function DataTable<TData, TValue>({
                         <Pencil className="h-4 w-4 " />
                       </Button>
                       {/* <ConfirmModal onConfirm={onDelete}> */}
-                      <Button onClick={handleToggleDropdown}>
+                      <Button
+                        onClick={() =>
+                          handleDelete(row.original as User)
+                        }
+                      >
                         <Trash className="h-4 w-4" />
                       </Button>
                       {/* </ConfirmModal> */}
