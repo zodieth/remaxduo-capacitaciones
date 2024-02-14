@@ -21,7 +21,10 @@ const formSchema = z.object({
     .string()
     .email("El email no es válido")
     .min(1, "El email no puede estar vacío"),
-  role: z.string().nonempty("El rol no puede estar vacío"),
+  role: z
+    .string()
+    .nonempty("El rol no puede estar vacío")
+    .default("USER"),
   password: z
     .string()
     .nonempty("La contraseña no puede estar vacía"),
@@ -35,16 +38,55 @@ interface FormValues {
 }
 
 export type User = {
-  id: string;
+  id?: string;
   name: string;
   email: string;
   role: string;
-  password: string;
+  password?: string;
 };
 
 type UserManagementProps = {
   onCancel: (value: boolean) => void;
   user?: User | undefined;
+};
+
+const api = {
+  createUser: async (user: User) => {
+    const response = await fetch("/api/user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+    if (!response.ok) {
+      toast.error("Error al crear el usuario");
+      throw new Error("Error al crear el usuario");
+    }
+    return response.json();
+  },
+  updateUser: async (user: User) => {
+    const response = await fetch(`/api/user/${user.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+    if (!response.ok) {
+      toast.error("Error al actualizar el usuario");
+      throw new Error("Error al actualizar el usuario");
+    }
+    return response.json();
+  },
+  deleteUser: async (id: string): Promise<void> => {
+    const response = await fetch(`/api/user/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error("Error al eliminar el usuario");
+    }
+  },
 };
 
 export const UserManagement = ({
@@ -71,10 +113,10 @@ export const UserManagement = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: (user as User)?.name || "",
-      email: (user as User)?.email || "",
-      role: (user as User)?.role || "",
-      password: "",
+      name: (user as User)?.name,
+      email: (user as User)?.email,
+      role: (user as User)?.role,
+      password: undefined,
     },
   });
 
@@ -86,12 +128,8 @@ export const UserManagement = ({
   const onSubmit: SubmitHandler<FormValues> = data => {
     console.log(data);
     if (!user) {
-      // create
-      const newUser = {
-        id: "1",
-        ...data,
-      };
       //TODO crear user
+      api.createUser(data);
       toast.success("Usuario creado");
     } else {
       //TODO edit user
@@ -155,7 +193,7 @@ export const UserManagement = ({
               <Input
                 id="name"
                 placeholder="Nombre y Apellido"
-                value={(user as User)?.name || ""}
+                value={(user as User)?.name}
                 {...register("name")}
               />
             </FormControl>
@@ -169,7 +207,7 @@ export const UserManagement = ({
               <Input
                 id="email"
                 placeholder="ejemplo@email.com"
-                value={(user as User)?.email || ""}
+                value={(user as User)?.email}
                 {...register("email")}
               />
             </FormControl>
@@ -183,13 +221,11 @@ export const UserManagement = ({
               <select
                 id="role"
                 {...register("role")}
-                value={(user as User)?.role || ""}
+                value={(user as User)?.role}
                 className="input border w-fit py-2 px-1 rounded-md"
               >
-                <option value="agente">Agente</option>
-                <option value="administrador">
-                  Administrador
-                </option>
+                <option value="USER">Agente</option>
+                <option value="ADMIN">Administrador</option>
               </select>
             </FormControl>
             {errors.role && (

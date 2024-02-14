@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,7 +14,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { PlusCircle, Trash, Pencil } from "lucide-react";
-import { ConfirmModal } from "@/components/modals/confirm-modal";
 import {
   Table,
   TableBody,
@@ -25,15 +25,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserManagement } from "./user-manage";
-import { useState } from "react";
 import { User } from "./user-manage";
-import { boolean } from "zod";
-import { isCancel } from "axios";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
+
+const api = {
+  fetchUsers: async () => {
+    const response = await fetch("/api/user");
+    if (!response.ok) {
+      throw new Error("Error al cargar los usuarios");
+    }
+    return response.json();
+  },
+};
 
 export function DataTable<TData, TValue>({
   columns,
@@ -45,10 +52,17 @@ export function DataTable<TData, TValue>({
   const [selectedUser, setSelectedUser] = useState<
     User | undefined
   >(undefined);
+  const [users, setUsers] = useState<User[]>([]);
 
   console.log(selectedUser);
+  useEffect(() => {
+    api.fetchUsers().then(users => {
+      setUsers(users);
+    });
+  }, []);
+
   const table = useReactTable({
-    data,
+    users,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
