@@ -1,14 +1,14 @@
-import { auth } from "@clerk/nextjs";
 import { isTeacher } from "@/lib/teacher";
 import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { getServerSessionFunc } from "../../auth/_components/getSessionFunction";
 
 // este endpoint es para subir multiples archivos a la carpeta public/FilesUploaded
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = auth();
+    const { userId } = await getServerSessionFunc();
 
     if (!userId || !isTeacher(userId)) {
       return new NextResponse("Unauthorized", {

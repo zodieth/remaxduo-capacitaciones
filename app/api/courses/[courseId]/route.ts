@@ -1,8 +1,9 @@
 import Mux from "@mux/mux-node";
-import { auth } from "@clerk/nextjs";
+
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
+import { getServerSessionFunc } from "../../auth/_components/getSessionFunction";
 
 const { Video } = new Mux(
   process.env.MUX_TOKEN_ID!,
@@ -14,7 +15,7 @@ export async function DELETE(
   { params }: { params: { courseId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = await getServerSessionFunc();
 
     if (!userId) {
       return new NextResponse("Unauthorized", {
@@ -66,7 +67,7 @@ export async function PATCH(
   { params }: { params: { courseId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = await getServerSessionFunc();
     const { courseId } = params;
     const values = await req.json();
 

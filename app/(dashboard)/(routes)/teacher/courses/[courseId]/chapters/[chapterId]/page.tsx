@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
@@ -23,12 +22,6 @@ const ChapterIdPage = async ({
 }: {
   params: { courseId: string; chapterId: string };
 }) => {
-  const { userId } = auth();
-
-  if (!userId) {
-    return redirect("/");
-  }
-
   const chapter = await db.chapter.findUnique({
     where: {
       id: params.chapterId,

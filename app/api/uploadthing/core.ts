@@ -1,35 +1,43 @@
-import { auth } from "@clerk/nextjs";
-import {
-  createUploadthing,
-  type FileRouter,
-} from "uploadthing/next";
+// ************************************************
+// ************************************************
+// ************************************************
+// deprecado pq dejamos de usar clerk y uploadthing
+// ************************************************
+// ************************************************
+// ************************************************
 
-import { isTeacher } from "@/lib/teacher";
+//
+// import {
+//   createUploadthing,
+//   type FileRouter,
+// } from "uploadthing/next";
 
-const f = createUploadthing();
+// import { isTeacher } from "@/lib/teacher";
 
-const handleAuth = () => {
-  const { userId } = auth();
-  const isAuthorized = isTeacher(userId);
+// const f = createUploadthing();
 
-  if (!userId || !isAuthorized) throw new Error("Unauthorized");
-  return { userId };
-};
+// const handleAuth = () => {
+//   const { userId } = auth();
+//   const isAuthorized = isTeacher(userId);
 
-export const ourFileRouter = {
-  courseImage: f({
-    image: { maxFileSize: "4MB", maxFileCount: 1 },
-  })
-    .middleware(() => handleAuth())
-    .onUploadComplete(() => {}),
-  courseAttachment: f(["text", "image", "video", "audio", "pdf"])
-    .middleware(() => handleAuth())
-    .onUploadComplete(() => {}),
-  chapterVideo: f({
-    video: { maxFileCount: 1, maxFileSize: "512GB" },
-  })
-    .middleware(() => handleAuth())
-    .onUploadComplete(() => {}),
-} satisfies FileRouter;
+//   if (!userId || !isAuthorized) throw new Error("Unauthorized");
+//   return { userId };
+// };
 
-export type OurFileRouter = typeof ourFileRouter;
+// export const ourFileRouter = {
+//   courseImage: f({
+//     image: { maxFileSize: "4MB", maxFileCount: 1 },
+//   })
+//     .middleware(() => handleAuth())
+//     .onUploadComplete(() => {}),
+//   courseAttachment: f(["text", "image", "video", "audio", "pdf"])
+//     .middleware(() => handleAuth())
+//     .onUploadComplete(() => {}),
+//   chapterVideo: f({
+//     video: { maxFileCount: 1, maxFileSize: "512GB" },
+//   })
+//     .middleware(() => handleAuth())
+//     .onUploadComplete(() => {}),
+// } satisfies FileRouter;
+
+// export type OurFileRouter = typeof ourFileRouter;

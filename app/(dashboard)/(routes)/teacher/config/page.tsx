@@ -1,10 +1,12 @@
-import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import CategoriesABM from "./_components/categoriesABM";
 import UsefulLinksABM from "./_components/usefulLinksABM";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const ConfigPage = async () => {
-  const { userId } = auth();
+  const session = await getServerSession(authOptions);
+  const userId = session.user.id;
 
   if (!userId) {
     return redirect("/");

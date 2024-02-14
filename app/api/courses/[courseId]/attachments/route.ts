@@ -1,14 +1,14 @@
-import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
+import { getServerSessionFunc } from "@/app/api/auth/_components/getSessionFunction";
 
 export async function POST(
   req: Request,
   { params }: { params: { courseId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = await getServerSessionFunc();
     const { url } = await req.json();
 
     if (!userId) {

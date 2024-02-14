@@ -1,11 +1,11 @@
-import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isTeacher } from "@/lib/teacher";
+import { getServerSessionFunc } from "../auth/_components/getSessionFunction";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = auth();
+    const { userId } = await getServerSessionFunc();
     const { title, url, description } = await req.json();
 
     if (!userId || !isTeacher(userId)) {
@@ -40,7 +40,7 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { userId } = auth();
+    const { userId } = await getServerSessionFunc();
     const { id, title, url, description } = await req.json();
 
     if (!userId || !isTeacher(userId)) {
@@ -61,7 +61,7 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const { userId } = auth();
+    const { userId } = await getServerSessionFunc();
     const { id } = await req.json();
 
     if (!userId || !isTeacher(userId)) {
