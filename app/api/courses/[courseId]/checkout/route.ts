@@ -1,22 +1,20 @@
 import Stripe from "stripe";
-import { currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
+import { getServerSessionFunc } from "@/app/api/auth/_components/getSessionFunction";
+
+// TODO: Refactor to use Stripe Checkout
 
 export async function POST(
   req: Request,
   { params }: { params: { courseId: string } }
 ) {
   try {
-    const user = await currentUser();
+    const { userId } = await getServerSessionFunc();
 
-    if (
-      !user ||
-      !user.id ||
-      !user.emailAddresses?.[0]?.emailAddress
-    ) {
+    if (!userId) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
@@ -32,7 +30,7 @@ export async function POST(
     const purchase = await db.purchase.findUnique({
       where: {
         userId_courseId: {
-          userId: user.id,
+          userId: userId,
           courseId: params.courseId,
         },
       },
@@ -64,7 +62,7 @@ export async function POST(
 
     let stripeCustomer = await db.stripeCustomer.findUnique({
       where: {
-        userId: user.id,
+        userId: userId,
       },
       select: {
         stripeCustomerId: true,
@@ -72,16 +70,15 @@ export async function POST(
     });
 
     if (!stripeCustomer) {
-      const customer = await stripe.customers.create({
-        email: user.emailAddresses[0].emailAddress,
-      });
-
-      stripeCustomer = await db.stripeCustomer.create({
-        data: {
-          userId: user.id,
-          stripeCustomerId: customer.id,
-        },
-      });
+      // const customer = await stripe.customers.create({
+      //   email: user.emailAddresses[0].emailAddress,
+      // });
+      // stripeCustomer = await db.stripeCustomer.create({
+      //   data: {
+      //     userId: userId,
+      //     stripeCustomerId: customer.id,
+      //   },
+      // });
     }
 
     // const session = await stripe.checkout.sessions.create({
@@ -101,7 +98,7 @@ export async function POST(
     await db.purchase.create({
       data: {
         courseId: params.courseId,
-        userId: user.id,
+        userId: userId,
       },
     });
 

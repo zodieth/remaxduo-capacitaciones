@@ -1,17 +1,15 @@
-import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 import { db } from "@/lib/db";
 
 import { DataTable } from "./_components/data-table";
 import { columns } from "./_components/columns";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const CoursesPage = async () => {
-  const { userId } = auth();
-
-  if (!userId) {
-    return redirect("/");
-  }
+  const session = await getServerSession(authOptions);
+  const userId = session.user.id;
 
   const courses = await db.course.findMany({
     where: {
