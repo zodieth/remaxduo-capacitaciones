@@ -1,5 +1,5 @@
 "use client";
-import { isAdmin } from "@/lib/teacher";
+import { isAdmin } from "@/lib/isAdminCheck";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 

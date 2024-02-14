@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/teacher";
+import { isAdmin } from "@/lib/isAdminCheck";
 import * as bcrypt from "bcryptjs";
 import { getServerSessionFunc } from "../auth/_components/getSessionFunction";
 

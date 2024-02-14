@@ -1,4 +1,4 @@
-import { isAdmin } from "@/lib/teacher";
+import { isAdmin } from "@/lib/isAdminCheck";
 import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";

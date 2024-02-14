@@ -5,7 +5,7 @@ import { LogOut } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { isAdmin } from "@/lib/teacher";
+import { isAdmin } from "@/lib/isAdminCheck";
 
 import { SearchInput } from "./search-input";
 import { useAuth } from "@/hooks/useAuth";
