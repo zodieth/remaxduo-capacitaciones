@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { isTeacher } from "@/lib/teacher";
+import { isAdmin } from "@/lib/teacher";
 import * as bcrypt from "bcryptjs";
 import { getServerSessionFunc } from "../auth/_components/getSessionFunction";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await getServerSessionFunc();
+    const { userId, role: userRole } =
+      await getServerSessionFunc();
     const { name, email, role, password } = await req.json();
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!userId || !isTeacher(userId)) {
+    if (!userId || !isAdmin(userRole)) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });

@@ -6,6 +6,7 @@ export function useAuth() {
   const isAuthenticated = status === "authenticated";
 
   const userId = session?.user?.id;
+  const role = session?.user?.role;
 
-  return { isAuthenticated, userId };
+  return { isAuthenticated, userId, role };
 }

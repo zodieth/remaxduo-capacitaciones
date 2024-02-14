@@ -1,5 +1,5 @@
 "use client";
-import { isTeacher } from "@/lib/teacher";
+import { isAdmin } from "@/lib/teacher";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 
@@ -9,9 +9,9 @@ const TeacherLayout = ({
   children: React.ReactNode;
 }) => {
   const { data: session } = useSession();
-  const userId = session?.user?.id;
+  const role = session?.user?.role;
 
-  if (!isTeacher(userId)) {
+  if (!isAdmin(role)) {
     return redirect("/");
   }
 

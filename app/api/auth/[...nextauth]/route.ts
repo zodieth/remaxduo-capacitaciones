@@ -3,10 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
 import * as bcrypt from "bcryptjs";
 
-//  NEXT_PUBLIC_APP_URL from env
-
-export const site = process.env.NEXT_PUBLIC_APP_URL;
-
 export const authOptions = {
   providers: [
     CredentialsProvider({
@@ -35,6 +31,7 @@ export const authOptions = {
               name: true,
               password: true,
               image: true,
+              role: true,
             },
           });
 
@@ -56,6 +53,7 @@ export const authOptions = {
           return {
             id: user.id,
             email: user.email,
+            role: user.role,
             name: user.name,
             image: user.image,
           };
@@ -71,18 +69,26 @@ export const authOptions = {
   },
   callbacks: {
     async jwt({ token, user }: any) {
+      console.log("jwt", token);
+      console.log("user", user);
       if (user) {
         token.id = user.id;
+        token.role = user.role;
       }
+      console.log("token", token);
       return token;
     },
 
     async session({ session, token }: any) {
+      console.log("session", session);
+      console.log("token", token);
+
       return {
         ...session,
         user: {
           ...session.user,
           id: token.id,
+          role: token.role,
         },
       };
     },

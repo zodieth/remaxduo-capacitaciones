@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { isTeacher } from "@/lib/teacher";
+import { isAdmin } from "@/lib/teacher";
 import { getServerSessionFunc } from "../auth/_components/getSessionFunction";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await getServerSessionFunc();
+    const { userId, role } = await getServerSessionFunc();
     const { title, url, description } = await req.json();
 
-    if (!userId || !isTeacher(userId)) {
+    if (!userId || !isAdmin(role)) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
@@ -40,10 +40,10 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { userId } = await getServerSessionFunc();
+    const { userId, role } = await getServerSessionFunc();
     const { id, title, url, description } = await req.json();
 
-    if (!userId || !isTeacher(userId)) {
+    if (!userId || !isAdmin(role)) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
@@ -61,10 +61,10 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const { userId } = await getServerSessionFunc();
+    const { userId, role } = await getServerSessionFunc();
     const { id } = await req.json();
 
-    if (!userId || !isTeacher(userId)) {
+    if (!userId || !isAdmin(role)) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 

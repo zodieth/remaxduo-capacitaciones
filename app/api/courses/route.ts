@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
-import { isTeacher } from "@/lib/teacher";
+import { isAdmin } from "@/lib/teacher";
 import { getServerSessionFunc } from "../auth/_components/getSessionFunction";
 
 export async function POST(req: Request) {
   try {
     const { title } = await req.json();
-    const { userId } = await getServerSessionFunc();
-    if (!userId || !isTeacher(userId)) {
+    const { userId, role } = await getServerSessionFunc();
+    if (!userId || !isAdmin(role)) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
