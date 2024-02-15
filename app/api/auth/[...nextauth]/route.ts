@@ -1,13 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
 import * as bcrypt from "bcryptjs";
 
-//  NEXT_PUBLIC_APP_URL from env
-
-export const site = process.env.NEXT_PUBLIC_APP_URL;
-
-export const authOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -65,9 +61,10 @@ export const authOptions = {
       },
     }),
   ],
+  session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
-    NextAuthX: "/login",
+    // NextAuthX: "/login",
   },
   callbacks: {
     async jwt({ token, user }: any) {

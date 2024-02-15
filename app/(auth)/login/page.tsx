@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/app/(dashboard)/_components/logo";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -10,7 +11,7 @@ type LoginFormInputs = {
   password: string;
 };
 
-export const LoginPage = () => {
+const LoginPage = () => {
   const router = useRouter();
 
   const {
