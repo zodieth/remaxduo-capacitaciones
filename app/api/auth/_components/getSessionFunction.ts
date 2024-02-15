@@ -4,5 +4,6 @@ import { authOptions } from "../[...nextauth]/route";
 export const getServerSessionFunc = async () => {
   const session = await getServerSession(authOptions);
   const userId = session.user.id;
-  return { userId };
+  const role = session.user.role;
+  return { userId, role };
 };

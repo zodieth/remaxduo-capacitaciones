@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,8 +13,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { PlusCircle, Trash, Pencil } from "lucide-react";
-import { ConfirmModal } from "@/components/modals/confirm-modal";
+import {
+  PlusCircle,
+  Trash,
+  Pencil,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -25,14 +31,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserManagement } from "./user-manage";
-import { useState } from "react";
 import { User } from "./user-manage";
-import { boolean } from "zod";
-import { isCancel } from "axios";
+import toast from "react-hot-toast";
+import { User as UserIcon } from "lucide-react";
+
+const api = {
+  deleteUser: async (id: string): Promise<void> => {
+    const response = await fetch(`/api/user/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error("Error al eliminar el usuario");
+    }
+  },
+};
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data: TData[] | User[];
 }
 
 export function DataTable<TData, TValue>({
@@ -45,10 +61,12 @@ export function DataTable<TData, TValue>({
   const [selectedUser, setSelectedUser] = useState<
     User | undefined
   >(undefined);
+  const [users, setUsers] = useState<User[]>([]);
 
-  console.log(selectedUser);
+  useEffect(() => setUsers(data as any), [data]);
+
   const table = useReactTable({
-    data,
+    data: users as any,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -64,10 +82,6 @@ export function DataTable<TData, TValue>({
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const handleToggleDropdown = () => {
-    setIsDropdownOpen(prevState => !prevState);
-  };
-
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
     setIsDropdownOpen(true);
@@ -76,11 +90,66 @@ export function DataTable<TData, TValue>({
   const handleFormCancel = (isCanceled: boolean) => {
     setIsDropdownOpen(!isCanceled);
     isCanceled && setSelectedUser(undefined);
+    setUsers(users);
+  };
+
+  const handleDelete = (user: User) => {
+    const id = user.id;
+
+    id &&
+      api
+        .deleteUser(id)
+        .then(() => toast.success("Usuario eliminado"));
+
+    const newData = users.filter((user: User) => user.id !== id);
+    setUsers(newData);
+  };
+
+  const handleRefreshUsers = (user: any) => {
+    console.log("user", user);
+    // check if user is alrready in users list by id
+    // if it is, update the user in the users list
+    const userExists = users.find((u: User) => u.id === user.id);
+    console.log("userExists", userExists);
+    let updatedUsers = users;
+
+    if (!userExists) {
+      // add the user to the users list
+      updatedUsers = [...users, user];
+      console.log("updatedUsers", updatedUsers);
+    } else {
+      // update the user in the users list
+      updatedUsers = users.map((u: User) => {
+        if (u.id === user.id) {
+          return user;
+        }
+        return u;
+      });
+      console.log("updatedUsers", updatedUsers);
+    }
+    setUsers(updatedUsers);
   };
 
   return (
     <div>
-      <div className="flex items-center py-4 justify-between">
+      <div className="flex w-full items-center py-4 justify-end">
+        <div className="relative justify-end text-end w-1/2">
+          <Button onClick={() => setIsDropdownOpen(true)}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Crear usuario
+          </Button>
+          <div className="text-start">
+            {isDropdownOpen && (
+              <UserManagement
+                onCancel={handleFormCancel}
+                user={selectedUser}
+                handleRefreshUsers={handleRefreshUsers}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center justify-between space-x-2 w-full pb-4">
         <Input
           placeholder="Filtrar usuarios..."
           value={
@@ -95,19 +164,23 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <div className="relative">
-          <Button onClick={() => setIsDropdownOpen(true)}>
-            <PlusCircle className="h-4 w-4 mr-2" />
-            Crear usuario
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ChevronLeft />
           </Button>
-          <div>
-            {isDropdownOpen && (
-              <UserManagement
-                onCancel={handleFormCancel}
-                user={selectedUser}
-              />
-            )}
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <ChevronRight />
+          </Button>
         </div>
       </div>
       <div className="rounded-md border">
@@ -158,11 +231,13 @@ export function DataTable<TData, TValue>({
                       >
                         <Pencil className="h-4 w-4 " />
                       </Button>
-                      {/* <ConfirmModal onConfirm={onDelete}> */}
-                      <Button onClick={handleToggleDropdown}>
+                      <Button
+                        onClick={() =>
+                          handleDelete(row.original as User)
+                        }
+                      >
                         <Trash className="h-4 w-4" />
                       </Button>
-                      {/* </ConfirmModal> */}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -179,24 +254,6 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4 absolute bottom-4 right-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previo
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Siguiente
-        </Button>
       </div>
     </div>
   );

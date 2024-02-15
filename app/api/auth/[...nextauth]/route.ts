@@ -31,6 +31,7 @@ export const authOptions: AuthOptions = {
               name: true,
               password: true,
               image: true,
+              role: true,
             },
           });
 
@@ -52,6 +53,7 @@ export const authOptions: AuthOptions = {
           return {
             id: user.id,
             email: user.email,
+            role: user.role,
             name: user.name,
             image: user.image,
           };
@@ -68,18 +70,26 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }: any) {
+      console.log("jwt", token);
+      console.log("user", user);
       if (user) {
         token.id = user.id;
+        token.role = user.role;
       }
+      console.log("token", token);
       return token;
     },
 
     async session({ session, token }: any) {
+      console.log("session", session);
+      console.log("token", token);
+
       return {
         ...session,
         user: {
           ...session.user,
           id: token.id,
+          role: token.role,
         },
       };
     },

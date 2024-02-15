@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { isTeacher } from "@/lib/teacher";
+import { isAdmin } from "@/lib/isAdminCheck";
 import * as bcrypt from "bcryptjs";
 import { getServerSessionFunc } from "../../auth/_components/getSessionFunction";
 
@@ -13,11 +13,12 @@ type UpdateDataType = {
 
 export async function GET(req: Request) {
   try {
-    const { userId } = await getServerSessionFunc();
-    const url = new URL(req.url);
-    const id = url.searchParams.get("id") || undefined;
+    const { userId, role } = await getServerSessionFunc();
+    // @ts-ignore
+    const url = req.nextUrl;
+    const id = url.pathname.split("/").pop();
 
-    if (!userId || !isTeacher(userId)) {
+    if (!userId || !isAdmin(role)) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
@@ -43,12 +44,16 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { userId } = await getServerSessionFunc();
-    const url = new URL(req.url);
-    const id = url.searchParams.get("id") || undefined;
+    const { userId, role: userRole } =
+      await getServerSessionFunc();
+
+    // @ts-ignore
+    const url = req.nextUrl;
+    const id = url.pathname.split("/").pop();
+
     const { name, email, role, password } = await req.json();
-    const hashedPassword = await bcrypt.hash(password, 10);
-    if (!userId || !isTeacher(userId)) {
+
+    if (!userId || !isAdmin(userRole)) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
@@ -62,6 +67,7 @@ export async function PUT(req: Request) {
     let updateData: UpdateDataType = { name, email, role };
 
     if (password && password.trim() !== "") {
+      console.log("entro a password");
       const hashedPassword = await bcrypt.hash(password, 10);
       updateData.password = hashedPassword;
     }
@@ -82,11 +88,15 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const { userId } = await getServerSessionFunc();
-    const url = new URL(req.url);
-    const id = url.searchParams.get("id") || undefined;
+    const { userId, role: userRole } =
+      await getServerSessionFunc();
 
-    if (!userId || !isTeacher(userId)) {
+    // @ts-ignore
+    const url = req.nextUrl;
+    // Asumiendo una estructura de URL como /api/resource/[id]
+    const id = url.pathname.split("/").pop();
+
+    if (!userId || !isAdmin(userRole)) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
