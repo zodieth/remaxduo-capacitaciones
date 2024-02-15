@@ -25,7 +25,7 @@ const LoginPage = () => {
     const res = await signIn("credentials", {
       email: data.email,
       password: data.password,
-      redirect: false,
+      redirect: true,
     });
 
     if (res?.error) {

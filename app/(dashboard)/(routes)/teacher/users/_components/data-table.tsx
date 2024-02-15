@@ -106,17 +106,14 @@ export function DataTable<TData, TValue>({
   };
 
   const handleRefreshUsers = (user: any) => {
-    console.log("user", user);
     // check if user is alrready in users list by id
     // if it is, update the user in the users list
     const userExists = users.find((u: User) => u.id === user.id);
-    console.log("userExists", userExists);
     let updatedUsers = users;
 
     if (!userExists) {
       // add the user to the users list
       updatedUsers = [...users, user];
-      console.log("updatedUsers", updatedUsers);
     } else {
       // update the user in the users list
       updatedUsers = users.map((u: User) => {
@@ -125,7 +122,6 @@ export function DataTable<TData, TValue>({
         }
         return u;
       });
-      console.log("updatedUsers", updatedUsers);
     }
     setUsers(updatedUsers);
   };

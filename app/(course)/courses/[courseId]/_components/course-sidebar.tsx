@@ -23,7 +23,7 @@ export const CourseSidebar = async ({
   progressCount,
 }: CourseSidebarProps) => {
   const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
+  const userId = session?.user?.id || "";
 
   const purchase = await db.purchase.findUnique({
     where: {

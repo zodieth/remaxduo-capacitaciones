@@ -16,7 +16,7 @@ const CourseLayout = async ({
   params: { courseId: string };
 }) => {
   const session = await getServerSession(authOptions);
-  const userId = session.user.id;
+  const userId = session?.user?.id;
 
   if (!userId) {
     return redirect("/");

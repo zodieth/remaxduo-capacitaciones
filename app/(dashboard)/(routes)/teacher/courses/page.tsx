@@ -9,7 +9,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const CoursesPage = async () => {
   const session = await getServerSession(authOptions);
-  const userId = session.user.id;
+  const userId = session?.user?.id;
 
   const courses = await db.course.findMany({
     where: {

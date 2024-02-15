@@ -14,7 +14,6 @@ import { signOut } from "next-auth/react";
 export const NavbarRoutes = () => {
   const { role } = useAuth();
 
-  console.log("si es admin: ", isAdmin(role), "role: ", role);
   const pathname = usePathname();
 
   const isAdminPage = pathname?.startsWith("/teacher");
