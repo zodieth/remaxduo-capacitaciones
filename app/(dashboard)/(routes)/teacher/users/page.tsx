@@ -3,6 +3,8 @@ import { columns } from "./_components/columns";
 import { User } from "./_components/user-manage";
 import { db } from "@/lib/db";
 
+export const revalidate = 0;
+
 const UsersPage = async () => {
   const users = await db.user.findMany();
 
