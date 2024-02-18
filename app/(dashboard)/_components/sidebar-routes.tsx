@@ -2,7 +2,7 @@
 
 import {
   BarChart,
-  Compass,
+  FileStack,
   Layout,
   List,
   Settings,
@@ -20,8 +20,8 @@ const guestRoutes = [
     href: "/",
   },
   {
-    icon: Compass,
-    label: "Buscar",
+    icon: FileStack,
+    label: "Documentos",
     href: "/search",
   },
   {

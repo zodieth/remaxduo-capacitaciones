@@ -19,12 +19,14 @@ export function FileUpload({
   courseId?: string;
 }) {
   const [files, setFiles] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
     if (files.length === 0) return;
+    setIsLoading(true);
 
     try {
       const data = new FormData();
@@ -51,11 +53,13 @@ export function FileUpload({
             onChange(file);
             console.log("File", file);
           });
+          setIsLoading(false);
         } else {
           console.error(
             "La respuesta no es un array",
             filesArray
           );
+          setIsLoading(false);
         }
       } else {
         throw new Error(await res.text());
@@ -101,6 +105,11 @@ export function FileUpload({
         <h3 className="text-lg font-semibold">
           Archivos seleccionados:
         </h3>
+        {isLoading && (
+          <p className="text-sm text-muted-foreground">
+            Subiendo archivos...
+          </p>
+        )}
         <ul>
           {files.map((file, index) => (
             <li
