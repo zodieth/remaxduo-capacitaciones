@@ -12,6 +12,7 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
+import { FileUploadZone } from "@/components/old-file-upoload";
 
 interface ChapterVideoFormProps {
   initialData: Chapter & { muxData?: MuxData | null };
@@ -84,7 +85,7 @@ export const ChapterVideoForm = ({
         ))}
       {isEditing && (
         <div>
-          <FileUpload
+          {/* <FileUpload
             endpoint="chapterVideo"
             courseId={courseId}
             onChange={({ url }) => {
@@ -92,9 +93,17 @@ export const ChapterVideoForm = ({
                 onSubmit({ videoUrl: url });
               }
             }}
+          /> */}
+          <FileUploadZone
+            endpoint="chapterVideo"
+            onChange={async url => {
+              if (url) {
+                await onSubmit({ videoUrl: url });
+              }
+            }}
           />
           <div className="text-xs text-muted-foreground mt-4">
-            Subir video
+            Subir video F
           </div>
         </div>
       )}

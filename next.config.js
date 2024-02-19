@@ -2,7 +2,7 @@
 const nextConfig = {
   images: {
     domains: ["utfs.io", "sistema.remaxup.com.ar"],
-    unoptimized: true,
+    // unoptimized: true,
   },
 };
 
