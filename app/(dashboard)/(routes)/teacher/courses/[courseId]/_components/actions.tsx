@@ -31,10 +31,10 @@ export const Actions = ({
 
       if (isPublished) {
         await axios.patch(`/api/courses/${courseId}/unpublish`);
-        toast.success("Curso despublicado");
+        toast.success("Capacitación despublicada");
       } else {
         await axios.patch(`/api/courses/${courseId}/publish`);
-        toast.success("Curso publicado");
+        toast.success("Capacitación publicada");
         confetti.onOpen();
       }
 
@@ -52,7 +52,7 @@ export const Actions = ({
 
       await axios.delete(`/api/courses/${courseId}`);
 
-      toast.success("Course eliminado");
+      toast.success("Capacitación eliminada");
       router.refresh();
       router.push(`/teacher/courses`);
     } catch {

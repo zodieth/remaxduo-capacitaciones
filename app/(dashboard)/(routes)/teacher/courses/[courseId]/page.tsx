@@ -86,7 +86,9 @@ const CourseIdPage = async ({
       <div className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-y-2">
-            <h1 className="text-2xl font-medium">Crear curso</h1>
+            <h1 className="text-2xl font-medium">
+              Crear capacitación
+            </h1>
             <span className="text-sm text-slate-700">
               Completa todos los campos {completionText}
             </span>
@@ -130,7 +132,9 @@ const CourseIdPage = async ({
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={ListChecks} />
-                <h2 className="text-xl">Capítulos del curso</h2>
+                <h2 className="text-xl">
+                  Capítulos de la capacitación
+                </h2>
               </div>
               <ChaptersForm
                 initialData={course}

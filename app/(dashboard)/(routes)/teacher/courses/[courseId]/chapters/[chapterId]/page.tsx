@@ -54,7 +54,7 @@ const ChapterIdPage = async ({
       {!chapter.isPublished && (
         <Banner
           variant="warning"
-          label="Este capítulo no está publicado. No va a ser visible en el curso"
+          label="Este capítulo no está publicado. No va a ser visible en la capacitación"
         />
       )}
       <div className="p-6">

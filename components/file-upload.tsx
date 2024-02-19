@@ -89,7 +89,7 @@ export function FileUpload({
           htmlFor="fileInput"
           className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          Seleccionar archivos
+          Seleccionar archivo
         </label>
         <Button
           type="submit"
@@ -99,17 +99,17 @@ export function FileUpload({
           }`}
           disabled={files.length === 0}
         >
-          Subir archivos
+          Subir archivo
         </Button>
       </form>
       <div className="mt-4">
         <h3 className="text-lg font-semibold">
-          Archivos seleccionados:
+          Archivo seleccionado:
         </h3>
         {isLoading && (
           <>
             <LoadingSpinner />
-            <p>Subiendo archivos...</p>
+            <p>Subiendo archivo...</p>
           </>
         )}
         <ul>

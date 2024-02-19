@@ -35,11 +35,11 @@ export const NavbarRoutes = () => {
       <div className="flex gap-x-2 ml-auto">
         {isAdminPage || isCoursePage ? (
           <Link href="/">
-            <Button size="sm">Ir a modo Agente</Button>
+            <Button size="sm">Dashboard</Button>
           </Link>
         ) : isAdmin(role) ? (
           <Link href="/teacher/courses">
-            <Button size="sm">Ir a modo Admin</Button>
+            <Button size="sm">Configuración</Button>
           </Link>
         ) : null}
       </div>

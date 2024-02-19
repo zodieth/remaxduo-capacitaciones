@@ -3,7 +3,7 @@
 import {
   BarChart,
   FileStack,
-  Layout,
+  // Layout,
   List,
   Settings,
   Link,
@@ -14,15 +14,15 @@ import { usePathname } from "next/navigation";
 import { SidebarItem } from "./sidebar-item";
 
 const guestRoutes = [
-  {
-    icon: Layout,
-    label: "Tablero",
-    href: "/",
-  },
+  // {
+  //   icon: FileStack,
+  //   label: "Tablero",
+  //   href: "/",
+  // },
   {
     icon: FileStack,
     label: "Documentos",
-    href: "/search",
+    href: "/",
   },
   {
     icon: Link,
