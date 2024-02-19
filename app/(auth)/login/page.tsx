@@ -73,7 +73,7 @@ const LoginPage = () => {
 
     res && !res.ok && setIsLoading(false);
 
-    if (res?.ok) router.push("/");
+    if (res?.ok) router.refresh();
 
     if (res && !res.ok && res.error) {
       let errorMessage = "Error desconocido";
