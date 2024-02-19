@@ -99,6 +99,8 @@ export const ChapterVideoForm = ({
             onChange={async url => {
               if (url) {
                 await onSubmit({ videoUrl: url });
+                // refresh the page to get the new video
+                router.refresh();
               }
             }}
           />

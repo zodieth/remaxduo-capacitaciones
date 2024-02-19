@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "./ui/button";
+import LoadingSpinner from "./ui/loadingSpinner";
 
 export function FileUpload({
   endpoint,
@@ -106,9 +107,10 @@ export function FileUpload({
           Archivos seleccionados:
         </h3>
         {isLoading && (
-          <p className="text-sm text-muted-foreground">
-            Subiendo archivos...
-          </p>
+          <>
+            <LoadingSpinner />
+            <p>Subiendo archivos...</p>
+          </>
         )}
         <ul>
           {files.map((file, index) => (
