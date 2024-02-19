@@ -126,7 +126,7 @@ const LoginPage = () => {
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Email"
+                  placeholder="Ingrese aquí su email"
                   {...register("email")}
                 />
               </FormControl>
@@ -141,7 +141,7 @@ const LoginPage = () => {
               <FormLabel>Contraseña</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Contraseña"
+                  placeholder="Ingrese aquí su contraseña"
                   {...register("password")}
                 />
               </FormControl>
