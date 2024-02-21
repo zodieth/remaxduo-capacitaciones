@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-
 import { db } from "@/lib/db";
 
 import { DataTable } from "./_components/data-table";
@@ -12,9 +10,10 @@ const CoursesPage = async () => {
   const userId = session?.user?.id;
 
   const courses = await db.course.findMany({
-    where: {
-      userId,
-    },
+    // usado para traer solo los cursos que creo el usuario logueado
+    // where: {
+    //   userId,
+    // },
     orderBy: {
       createdAt: "desc",
     },
