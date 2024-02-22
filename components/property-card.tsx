@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen } from "lucide-react";
+import { Home } from "lucide-react";
 
 import { IconBadge } from "@/components/icon-badge";
 
@@ -18,7 +18,7 @@ export const PropertyCard = ({
   slug,
 }: PropertyCard) => {
   return (
-    <Link href={`/propiedades/${id}`}>
+    <Link href={`/propiedades/id/${id}`}>
       <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
         <div className="relative w-full aspect-video rounded-md overflow-hidden">
           {/* <Image
@@ -35,7 +35,7 @@ export const PropertyCard = ({
           <p className="text-xs text-muted-foreground">{slug}</p>
           <div className="my-3 flex items-center gap-x-2 text-sm md:text-xs">
             <div className="flex items-center gap-x-1 text-slate-500">
-              <IconBadge size="sm" icon={BookOpen} />
+              <IconBadge size="sm" icon={Home} />
               {/* <span>
                 {chaptersLength}{" "}
                 {chaptersLength === 1 ? "Capítulo" : "Capítulos"}

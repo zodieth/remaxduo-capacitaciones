@@ -2,18 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { ArrowUpRightSquare } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { Propiedad } from "@/types/next-auth";
 import { PropertyCard } from "@/components/property-card";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
-import { SearchInput } from "@/components/search-input";
 
 const fetchPropiedades = {
   fetchPropiedades: async (): Promise<ApiResponse> => {
     const response = await fetch(
-      "https://api-ar.redremax.com/remaxweb-ar/api/listings/findAll?page=0&pageSize=500&sort=-createdAt&in:operationId=1,2,3&officeid=AR.42.170&officeName=RE/MAX%20Up&filterCount=0&viewMode=list"
+      "https://api-ar.redremax.com/remaxweb-ar/api/listings/findAll?page=0&pageSize=200&sort=-createdAt&in:operationId=1,2,3&officeid=AR.42.170&officeName=RE/MAX%20Up&filterCount=0&viewMode=list"
     );
     if (!response.ok) {
       toast.error("Error al cargar las propiedades");
@@ -31,47 +28,63 @@ interface ApiResponse {
 
 const Propiedades = () => {
   const { data: session } = useSession();
-
+  const [loading, setLoading] = useState(true);
   const [propiedades, setPropiedades] = useState<Propiedad[]>(
     []
   );
-  useEffect(() => {
-    fetchPropiedades.fetchPropiedades().then(propiedades => {
-      setPropiedades(propiedades.data.data);
-    });
-  }, []);
 
-  const filterPropertiesByAgent = async () => {
-    const propiedadesFiltradas = propiedades?.filter(
-      propiedad => {
-        return (
-          propiedad.associate.emails[0].value ===
-          session?.user?.email
-        );
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const propiedadesData =
+          await fetchPropiedades.fetchPropiedades();
+
+        const propiedadesFiltradas =
+          propiedadesData.data.data.filter(
+            propiedad =>
+              propiedad.associate.emails[0].value ===
+              session?.user?.email
+          );
+
+        setPropiedades(propiedadesFiltradas);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al obtener propiedades:", error);
       }
-    );
-  };
-  filterPropertiesByAgent();
+    };
+
+    fetchData();
+  }, [session?.user?.email]);
 
   return (
     <div className="m-5 flex flex-col">
-      <div className="px-6 pt-6 md:hidden md:mb-0 block">
-        <SearchInput />
+      <div className="mb-2 mx-6">
+        {session?.user?.name ? (
+          <h1 className="font-bold text-2xl">
+            Propiedades de {session?.user?.name}
+          </h1>
+        ) : (
+          ""
+        )}
       </div>
-      <div className="mb-5">
-        <h1 className="font-bold text-2xl">Mis propiedades</h1>
-      </div>
-      <div className="p-6 w-full border border-gray-300 rounded-lg grid md:grid-cols-3 gap-4">
-        {propiedades.length ? (
+      <div className="p-6 w-full grid md:grid-cols-3 gap-4 lg:grid-cols-4">
+        {loading ? (
+          <LoadingSpinner />
+        ) : propiedades.length ? (
           propiedades.map(propiedad => (
             <PropertyCard
+              key={propiedad.id}
               id={propiedad.id}
               title={propiedad.title}
               slug={propiedad.slug}
             />
           ))
+        ) : !propiedades.length ? (
+          <h1 className=" text-1xl">
+            No se encontraron propiedades
+          </h1>
         ) : (
-          <LoadingSpinner />
+          ""
         )}
       </div>
     </div>
