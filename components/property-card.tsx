@@ -10,23 +10,25 @@ type PropertyCard = {
   id: string;
   title: string;
   slug: string;
+  photo: string;
 };
 
 export const PropertyCard = ({
   id,
   title,
   slug,
+  photo,
 }: PropertyCard) => {
   return (
     <Link href={`/propiedades/id/${id}`}>
       <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
         <div className="relative w-full aspect-video rounded-md overflow-hidden">
-          {/* <Image
+          <Image
             fill
             className="object-cover"
             alt={title}
-            src={imageUrl || "/placeholder.png"}
-          /> */}
+            src={`https://d1acdg20u0pmxj.cloudfront.net/${photo}`}
+          />
         </div>
         <div className="flex flex-col pt-2">
           <div className="text-lg md:text-base font-medium group-hover:text-sky-700 transition line-clamp-2">

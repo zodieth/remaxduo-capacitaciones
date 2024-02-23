@@ -42,7 +42,11 @@ type Propiedad = {
   type: object;
   operation: object;
   listingStatus: object;
-  photos: [object];
+  photos: [
+    {
+      value: string;
+    },
+  ];
   addressInfo: string;
   billingFrequency: boolean;
 };

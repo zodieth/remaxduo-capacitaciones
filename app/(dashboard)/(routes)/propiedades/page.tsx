@@ -77,6 +77,7 @@ const Propiedades = () => {
               id={propiedad.id}
               title={propiedad.title}
               slug={propiedad.slug}
+              photo={propiedad.photos[0].value}
             />
           ))
         ) : !propiedades.length ? (
