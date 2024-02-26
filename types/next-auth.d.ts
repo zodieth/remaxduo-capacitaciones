@@ -23,7 +23,9 @@ type Propiedad = {
   bathrooms: number;
   price: number;
   priceExposure: boolean;
-  currency: object;
+  currency: {
+    value: string;
+  };
   expensesPrice: number;
   expensesCurrency: object;
   displayAddress: string;
@@ -32,11 +34,13 @@ type Propiedad = {
   dimensionTotalBuilt: number;
   dimensionCovered: number;
   associate: {
+    id: string;
     emails: [
       {
         value: string;
       },
     ];
+    name: string;
   };
   listBroker: [];
   type: object;

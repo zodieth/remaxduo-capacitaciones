@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Home } from "lucide-react";
+import { Home, DollarSign, User } from "lucide-react";
 
 import { IconBadge } from "@/components/icon-badge";
 
@@ -10,13 +10,21 @@ type PropertyCard = {
   title: string;
   slug: string;
   photo: string;
+  displayAddress: string;
+  price: number;
+  currency: string;
+  agent: string;
 };
 
-export const PropertyCard = ({
+export const PropertyCardDetail = ({
   id,
   title,
   slug,
   photo,
+  displayAddress,
+  price,
+  currency,
+  agent,
 }: PropertyCard) => {
   return (
     <Link href={`/propiedades/${id}`}>
@@ -34,26 +42,22 @@ export const PropertyCard = ({
             {title}
           </div>
           <p className="text-xs text-muted-foreground">{slug}</p>
-          <div className="my-3 flex items-center gap-x-2 text-sm md:text-xs">
+          <div className="my-2 flex flex-col items-start gap-2 text-sm md:text-xs">
             <div className="flex items-center gap-x-1 text-slate-500">
               <IconBadge size="sm" icon={Home} />
-              {/* <span>
-                {chaptersLength}{" "}
-                {chaptersLength === 1 ? "Capítulo" : "Capítulos"}
-              </span> */}
+              <span>Dirección: {displayAddress}</span>
+            </div>
+            <div className="flex items-center gap-x-1 text-slate-500">
+              <IconBadge size="sm" icon={DollarSign} />
+              <span>
+                Precio: ${price} {currency}
+              </span>
+            </div>
+            <div className="flex items-center gap-x-1 text-slate-500">
+              <IconBadge size="sm" icon={User} />
+              <span>Agente: {agent}</span>
             </div>
           </div>
-          {/* {progress !== null ? (
-            <CourseProgress
-              variant={progress === 100 ? "success" : "default"}
-              size="sm"
-              value={progress}
-            />
-          ) : (
-            <p className="text-md md:text-sm font-medium text-slate-700">
-              {formatPrice(price)}
-            </p>
-          )} */}
         </div>
       </div>
     </Link>
