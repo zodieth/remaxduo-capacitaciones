@@ -42,18 +42,18 @@ export const PropertyCardDetail = ({
             {title}
           </div>
           <p className="text-xs text-muted-foreground">{slug}</p>
-          <div className="my-2 flex flex-col items-start gap-2 text-sm md:text-xs">
-            <div className="flex items-center gap-x-1 text-slate-500">
+          <div className="my-2 flex flex-col items-start gap-4 text-sm md:text-xs">
+            <div className="flex items-center gap-x-2 text-slate-500">
               <IconBadge size="sm" icon={Home} />
               <span>Dirección: {displayAddress}</span>
             </div>
-            <div className="flex items-center gap-x-1 text-slate-500">
+            <div className="flex items-center gap-x-2 text-slate-500">
               <IconBadge size="sm" icon={DollarSign} />
               <span>
                 Precio: ${price} {currency}
               </span>
             </div>
-            <div className="flex items-center gap-x-1 text-slate-500">
+            <div className="flex items-center gap-x-2 text-slate-500">
               <IconBadge size="sm" icon={User} />
               <span>Agente: {agent}</span>
             </div>

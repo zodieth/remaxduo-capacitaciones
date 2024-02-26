@@ -54,7 +54,18 @@ export default function Page() {
     fetchData();
   }, [session?.user?.email]);
 
-  console.log(propiedad);
+  if (
+    propiedad
+      ? propiedad[0].associate.emails[0].value !==
+        session?.user?.email
+      : ""
+  ) {
+    return (
+      <div className="m-4">
+        No tienes acceso a esta propiedad
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -62,7 +73,7 @@ export default function Page() {
         <LoadingSpinner />
       ) : propiedad?.length ? (
         propiedad.map(propiedad => (
-          <div className=" m-4 flex flex-col items-center justify-start gap-4 md:flex-row">
+          <div className="m-4 flex flex-col items-center justify-start gap-4 md:flex-row">
             <PropertyCardDetail
               displayAddress={propiedad.displayAddress}
               key={propiedad.id}
