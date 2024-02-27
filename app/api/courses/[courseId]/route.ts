@@ -26,7 +26,6 @@ export async function DELETE(
     const course = await db.course.findUnique({
       where: {
         id: params.courseId,
-        userId: userId,
       },
       include: {
         chapters: {
@@ -80,7 +79,6 @@ export async function PATCH(
     const course = await db.course.update({
       where: {
         id: courseId,
-        userId,
       },
       data: {
         ...values,
