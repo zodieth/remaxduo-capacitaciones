@@ -21,7 +21,10 @@ export const InfoCard = ({
       <div>
         <p className="font-medium">{label}</p>
         <p className="text-gray-500 text-sm">
-          {numberOfItems} {numberOfItems === 1 ? "Curso" : "Cursos"}
+          {numberOfItems}{" "}
+          {numberOfItems === 1
+            ? "Capacitación"
+            : "Capacitaciones"}
         </p>
       </div>
     </div>

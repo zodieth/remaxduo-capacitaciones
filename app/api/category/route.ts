@@ -1,15 +1,18 @@
-import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { isTeacher } from "@/lib/teacher";
+import { isAdmin } from "@/lib/isAdminCheck";
+import { getServerSessionFunc } from "../auth/_components/getSessionFunction";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = auth();
+    const { userId, role } = await getServerSessionFunc();
+
     const { name } = await req.json();
 
-    if (!userId || !isTeacher(userId)) {
-      return new NextResponse("Unauthorized", { status: 401 });
+    if (!userId || !isAdmin(role)) {
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     const category = await db.category.create({
@@ -21,7 +24,9 @@ export async function POST(req: Request) {
     return NextResponse.json(category);
   } catch (error) {
     console.log("[CATEGORY]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }
 
@@ -32,17 +37,21 @@ export async function GET(req: Request) {
     return NextResponse.json(categories);
   } catch (error) {
     console.log("[CATEGORY]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }
 
 export async function PUT(req: Request) {
   try {
-    const { userId } = auth();
+    const { userId, role } = await getServerSessionFunc();
     const { id, name } = await req.json();
 
-    if (!userId || !isTeacher(userId)) {
-      return new NextResponse("Unauthorized", { status: 401 });
+    if (!userId || !isAdmin(role)) {
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     const category = await db.category.update({
@@ -53,17 +62,21 @@ export async function PUT(req: Request) {
     return NextResponse.json(category);
   } catch (error) {
     console.log("[CATEGORY]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }
 
 export async function DELETE(req: Request) {
   try {
-    const { userId } = auth();
+    const { userId, role } = await getServerSessionFunc();
     const { id } = await req.json();
 
-    if (!userId || !isTeacher(userId)) {
-      return new NextResponse("Unauthorized", { status: 401 });
+    if (!userId || !isAdmin(role)) {
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     await db.category.delete({ where: { id } });
@@ -71,6 +84,8 @@ export async function DELETE(req: Request) {
     return new NextResponse("Deleted", { status: 200 });
   } catch (error) {
     console.log("[CATEGORY]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }

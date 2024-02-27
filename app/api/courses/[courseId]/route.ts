@@ -1,12 +1,13 @@
 import Mux from "@mux/mux-node";
-import { auth } from "@clerk/nextjs";
+
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
+import { getServerSessionFunc } from "../../auth/_components/getSessionFunction";
 
 const { Video } = new Mux(
   process.env.MUX_TOKEN_ID!,
-  process.env.MUX_TOKEN_SECRET!,
+  process.env.MUX_TOKEN_SECRET!
 );
 
 export async function DELETE(
@@ -14,24 +15,25 @@ export async function DELETE(
   { params }: { params: { courseId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = await getServerSessionFunc();
 
     if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     const course = await db.course.findUnique({
       where: {
         id: params.courseId,
-        userId: userId,
       },
       include: {
         chapters: {
           include: {
             muxData: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     if (!course) {
@@ -53,7 +55,9 @@ export async function DELETE(
     return NextResponse.json(deletedCourse);
   } catch (error) {
     console.log("[COURSE_ID_DELETE]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }
 
@@ -62,27 +66,30 @@ export async function PATCH(
   { params }: { params: { courseId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = await getServerSessionFunc();
     const { courseId } = params;
     const values = await req.json();
 
     if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     const course = await db.course.update({
       where: {
         id: courseId,
-        userId
       },
       data: {
         ...values,
-      }
+      },
     });
 
     return NextResponse.json(course);
   } catch (error) {
     console.log("[COURSE_ID]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
   }
 }

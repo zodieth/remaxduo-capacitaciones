@@ -37,11 +37,13 @@ const CreatePage = () => {
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
       const response = await axios.post("/api/courses", values);
       router.push(`/teacher/courses/${response.data.id}`);
-      toast.success("Curso creado");
+      toast.success("Capacitación creada");
     } catch {
       toast.error("Algo no funcionó correctamente");
     }
@@ -50,10 +52,10 @@ const CreatePage = () => {
   return (
     <div className="max-w-5xl mx-auto flex md:items-center md:justify-center h-full p-6">
       <div>
-        <h1 className="text-2xl">Nombre del curso</h1>
+        <h1 className="text-2xl">Nombre de la capacitación</h1>
         <p className="text-sm text-slate-600">
-          Cómo te gustaría llamar este curso? No te preocupes, lo podés cambiar
-          más adelante.
+          Cómo te gustaría llamar este curso? No te preocupes, lo
+          podés cambiar más adelante.
         </p>
         <Form {...form}>
           <form
@@ -69,12 +71,12 @@ const CreatePage = () => {
                   <FormControl>
                     <Input
                       disabled={isSubmitting}
-                      placeholder="e.g. 'Advanced web development'"
+                      placeholder="e.g. 'Listing...'"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    Qué vas a enseñar en este curso?
+                    Qué vas a enseñar en esta capacitación?
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -86,7 +88,10 @@ const CreatePage = () => {
                   Cancelar
                 </Button>
               </Link>
-              <Button type="submit" disabled={!isValid || isSubmitting}>
+              <Button
+                type="submit"
+                disabled={!isValid || isSubmitting}
+              >
                 Continuar
               </Button>
             </div>

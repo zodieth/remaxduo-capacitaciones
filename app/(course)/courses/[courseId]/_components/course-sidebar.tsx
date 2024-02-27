@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs";
 import { Chapter, Course, UserProgress } from "@prisma/client";
 import { redirect } from "next/navigation";
 
@@ -7,6 +6,8 @@ import { CourseProgress } from "@/components/course-progress";
 
 import { CourseSidebarItem } from "./course-sidebar-item";
 import { Logo } from "@/app/(dashboard)/_components/logo";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 interface CourseSidebarProps {
   course: Course & {
@@ -21,11 +22,8 @@ export const CourseSidebar = async ({
   course,
   progressCount,
 }: CourseSidebarProps) => {
-  const { userId } = auth();
-
-  if (!userId) {
-    return redirect("/");
-  }
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id || "";
 
   const purchase = await db.purchase.findUnique({
     where: {
@@ -43,17 +41,22 @@ export const CourseSidebar = async ({
         <h1 className="font-semibold">{course.title}</h1>
         {purchase && (
           <div className="mt-10">
-            <CourseProgress variant="success" value={progressCount} />
+            <CourseProgress
+              variant="success"
+              value={progressCount}
+            />
           </div>
         )}
       </div>
       <div className="flex flex-col w-full">
-        {course.chapters.map((chapter) => (
+        {course.chapters.map(chapter => (
           <CourseSidebarItem
             key={chapter.id}
             id={chapter.id}
             label={chapter.title}
-            isCompleted={!!chapter.userProgress?.[0]?.isCompleted}
+            isCompleted={
+              !!chapter.userProgress?.[0]?.isCompleted
+            }
             courseId={course.id}
             isLocked={!chapter.isFree && !purchase}
           />

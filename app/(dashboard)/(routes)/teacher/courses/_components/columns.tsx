@@ -2,7 +2,11 @@
 
 import { Course } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react";
+import {
+  ArrowUpDown,
+  MoreHorizontal,
+  Pencil,
+} from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -22,7 +26,9 @@ export const columns: ColumnDef<Course>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() =>
+            column.toggleSorting(column.getIsSorted() === "asc")
+          }
         >
           Título
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -30,36 +36,40 @@ export const columns: ColumnDef<Course>[] = [
       );
     },
   },
-  {
-    accessorKey: "price",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Precio
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const price = parseFloat(row.getValue("price") || "0");
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(price);
+  // {
+  //   accessorKey: "price",
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button
+  //         variant="ghost"
+  //         onClick={() =>
+  //           column.toggleSorting(column.getIsSorted() === "asc")
+  //         }
+  //       >
+  //         Precio
+  //         <ArrowUpDown className="ml-2 h-4 w-4" />
+  //       </Button>
+  //     );
+  //   },
+  //   cell: ({ row }) => {
+  //     const price = parseFloat(row.getValue("price") || "0");
+  //     const formatted = new Intl.NumberFormat("en-US", {
+  //       style: "currency",
+  //       currency: "USD",
+  //     }).format(price);
 
-      return <div>{formatted}</div>;
-    },
-  },
+  //     return <div>{formatted}</div>;
+  //   },
+  // },
   {
     accessorKey: "isPublished",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() =>
+            column.toggleSorting(column.getIsSorted() === "asc")
+          }
         >
           Publicado
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -70,7 +80,12 @@ export const columns: ColumnDef<Course>[] = [
       const isPublished = row.getValue("isPublished") || false;
 
       return (
-        <Badge className={cn("bg-slate-500", isPublished && "bg-sky-700")}>
+        <Badge
+          className={cn(
+            "bg-slate-500",
+            isPublished && "bg-sky-700"
+          )}
+        >
           {isPublished ? "Publicado" : "Borrador"}
         </Badge>
       );

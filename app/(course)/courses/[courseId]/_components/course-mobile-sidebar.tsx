@@ -4,7 +4,7 @@ import { Chapter, Course, UserProgress } from "@prisma/client";
 import {
   Sheet,
   SheetContent,
-  SheetTrigger
+  SheetTrigger,
 } from "@/components/ui/sheet";
 
 import { CourseSidebar } from "./course-sidebar";
@@ -16,9 +16,9 @@ interface CourseMobileSidebarProps {
     })[];
   };
   progressCount: number;
-};
+}
 
-export const CourseMobileSidebar = ({ 
+export const CourseMobileSidebar = ({
   course,
   progressCount,
 }: CourseMobileSidebarProps) => {
@@ -34,5 +34,5 @@ export const CourseMobileSidebar = ({
         />
       </SheetContent>
     </Sheet>
-  )
-}
+  );
+};

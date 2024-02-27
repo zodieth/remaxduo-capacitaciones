@@ -16,7 +16,11 @@ interface ActionsProps {
   isPublished: boolean;
 }
 
-export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
+export const Actions = ({
+  disabled,
+  courseId,
+  isPublished,
+}: ActionsProps) => {
   const router = useRouter();
   const confetti = useConfettiStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -27,10 +31,10 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
 
       if (isPublished) {
         await axios.patch(`/api/courses/${courseId}/unpublish`);
-        toast.success("Curso despublicado");
+        toast.success("Capacitación despublicada");
       } else {
         await axios.patch(`/api/courses/${courseId}/publish`);
-        toast.success("Curso publicado");
+        toast.success("Capacitación publicada");
         confetti.onOpen();
       }
 
@@ -48,7 +52,7 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
 
       await axios.delete(`/api/courses/${courseId}`);
 
-      toast.success("Course eliminado");
+      toast.success("Capacitación eliminada");
       router.refresh();
       router.push(`/teacher/courses`);
     } catch {

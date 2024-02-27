@@ -12,6 +12,7 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
+import { FileUploadZone } from "@/components/old-file-upoload";
 
 interface ChapterVideoFormProps {
   initialData: Chapter & { muxData?: MuxData | null };
@@ -30,11 +31,13 @@ export const ChapterVideoForm = ({
 }: ChapterVideoFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const toggleEdit = () => setIsEditing((current) => !current);
+  const toggleEdit = () => setIsEditing(current => !current);
 
   const router = useRouter();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
       await axios.patch(
         `/api/courses/${courseId}/chapters/${chapterId}`,
@@ -75,26 +78,41 @@ export const ChapterVideoForm = ({
           </div>
         ) : (
           <div className="relative aspect-video mt-2">
-            <MuxPlayer playbackId={initialData?.muxData?.playbackId || ""} />
+            <MuxPlayer
+              playbackId={initialData?.muxData?.playbackId || ""}
+            />
           </div>
         ))}
       {isEditing && (
         <div>
-          <FileUpload
+          {/* <FileUpload
             endpoint="chapterVideo"
-            onChange={(url) => {
+            courseId={courseId}
+            onChange={({ url }) => {
               if (url) {
                 onSubmit({ videoUrl: url });
               }
             }}
+          /> */}
+          <FileUploadZone
+            endpoint="chapterVideo"
+            onChange={async url => {
+              if (url) {
+                await onSubmit({ videoUrl: url });
+                // refresh the page to get the new video
+                router.refresh();
+              }
+            }}
           />
-          <div className="text-xs text-muted-foreground mt-4">Subir video</div>
+          <div className="text-xs text-muted-foreground mt-4">
+            Subir video F
+          </div>
         </div>
       )}
       {initialData.videoUrl && !isEditing && (
         <div className="text-xs text-muted-foreground mt-2">
-          Los videos pueden tomar unos minutos en proesar. Refresca la página si
-          el video no aparece.
+          Los videos pueden tomar unos minutos en proesar.
+          Refresca la página si el video no aparece.
         </div>
       )}
     </div>

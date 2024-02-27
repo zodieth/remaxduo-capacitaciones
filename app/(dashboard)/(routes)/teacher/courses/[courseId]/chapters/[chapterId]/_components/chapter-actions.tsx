@@ -53,7 +53,9 @@ export const ChapterActions = ({
     try {
       setIsLoading(true);
 
-      await axios.delete(`/api/courses/${courseId}/chapters/${chapterId}`);
+      await axios.delete(
+        `/api/courses/${courseId}/chapters/${chapterId}`
+      );
 
       toast.success("Capítulo borrado");
       router.refresh();

@@ -23,14 +23,19 @@ const formSchema = z.object({
   }),
 });
 
-export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
+export const ImageForm = ({
+  initialData,
+  courseId,
+}: ImageFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const toggleEdit = () => setIsEditing((current) => !current);
+  const toggleEdit = () => setIsEditing(current => !current);
 
   const router = useRouter();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof formSchema>
+  ) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Curso actualizado");
@@ -40,6 +45,8 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
       toast.error("Algo no funcionó correctamente");
     }
   };
+
+  console.log("Initial data: ", initialData);
 
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
@@ -80,7 +87,8 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
         <div>
           <FileUpload
             endpoint="courseImage"
-            onChange={(url) => {
+            courseId={courseId}
+            onChange={({ url }) => {
               if (url) {
                 onSubmit({ imageUrl: url });
               }

@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import {
   CircleDollarSign,
@@ -19,9 +18,16 @@ import { PriceForm } from "./_components/price-form";
 import { AttachmentForm } from "./_components/attachment-form";
 import { ChaptersForm } from "./_components/chapters-form";
 import { Actions } from "./_components/actions";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
-  const { userId } = auth();
+const CourseIdPage = async ({
+  params,
+}: {
+  params: { courseId: string };
+}) => {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
 
   if (!userId) {
     return redirect("/");
@@ -30,7 +36,8 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
   const course = await db.course.findUnique({
     where: {
       id: params.courseId,
-      userId,
+      // usado para traer solo los cursos que creo el usuario logueado
+      // userId,
     },
     include: {
       chapters: {
@@ -60,9 +67,9 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
     course.title,
     course.description,
     course.imageUrl,
-    course.price,
+    // course.price,
     course.categoryId,
-    course.chapters.some((chapter) => chapter.isPublished),
+    course.chapters.some(chapter => chapter.isPublished),
   ];
 
   const totalFields = requiredFields.length;
@@ -80,7 +87,9 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
       <div className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-y-2">
-            <h1 className="text-2xl font-medium">Crear curso</h1>
+            <h1 className="text-2xl font-medium">
+              Crear capacitación
+            </h1>
             <span className="text-sm text-slate-700">
               Completa todos los campos {completionText}
             </span>
@@ -95,15 +104,26 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
           <div>
             <div className="flex items-center gap-x-2">
               <IconBadge icon={LayoutDashboard} />
-              <h2 className="text-xl">Customización del curso</h2>
+              <h2 className="text-xl">
+                Customización del curso
+              </h2>
             </div>
-            <TitleForm initialData={course} courseId={course.id} />
-            <DescriptionForm initialData={course} courseId={course.id} />
-            <ImageForm initialData={course} courseId={course.id} />
+            <TitleForm
+              initialData={course}
+              courseId={course.id}
+            />
+            <DescriptionForm
+              initialData={course}
+              courseId={course.id}
+            />
+            <ImageForm
+              initialData={course}
+              courseId={course.id}
+            />
             <CategoryForm
               initialData={course}
               courseId={course.id}
-              options={categories.map((category) => ({
+              options={categories.map(category => ({
                 label: category.name,
                 value: category.id,
               }))}
@@ -113,23 +133,31 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={ListChecks} />
-                <h2 className="text-xl">Capítulos del curso</h2>
+                <h2 className="text-xl">
+                  Capítulos de la capacitación
+                </h2>
               </div>
-              <ChaptersForm initialData={course} courseId={course.id} />
+              <ChaptersForm
+                initialData={course}
+                courseId={course.id}
+              />
             </div>
-            <div>
+            {/* <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={CircleDollarSign} />
                 <h2 className="text-xl">Vende tu curso</h2>
               </div>
               <PriceForm initialData={course} courseId={course.id} />
-            </div>
+            </div> */}
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={File} />
                 <h2 className="text-xl">Archivos & Agregados</h2>
               </div>
-              <AttachmentForm initialData={course} courseId={course.id} />
+              <AttachmentForm
+                initialData={course}
+                courseId={course.id}
+              />
             </div>
           </div>
         </div>

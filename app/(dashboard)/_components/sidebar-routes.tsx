@@ -1,20 +1,33 @@
 "use client";
 
-import { BarChart, Compass, Layout, List, Settings } from "lucide-react";
+import {
+  BarChart,
+  FileStack,
+  // Layout,
+  List,
+  Settings,
+  Link,
+  User,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { SidebarItem } from "./sidebar-item";
 
 const guestRoutes = [
+  // {
+  //   icon: FileStack,
+  //   label: "Tablero",
+  //   href: "/",
+  // },
   {
-    icon: Layout,
-    label: "Tablero",
+    icon: FileStack,
+    label: "Documentos",
     href: "/",
   },
   {
-    icon: Compass,
-    label: "Buscar",
-    href: "/search",
+    icon: Link,
+    label: "Links",
+    href: "/links",
   },
 ];
 
@@ -34,18 +47,23 @@ const teacherRoutes = [
     label: "Configuración",
     href: "/teacher/config",
   },
+  {
+    icon: User,
+    label: "Usuarios",
+    href: "/teacher/users",
+  },
 ];
 
 export const SidebarRoutes = () => {
   const pathname = usePathname();
 
-  const isTeacherPage = pathname?.includes("/teacher");
+  const isAdminPage = pathname?.includes("/teacher");
 
-  const routes = isTeacherPage ? teacherRoutes : guestRoutes;
+  const routes = isAdminPage ? teacherRoutes : guestRoutes;
 
   return (
     <div className="flex flex-col w-full">
-      {routes.map((route) => (
+      {routes.map(route => (
         <SidebarItem
           key={route.href}
           icon={route.icon}

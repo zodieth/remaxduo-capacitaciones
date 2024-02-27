@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 import { db } from "@/lib/db";
@@ -6,18 +5,21 @@ import { getProgress } from "@/actions/get-progress";
 
 import { CourseSidebar } from "./_components/course-sidebar";
 import { CourseNavbar } from "./_components/course-navbar";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const CourseLayout = async ({
   children,
-  params
+  params,
 }: {
   children: React.ReactNode;
   params: { courseId: string };
 }) => {
-  const { userId } = auth();
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
 
   if (!userId) {
-    return redirect("/")
+    return redirect("/");
   }
 
   const course = await db.course.findUnique({
@@ -33,12 +35,12 @@ const CourseLayout = async ({
           userProgress: {
             where: {
               userId,
-            }
-          }
+            },
+          },
         },
         orderBy: {
-          position: "asc"
-        }
+          position: "asc",
+        },
       },
     },
   });
@@ -67,7 +69,7 @@ const CourseLayout = async ({
         {children}
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default CourseLayout
+export default CourseLayout;
