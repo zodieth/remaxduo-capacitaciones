@@ -8,6 +8,7 @@ export function FileUpload({
   endpoint,
   onChange,
   courseId,
+  chapterId,
 }: {
   endpoint?: string;
   onChange: ({
@@ -18,6 +19,7 @@ export function FileUpload({
     name?: string;
   }) => void;
   courseId?: string;
+  chapterId?: string;
 }) {
   const [files, setFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,9 +37,8 @@ export function FileUpload({
         data.append("files", file);
         data.append("endpoint", endpoint || "");
         data.append("courseId", courseId || "");
+        data.append("chapterId", chapterId || "");
       });
-
-      console.log("Files", files);
 
       const res = await fetch("/api/fileUpload/multipleFile", {
         method: "POST",
