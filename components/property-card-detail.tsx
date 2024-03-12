@@ -27,7 +27,7 @@ export const PropertyCardDetail = ({
   agent,
 }: PropertyCard) => {
   return (
-    <Link href={`/propiedades/${id}`}>
+    <Link href={`/documentos/${id}`}>
       <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
         <div className="relative w-full aspect-video rounded-md overflow-hidden">
           <Image

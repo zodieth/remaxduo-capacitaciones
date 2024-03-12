@@ -66,7 +66,7 @@ const LoginPage = () => {
   > = async data => {
     setIsLoading(true);
     const res = await signIn("credentials", {
-      email: data.email,
+      email: data.email.trim(),
       password: data.password,
       redirect: false,
     });
