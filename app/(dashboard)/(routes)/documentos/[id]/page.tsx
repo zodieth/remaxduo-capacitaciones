@@ -73,7 +73,10 @@ export default function Page() {
         <LoadingSpinner />
       ) : propiedad?.length ? (
         propiedad.map(propiedad => (
-          <div className="m-4 flex flex-col items-center justify-start gap-4 md:flex-row">
+          <div
+            className="m-4 flex flex-col items-center justify-start gap-4 md:flex-row"
+            key={propiedad.id}
+          >
             <PropertyCardDetail
               displayAddress={propiedad.displayAddress}
               key={propiedad.id}
