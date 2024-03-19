@@ -18,11 +18,11 @@ const guestRoutes = [
     label: "Capacitaciones",
     href: "/",
   },
-  {
-    icon: FileStack,
-    label: "Documentos",
-    href: "/documentos",
-  },
+  // {
+  //   icon: FileStack,
+  //   label: "Documentos",
+  //   href: "/documentos",
+  // },
   {
     icon: Link,
     label: "Links",
