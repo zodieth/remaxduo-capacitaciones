@@ -54,3 +54,209 @@ type Propiedad = {
   addressInfo: string;
   billingFrequency: boolean;
 };
+
+// ----------------------------------------------
+// type de la api de remax propiedades:
+
+type Maintenance = {
+  fee: number;
+  type: null | string;
+  currency: string;
+  code: number;
+};
+
+type Address = {
+  displayAddress: string;
+  streetNumber: string;
+  streetName: string;
+  postalCode: string;
+  countryId: string;
+  country: string;
+  regionId: string;
+  region: string;
+  stateId: string;
+  state: string;
+  subregionId: string;
+  subregion: string;
+  countyId: string;
+  county: string;
+  cityId: string;
+  city: string;
+  neighborhoodId: null | string;
+  neighborhood: null | string;
+  privatecommunityId: null | string;
+  privatecommunity: null | string;
+  apartment: string;
+  floor: string;
+};
+
+type Document = {
+  id: string;
+  originalName: string;
+  type: string;
+  cdn: string;
+  fileType: string;
+  createdAt: string;
+  linkDownload: string;
+};
+
+type Photo = {
+  id: null | string;
+  cdn: string;
+  fileName: string;
+  is360Image: null | boolean;
+  prefix: string;
+  primary: boolean;
+  value: null | string;
+  order: number;
+  cloudfront: string;
+  path: string;
+  createdAt: string;
+};
+
+type Price = {
+  currency: string;
+  exposure: string;
+  type: string;
+  value: number;
+};
+
+type Commission = {
+  seller: { type: string; value: number };
+  buyer: { type: string; value: number };
+};
+
+type TransferHistoryItem = {
+  associate: string;
+  office: string;
+  mlsid: string;
+  redremaxId: string;
+  start: string;
+  end: string | null;
+};
+
+type ClientData = {
+  id: string;
+  createdBy: string;
+  email: string;
+  family: Array<{
+    name: string;
+    relation: string;
+    date: null | string;
+  }>;
+  mobile: string;
+  firstname: string;
+  lastname: string;
+  birthday: string;
+  type: string;
+  gender: string;
+  status: string;
+  origin: string;
+  associate: string;
+  office: string;
+  createdAt: string;
+  copyFrom: string;
+};
+
+export type PropertydApi = {
+  id: string;
+  expiresOn: string;
+  propertyTypeV2: string;
+  featureV2: Array<any>;
+  yearBuild: number;
+  virtualTours: Array<any>;
+  aptCredit: boolean;
+  professionalUse: boolean;
+  commercialUse: boolean;
+  buildingTotalUnits: number;
+  maintenance: Maintenance;
+  status: string;
+  statusChanges: string;
+  address: Address;
+  location: [number, number];
+  clients: Array<string>;
+  type: string;
+  availableDate: string;
+  commission: Commission;
+  notes: Array<any>;
+  dimensions: {
+    land: null | number;
+    totalBuilt: number;
+    covered: number;
+    semicovered: number;
+    uncovered: null | number;
+  };
+  propertyCondition: Array<any>;
+  contract: string;
+  video: string;
+  title: string;
+  description: string;
+  price: Price;
+  defaults: {
+    currency: string;
+    unit: string;
+  };
+  documents: Array<Document>;
+  photos: Array<Photo>;
+  photos360: Array<any>;
+  blueprints: Array<any>;
+  rooms: Array<any>;
+  toiletrooms: number;
+  bathrooms: number;
+  bedrooms: number;
+  totalFloors: number;
+  totalRooms: number;
+  parkingSpaces: null | number;
+  financing: boolean;
+  remaxCollection: boolean;
+  pozo: boolean;
+  inPrivateCommunity: boolean;
+  billboard: boolean;
+  reducedMovility: boolean;
+  canPublish: boolean;
+  opportunity: boolean;
+  staffDirectAprove: boolean;
+  associate: string;
+  network: string;
+  node: string;
+  office: string;
+  associateQrid: string;
+  onemls: {
+    nodeId: string;
+    networkId: number;
+    officeId: number;
+    associateId: number;
+    listingId: number;
+  };
+  qrid: string;
+  deletedOn: null | string;
+  updatedBy: string;
+  updatedOn: string;
+  createdAt: string;
+  publishingPercentage: number;
+  associateStatus: string;
+  countContacts: number;
+  countViews: number;
+  publicationQuality: number;
+  syndicateAs: {
+    version: number;
+    versionDate: string;
+  };
+  mlsid: string;
+  transferHistory: Array<TransferHistoryItem>;
+  approvedAt: string;
+  approvedBy: string;
+  priceHistory: Array<{
+    date: string;
+    price: string;
+    currency: string;
+    TC: number;
+    USD: string;
+    ARS: string;
+  }>;
+  clientsData: Array<ClientData>;
+  variacion: number;
+  countContactsUnanswered: number;
+};
+
+// ----------------------------------------------

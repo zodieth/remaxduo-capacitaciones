@@ -3,15 +3,29 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
-import { Propiedad } from "@/types/next-auth";
+import { PropertydApi } from "@/types/next-auth";
 import { PropertyCard } from "@/components/property-card";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { DataTable } from "./_components/data-table";
+import { columns } from "./_components/columns";
+
+const PROPIEDADES_API_URL =
+  process.env.NEXT_PUBLIC_REMAX_API_PROPIEDADES_URL;
+
+const propertiesSizeFetch = 15;
 
 const fetchPropiedades = {
   fetchPropiedades: async (): Promise<ApiResponse> => {
     const response = await fetch(
-      "https://api-ar.redremax.com/remaxweb-ar/api/listings/findAll?page=0&pageSize=200&sort=-createdAt&in:operationId=1,2,3&officeid=AR.42.170&officeName=RE/MAX%20Up&filterCount=0&viewMode=list"
+      `${PROPIEDADES_API_URL}${propertiesSizeFetch}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_REMAX_API_TOKEN}`,
+        },
+      }
     );
+
     if (!response.ok) {
       toast.error("Error al cargar las propiedades");
       throw new Error("Error al cargar las propiedades");
@@ -21,15 +35,13 @@ const fetchPropiedades = {
 };
 
 interface ApiResponse {
-  data: {
-    data: Propiedad[];
-  };
+  data: PropertydApi[];
 }
 
 const Propiedades = () => {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
-  const [propiedades, setPropiedades] = useState<Propiedad[]>(
+  const [propiedades, setPropiedades] = useState<PropertydApi[]>(
     []
   );
 
@@ -39,14 +51,17 @@ const Propiedades = () => {
         const propiedadesData =
           await fetchPropiedades.fetchPropiedades();
 
-        const propiedadesFiltradas =
-          propiedadesData.data.data.filter(
-            propiedad =>
-              propiedad.associate.emails[0].value ===
-              session?.user?.email
-          );
+        // aca no podemos filtrar por Mail....
 
-        setPropiedades(propiedadesFiltradas);
+        // const propiedadesFiltradas =
+        //   propiedadesData.data.data.filter(
+        //     propiedad =>
+        //       propiedad.associate.emails[0].value ===
+        //       session?.user?.email
+        //   );
+
+        console.log("propiedadesData", propiedadesData.data);
+        setPropiedades(propiedadesData.data);
         setLoading(false);
       } catch (error) {
         console.error("Error al obtener propiedades:", error);
@@ -67,19 +82,11 @@ const Propiedades = () => {
           ""
         )}
       </div>
-      <div className="p-6 w-full grid md:grid-cols-3 gap-4 lg:grid-cols-4">
+      <div className="p-6 w-full">
         {loading ? (
           <LoadingSpinner />
         ) : propiedades.length ? (
-          propiedades.map(propiedad => (
-            <PropertyCard
-              key={propiedad.id}
-              id={propiedad.id}
-              title={propiedad.title}
-              slug={propiedad.slug}
-              photo={propiedad.photos[0].value}
-            />
-          ))
+          <DataTable data={propiedades} columns={columns} />
         ) : !propiedades.length ? (
           <h1 className=" text-1xl">
             No se encontraron propiedades
