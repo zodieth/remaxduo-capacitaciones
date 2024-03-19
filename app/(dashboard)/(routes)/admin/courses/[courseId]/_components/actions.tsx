@@ -54,7 +54,7 @@ export const Actions = ({
 
       toast.success("Capacitación eliminada");
       router.refresh();
-      router.push(`/teacher/courses`);
+      router.push(`/admin/courses`);
     } catch {
       toast.error("Algo no funcionó correctamente");
     } finally {

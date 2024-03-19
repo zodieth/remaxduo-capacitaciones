@@ -3,7 +3,7 @@
 import {
   BarChart,
   FileStack,
-  // Layout,
+  Tv2,
   List,
   Settings,
   Link,
@@ -12,18 +12,17 @@ import {
 import { usePathname } from "next/navigation";
 
 import { SidebarItem } from "./sidebar-item";
-
 const guestRoutes = [
-  // {
-  //   icon: FileStack,
-  //   label: "Tablero",
-  //   href: "/",
-  // },
   {
-    icon: FileStack,
-    label: "Documentos",
+    icon: Tv2,
+    label: "Capacitaciones",
     href: "/",
   },
+  // {
+  //   icon: FileStack,
+  //   label: "Documentos",
+  //   href: "/documentos",
+  // },
   {
     icon: Link,
     label: "Links",
@@ -31,35 +30,35 @@ const guestRoutes = [
   },
 ];
 
-const teacherRoutes = [
+const adminRoutes = [
   {
     icon: List,
     label: "Cursos",
-    href: "/teacher/courses",
+    href: "/admin/courses",
   },
   {
     icon: BarChart,
     label: "Analíticas",
-    href: "/teacher/analytics",
+    href: "/admin/analytics",
   },
   {
     icon: Settings,
     label: "Configuración",
-    href: "/teacher/config",
+    href: "/admin/config",
   },
   {
     icon: User,
     label: "Usuarios",
-    href: "/teacher/users",
+    href: "/admin/users",
   },
 ];
 
 export const SidebarRoutes = () => {
   const pathname = usePathname();
 
-  const isAdminPage = pathname?.includes("/teacher");
+  const isAdminPage = pathname?.includes("/admin");
 
-  const routes = isAdminPage ? teacherRoutes : guestRoutes;
+  const routes = isAdminPage ? adminRoutes : guestRoutes;
 
   return (
     <div className="flex flex-col w-full">

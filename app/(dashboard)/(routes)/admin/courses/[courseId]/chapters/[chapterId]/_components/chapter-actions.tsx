@@ -59,7 +59,7 @@ export const ChapterActions = ({
 
       toast.success("Capítulo borrado");
       router.refresh();
-      router.push(`/teacher/courses/${courseId}`);
+      router.push(`/admin/courses/${courseId}`);
     } catch {
       toast.error("Algo no funcionó correctamente");
     } finally {

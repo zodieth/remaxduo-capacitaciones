@@ -23,6 +23,9 @@ export async function POST(request: NextRequest) {
     ) as unknown as File[];
     const endpoint = data.get("endpoint") as string | undefined;
     const courseId = data.get("courseId") as string | undefined;
+    const chapterId = data.get("chapterId") as
+      | string
+      | undefined;
 
     let folder = "public/FilesUploaded";
 
@@ -33,7 +36,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (endpoint && courseId) {
+    if (endpoint === "chapterVideo" && courseId && chapterId) {
+      folder = `public/FilesUploaded/${courseId}/chapters/${chapterId}`;
+    }
+
+    if (endpoint && courseId && !chapterId) {
       folder = `public/FilesUploaded/${courseId}/${endpoint}`;
     }
 

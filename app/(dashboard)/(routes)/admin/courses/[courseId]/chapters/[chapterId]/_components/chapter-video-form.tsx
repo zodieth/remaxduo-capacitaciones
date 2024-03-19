@@ -2,20 +2,18 @@
 
 import * as z from "zod";
 import axios from "axios";
-import MuxPlayer from "@mux/mux-player-react";
 import { Pencil, PlusCircle, Video } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Chapter, MuxData } from "@prisma/client";
-import Image from "next/image";
+import { Chapter } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
-import { FileUploadZone } from "@/components/old-file-upoload";
+import { VideoPlayer } from "@/app/(course)/courses/[courseId]/chapters/[chapterId]/_components/video-player";
 
 interface ChapterVideoFormProps {
-  initialData: Chapter & { muxData?: MuxData | null };
+  initialData: Chapter;
   courseId: string;
   chapterId: string;
 }
@@ -78,34 +76,31 @@ export const ChapterVideoForm = ({
           </div>
         ) : (
           <div className="relative aspect-video mt-2">
-            <MuxPlayer
-              playbackId={initialData?.muxData?.playbackId || ""}
+            <VideoPlayer
+              isLocked={false}
+              completeOnEnd={false}
+              courseId={courseId}
+              chapterId={chapterId}
+              title={initialData.title}
+              url={initialData.videoUrl}
+              startPlaying={false}
             />
           </div>
         ))}
       {isEditing && (
         <div>
-          {/* <FileUpload
+          <FileUpload
             endpoint="chapterVideo"
             courseId={courseId}
+            chapterId={chapterId}
             onChange={({ url }) => {
               if (url) {
                 onSubmit({ videoUrl: url });
               }
             }}
-          /> */}
-          <FileUploadZone
-            endpoint="chapterVideo"
-            onChange={async url => {
-              if (url) {
-                await onSubmit({ videoUrl: url });
-                // refresh the page to get the new video
-                router.refresh();
-              }
-            }}
           />
           <div className="text-xs text-muted-foreground mt-4">
-            Subir video F
+            Subir video
           </div>
         </div>
       )}

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 
-const TeacherLayout = ({
+const AdminLayout = ({
   children,
 }: {
   children: React.ReactNode;
@@ -37,4 +37,4 @@ const TeacherLayout = ({
   ) : null;
 };
 
-export default TeacherLayout;
+export default AdminLayout;

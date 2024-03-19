@@ -16,7 +16,7 @@ export const NavbarRoutes = () => {
 
   const pathname = usePathname();
 
-  const isAdminPage = pathname?.startsWith("/teacher");
+  const isAdminPage = pathname?.startsWith("/admin");
   const isCoursePage = pathname?.includes("/courses");
   const isSearchPage = pathname === "/search";
 
@@ -38,7 +38,7 @@ export const NavbarRoutes = () => {
             <Button size="sm">Dashboard</Button>
           </Link>
         ) : isAdmin(role) ? (
-          <Link href="/teacher/courses">
+          <Link href="/admin/courses">
             <Button size="sm">Configuración</Button>
           </Link>
         ) : null}
