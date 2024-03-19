@@ -1,33 +1,33 @@
 "use client";
 
 import axios from "axios";
-import MuxPlayer from "@mux/mux-player-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Loader2, Lock } from "lucide-react";
-
-import { cn } from "@/lib/utils";
+import ReactPlayer from "react-player";
 import { useConfettiStore } from "@/hooks/use-confetti-store";
 
 interface VideoPlayerProps {
-  playbackId: string;
   courseId: string;
   chapterId: string;
   nextChapterId?: string;
   isLocked: boolean;
   completeOnEnd: boolean;
   title: string;
+  url: string;
+  startPlaying?: boolean;
 }
 
 export const VideoPlayer = ({
-  playbackId,
   courseId,
   chapterId,
   nextChapterId,
   isLocked,
   completeOnEnd,
   title,
+  url,
+  startPlaying = true,
 }: VideoPlayerProps) => {
   const [isReady, setIsReady] = useState(false);
   const router = useRouter();
@@ -75,14 +75,24 @@ export const VideoPlayer = ({
         </div>
       )}
       {!isLocked && (
-        <MuxPlayer
-          title={title}
-          className={cn(!isReady && "hidden")}
-          onCanPlay={() => setIsReady(true)}
-          onEnded={onEnd}
-          autoPlay
-          playbackId={playbackId}
-        />
+        <>
+          <ReactPlayer
+            url={url}
+            playing={startPlaying}
+            controls={true}
+            onReady={() => setIsReady(true)}
+            onEnded={onEnd}
+            width="100%" // Asegura que el reproductor ocupe todo el ancho del contenedor.
+            height="100%" // Ajusta la altura según sea necesario para mantener la relación de aspecto.
+            config={{
+              file: {
+                attributes: {
+                  controlsList: "nodownload",
+                },
+              },
+            }}
+          />
+        </>
       )}
     </div>
   );

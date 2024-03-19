@@ -38,7 +38,7 @@ export const NavbarRoutes = () => {
             <Button size="sm">Dashboard</Button>
           </Link>
         ) : isAdmin(role) ? (
-          <Link href="/teacher/courses">
+          <Link href="/admin/courses">
             <Button size="sm">Configuración</Button>
           </Link>
         ) : null}

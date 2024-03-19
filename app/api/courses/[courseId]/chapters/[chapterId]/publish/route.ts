@@ -16,18 +16,19 @@ export async function PATCH(
       });
     }
 
-    const ownCourse = await db.course.findUnique({
-      where: {
-        id: params.courseId,
-        userId,
-      },
-    });
+    // Removimos la validación de que el usuario sea el dueño del curso
+    // const ownCourse = await db.course.findUnique({
+    //   where: {
+    //     id: params.courseId,
+    //     // userId,
+    //   },
+    // });
 
-    if (!ownCourse) {
-      return new NextResponse("Unauthorized", {
-        status: 401,
-      });
-    }
+    // if (!ownCourse) {
+    //   return new NextResponse("Unauthorized", {
+    //     status: 401,
+    //   });
+    // }
 
     const chapter = await db.chapter.findUnique({
       where: {
@@ -36,15 +37,8 @@ export async function PATCH(
       },
     });
 
-    const muxData = await db.muxData.findUnique({
-      where: {
-        chapterId: params.chapterId,
-      },
-    });
-
     if (
       !chapter ||
-      !muxData ||
       !chapter.title ||
       !chapter.description ||
       !chapter.videoUrl
