@@ -20,6 +20,7 @@ interface FormValues {
   email: string;
   role: string;
   password: string;
+  agentId?: string;
 }
 
 export type User = {
@@ -28,6 +29,7 @@ export type User = {
   email: string;
   role: string;
   password?: string;
+  agentId?: string;
 };
 
 type UserManagementProps = {
@@ -91,6 +93,7 @@ export const UserManagement = ({
       : z
           .string()
           .nonempty("La contraseña no puede estar vacía"),
+    agentId: z.string().optional(),
   });
 
   const {
@@ -109,6 +112,7 @@ export const UserManagement = ({
       email: (editUser as User)?.email,
       role: (editUser as User)?.role,
       password: undefined,
+      agentId: (editUser as User)?.agentId,
     },
   });
 
@@ -151,6 +155,7 @@ export const UserManagement = ({
       email: "",
       role: "",
       password: "",
+      agentId: "",
     });
   };
 
@@ -161,6 +166,7 @@ export const UserManagement = ({
       email: "",
       role: "",
       password: "",
+      agentId: "",
     });
     onCancel(true);
   };
@@ -211,6 +217,22 @@ export const UserManagement = ({
             </FormControl>
             {errors.email && (
               <FormMessage>{errors.email.message}</FormMessage>
+            )}
+          </FormItem>
+          <FormItem className="mt-4">
+            <FormLabel>Id de Agente (RED Remax)</FormLabel>
+            <FormControl>
+              <Input
+                id="agentId"
+                placeholder="AR.42.170.XX"
+                value={(editUser as User)?.agentId}
+                {...register("agentId", {
+                  onChange: handleInputChange,
+                })}
+              />
+            </FormControl>
+            {errors.agentId && (
+              <FormMessage>{errors.agentId.message}</FormMessage>
             )}
           </FormItem>
           <FormItem className="mt-4 flex flex-col">

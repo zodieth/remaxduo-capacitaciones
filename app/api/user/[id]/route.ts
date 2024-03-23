@@ -9,6 +9,7 @@ type UpdateDataType = {
   email: string;
   role: string;
   password?: string;
+  agentId: string;
 };
 
 export async function GET(req: Request) {
@@ -51,7 +52,8 @@ export async function PUT(req: Request) {
     const url = req.nextUrl;
     const id = url.pathname.split("/").pop();
 
-    const { name, email, role, password } = await req.json();
+    const { name, email, role, password, agentId } =
+      await req.json();
 
     if (!userId || !isAdmin(userRole)) {
       return new NextResponse("Unauthorized", {
@@ -64,7 +66,12 @@ export async function PUT(req: Request) {
         status: 400,
       });
 
-    let updateData: UpdateDataType = { name, email, role };
+    let updateData: UpdateDataType = {
+      name,
+      email,
+      role,
+      agentId,
+    };
 
     if (password && password.trim() !== "") {
       console.log("entro a password");

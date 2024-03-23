@@ -8,7 +8,8 @@ export async function POST(req: Request) {
   try {
     const { userId, role: userRole } =
       await getServerSessionFunc();
-    const { name, email, role, password } = await req.json();
+    const { name, email, role, password, agentId } =
+      await req.json();
     const hashedPassword = await bcrypt.hash(password, 10);
 
     if (!userId || !isAdmin(userRole)) {
@@ -17,7 +18,13 @@ export async function POST(req: Request) {
       });
     }
 
-    console.log("POST", { name, email, role, password });
+    console.log("POST", {
+      name,
+      email,
+      role,
+      password,
+      agentId,
+    });
 
     const existingUser = await db.user.findUnique({
       where: { email },
@@ -37,6 +44,7 @@ export async function POST(req: Request) {
         email,
         role,
         password: hashedPassword,
+        agentId,
       },
     });
 

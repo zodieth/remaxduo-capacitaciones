@@ -18,13 +18,13 @@ model User {
   image         String?
   password      String
   accounts      Account[]
+  agentId       String?
 }
 
 enum Role {
   ADMIN
   USER
 }
-
 
 model Account {
   id                String  @id @default(cuid())

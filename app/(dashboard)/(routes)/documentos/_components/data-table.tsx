@@ -61,12 +61,12 @@ export function DataTable<TData, TValue>({
           placeholder="Filtrar propiedades..."
           value={
             (table
-              .getColumn("propertyTypeV2")
+              .getColumn("title")
               ?.getFilterValue() as string) ?? ""
           }
           onChange={event =>
             table
-              .getColumn("propertyTypeV2")
+              .getColumn("title")
               ?.setFilterValue(event.target.value)
           }
           className="max-w-sm"

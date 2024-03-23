@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { refreshTokenJWT } from "@/components/jwtHandler";
 
 const errorMessageHandler = (message: string) => {
   switch (message) {
@@ -70,6 +71,8 @@ const LoginPage = () => {
       password: data.password,
       redirect: false,
     });
+
+    res && res.ok && (await refreshTokenJWT());
 
     res && !res.ok && setIsLoading(false);
 

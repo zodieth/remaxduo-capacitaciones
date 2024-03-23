@@ -4,24 +4,39 @@ import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { PropertydApi } from "@/types/next-auth";
-import { PropertyCard } from "@/components/property-card";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { DataTable } from "./_components/data-table";
 import { columns } from "./_components/columns";
+import {
+  jwtHandler,
+  refreshTokenJWT,
+} from "@/components/jwtHandler";
 
 const PROPIEDADES_API_URL =
   process.env.NEXT_PUBLIC_REMAX_API_PROPIEDADES_URL;
 
-const propertiesSizeFetch = 15;
+const fetchPropiedades = async (
+  agentId: string
+): Promise<ApiResponse | undefined> => {
+  let token = localStorage.getItem("remax-token") || "";
+  const { valid, expired } = await jwtHandler(token);
 
-const fetchPropiedades = {
-  fetchPropiedades: async (): Promise<ApiResponse> => {
+  if (expired || !valid) {
+    const tokenToast = toast.loading(
+      "Token expirado. Refrescando..."
+    );
+    const newToken = await refreshTokenJWT();
+
+    newToken && (token = newToken) && toast.dismiss(tokenToast);
+  }
+
+  try {
     const response = await fetch(
-      `${PROPIEDADES_API_URL}${propertiesSizeFetch}`,
+      `${PROPIEDADES_API_URL}&agent=${agentId}`,
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_REMAX_API_TOKEN}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -30,8 +45,11 @@ const fetchPropiedades = {
       toast.error("Error al cargar las propiedades");
       throw new Error("Error al cargar las propiedades");
     }
+
     return response.json();
-  },
+  } catch (error) {
+    console.error("Error al obtener propiedades:", error);
+  }
 };
 
 interface ApiResponse {
@@ -40,6 +58,8 @@ interface ApiResponse {
 
 const Propiedades = () => {
   const { data: session } = useSession();
+  const agentId = session?.user?.agentId || "";
+  const user = session?.user;
   const [loading, setLoading] = useState(true);
   const [propiedades, setPropiedades] = useState<PropertydApi[]>(
     []
@@ -48,20 +68,17 @@ const Propiedades = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const propiedadesData =
-          await fetchPropiedades.fetchPropiedades();
+        const propiedadesData = await fetchPropiedades(agentId);
 
-        // aca no podemos filtrar por Mail....
+        if (!propiedadesData) {
+          toast.error("No se encontraron propiedades");
+          return;
+        }
 
-        // const propiedadesFiltradas =
-        //   propiedadesData.data.data.filter(
-        //     propiedad =>
-        //       propiedad.associate.emails[0].value ===
-        //       session?.user?.email
-        //   );
-
-        console.log("propiedadesData", propiedadesData.data);
-        setPropiedades(propiedadesData.data);
+        if (propiedadesData) {
+          console.log("propiedadesData", propiedadesData.data);
+          setPropiedades(propiedadesData.data);
+        }
         setLoading(false);
       } catch (error) {
         console.error("Error al obtener propiedades:", error);
@@ -69,14 +86,14 @@ const Propiedades = () => {
     };
 
     fetchData();
-  }, [session?.user?.email]);
+  }, [user?.email, agentId]);
 
   return (
     <div className="m-5 flex flex-col">
       <div className="mb-2 mx-6">
-        {session?.user?.name ? (
+        {user?.name ? (
           <h1 className="font-bold text-2xl">
-            Propiedades de {session?.user?.name}
+            Propiedades de {user?.name}
           </h1>
         ) : (
           ""

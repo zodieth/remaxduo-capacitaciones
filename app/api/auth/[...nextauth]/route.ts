@@ -32,6 +32,7 @@ export const authOptions: AuthOptions = {
               password: true,
               image: true,
               role: true,
+              agentId: true,
             },
           });
 
@@ -56,6 +57,7 @@ export const authOptions: AuthOptions = {
             role: user.role,
             name: user.name,
             image: user.image,
+            agentId: user.agentId,
           };
         }
 
@@ -73,6 +75,7 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.agentId = user.agentId;
       }
 
       return token;
@@ -85,6 +88,7 @@ export const authOptions: AuthOptions = {
           ...session.user,
           id: token.id,
           role: token.role,
+          agentId: token.agentId,
         },
       };
     },
