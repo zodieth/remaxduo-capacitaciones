@@ -20,7 +20,7 @@ import Link from "next/link";
 
 export const columns: ColumnDef<PropertydApi>[] = [
   {
-    accessorKey: "propertyTypeV2",
+    accessorKey: "title",
     header: ({ column }) => {
       return (
         <Button
@@ -54,7 +54,6 @@ export const columns: ColumnDef<PropertydApi>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      console.log(row);
       const {
         id,
         propertyTypeV2,
@@ -63,12 +62,11 @@ export const columns: ColumnDef<PropertydApi>[] = [
         description,
       } = row.original;
       const addressToDisplay = address.displayAddress;
-      console.log("address", address);
-      console.log("addressToDisplay", addressToDisplay);
       const photoUrl = photos[0]?.cdn;
 
-      const href = `/documentos/${id}/property-details?propertyTypeV2=${encodeURIComponent(propertyTypeV2)}&description=${encodeURIComponent(description)}&photoUrl=${encodeURIComponent(photoUrl)}&addressToDisplay=${encodeURIComponent(addressToDisplay)}`;
+      // const href = `/documentos/${id}/property-details?propertyTypeV2=${encodeURIComponent(propertyTypeV2)}&description=${encodeURIComponent(description)}&photoUrl=${encodeURIComponent(photoUrl)}&addressToDisplay=${encodeURIComponent(addressToDisplay)}`;
       // const href = `/documentos/${id}/property-details?propertyTypeV2=${encodeURIComponent(propertyTypeV2)}`;
+      const href = `documentos/${id}`;
 
       return (
         <DropdownMenu>

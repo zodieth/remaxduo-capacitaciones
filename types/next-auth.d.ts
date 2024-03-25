@@ -262,3 +262,104 @@ export type PropertydApi = {
 };
 
 // ----------------------------------------------
+
+// agente
+
+export type Email = {
+  type: string;
+  value: string;
+  primary: boolean;
+};
+
+type PhoneNumber = {
+  countryCode: string;
+  networkPrefix: string;
+  number: string;
+  formated: string;
+  international: string;
+  isMobile: boolean;
+  type: string;
+  value: string;
+  directDial: string;
+  primary: boolean;
+};
+
+type Photo = {
+  id: string;
+  cdn: string;
+  primary: boolean;
+  type: string;
+  value: string;
+  originalName: string;
+  fileType: string;
+};
+
+type Name = {
+  givenName: string;
+  familyName: string;
+};
+
+type Foreigns = {
+  remaxAr: {
+    id: number;
+    url: string;
+  };
+  class: string;
+};
+
+type OneMLS = {
+  nodeId: string;
+  networkId: number;
+  officeId: number;
+  associateId: number;
+  nextListingId: number;
+};
+
+type Office = {
+  id: string;
+  network: string;
+  node: string;
+  // Agrega más campos según sean necesarios
+};
+
+type User = {
+  id: {
+    $id: string;
+  };
+  profile: string;
+  // Agrega más campos según sean necesarios
+};
+
+export type Agent = {
+  id: string;
+  network: string;
+  node: string;
+  bulletPoints: string[];
+  closer: string;
+  createdOn: string;
+  updatedOn: string;
+  name: Name;
+  displayName: string;
+  emails: Email[];
+  foreigns: Foreigns;
+  location: any[]; // Define más específicamente si es necesario
+  onemls: OneMLS;
+  phoneNumbers: PhoneNumber[];
+  photos: Photo[];
+  role: string;
+  title: string;
+  remaxCollection: boolean;
+  shortId: string;
+  status: string;
+  thumbnail: string;
+  totalListings: number;
+  nextActiveSearchId: number;
+  listingsLimit: number;
+  qrid: string;
+  offices: Office[];
+  // Agrega más campos según sean necesarios
+  user: User;
+  ratings: any[]; // Define más específicamente si es necesario
+};
+
+// ----------------------------------------------

@@ -11,6 +11,7 @@ import {
   jwtHandler,
   refreshTokenJWT,
 } from "@/components/jwtHandler";
+import usePropertiesStore from "@/stores/usePropertiesStore";
 
 const PROPIEDADES_API_URL =
   process.env.NEXT_PUBLIC_REMAX_API_PROPIEDADES_URL;
@@ -30,25 +31,27 @@ const fetchPropiedades = async (
     newToken && (token = newToken) && toast.dismiss(tokenToast);
   }
 
-  try {
-    const response = await fetch(
-      `${PROPIEDADES_API_URL}&agent=${agentId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+  if (agentId) {
+    try {
+      const response = await fetch(
+        `${PROPIEDADES_API_URL}&agent=${agentId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        toast.error("Error al cargar las propiedades");
+        throw new Error("Error al cargar las propiedades");
       }
-    );
 
-    if (!response.ok) {
-      toast.error("Error al cargar las propiedades");
-      throw new Error("Error al cargar las propiedades");
+      return response.json();
+    } catch (error) {
+      console.error("Error al obtener propiedades:", error);
     }
-
-    return response.json();
-  } catch (error) {
-    console.error("Error al obtener propiedades:", error);
   }
 };
 
@@ -65,21 +68,26 @@ const Propiedades = () => {
     []
   );
 
+  const setPropiedadesToStore = usePropertiesStore(
+    state => state.setPropiedades
+  );
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const propiedadesData = await fetchPropiedades(agentId);
 
-        if (!propiedadesData) {
-          toast.error("No se encontraron propiedades");
-          return;
-        }
-
         if (propiedadesData) {
           console.log("propiedadesData", propiedadesData.data);
           setPropiedades(propiedadesData.data);
+          setPropiedadesToStore(propiedadesData.data);
+          setLoading(false);
         }
-        setLoading(false);
+
+        // if (!propiedadesData) {
+        //   toast.error("No se encontraron propiedades");
+        //   return;
+        // }
       } catch (error) {
         console.error("Error al obtener propiedades:", error);
       }
