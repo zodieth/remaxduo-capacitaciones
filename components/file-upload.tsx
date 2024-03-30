@@ -1,5 +1,5 @@
 "use client";
-
+// file: components/file-upload.tsx
 import { useState } from "react";
 import { Button } from "./ui/button";
 import LoadingSpinner from "./ui/loadingSpinner";
@@ -9,17 +9,21 @@ export function FileUpload({
   onChange,
   courseId,
   chapterId,
+  accept = "*",
 }: {
   endpoint?: string;
   onChange: ({
     url,
     name,
+    variables,
   }: {
     url: string;
     name?: string;
+    variables?: string[];
   }) => void;
   courseId?: string;
   chapterId?: string;
+  accept?: string;
 }) {
   const [files, setFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,6 +89,7 @@ export function FileUpload({
               e.target.files ? Array.from(e.target.files) : []
             )
           }
+          accept={accept}
         />
         <label
           htmlFor="fileInput"

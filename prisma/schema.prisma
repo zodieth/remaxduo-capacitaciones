@@ -168,3 +168,14 @@ model UsefulLink {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model DocumentTemplate {
+  id          String  @id @default(uuid())
+  title       String
+  description String? @db.Text
+  url         String  @db.Text
+  variables   String  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

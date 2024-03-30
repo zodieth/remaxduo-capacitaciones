@@ -51,6 +51,11 @@ const adminRoutes = [
     label: "Usuarios",
     href: "/admin/users",
   },
+  {
+    icon: FileStack,
+    label: "Plantillas",
+    href: "/admin/templates",
+  },
 ];
 
 export const SidebarRoutes = () => {
