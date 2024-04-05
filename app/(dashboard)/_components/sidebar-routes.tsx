@@ -54,7 +54,7 @@ const adminRoutes = [
   {
     icon: FileStack,
     label: "Plantillas",
-    href: "/admin/templates",
+    href: "/admin/documentTemplates",
   },
 ];
 

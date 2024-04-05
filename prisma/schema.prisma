@@ -169,12 +169,26 @@ model UsefulLink {
   updatedAt DateTime @updatedAt
 }
 
+model DocumentVariable {
+  id          String  @id @default(uuid())
+  name        String
+  value       String
+  description String? @db.Text
+  referenceTo String? @db.Text
+
+  templates DocumentTemplate[] @relation("DocumentToVariables")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model DocumentTemplate {
   id          String  @id @default(uuid())
   title       String
   description String? @db.Text
-  url         String  @db.Text
-  variables   String  @db.Text
+  content     String  @db.MediumText
+
+  variables DocumentVariable[] @relation("DocumentToVariables")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
