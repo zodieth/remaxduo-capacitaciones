@@ -15,6 +15,22 @@ const api = {
     );
     return response.json();
   },
+  async editDocumentTemplate(
+    documentTemplateId: string,
+    documentToSend: DocumentToSend
+  ) {
+    const response = await fetch(
+      `/api/documents/documentTemplate/${documentTemplateId}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(documentToSend),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.json();
+  },
 };
 
 const EditDocumentTemplatePage = ({
@@ -45,15 +61,9 @@ const EditDocumentTemplatePage = ({
   const onEdit = async (documentToSend: DocumentToSend) => {
     setIsLoading(true);
     try {
-      const res = await fetch(
-        `/api/documents/documentTemplate/${params.documentTemplateId}`,
-        {
-          method: "PUT",
-          body: JSON.stringify(documentToSend),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const res = await api.editDocumentTemplate(
+        params.documentTemplateId,
+        documentToSend
       );
 
       if (res.ok) {

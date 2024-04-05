@@ -13,21 +13,29 @@ export type DocumentToSend = {
   variablesIds: string[];
 };
 
+const api = {
+  async createDocumentTemplate(documentToSend: DocumentToSend) {
+    const response = await fetch(
+      "/api/documents/documentTemplate",
+      {
+        method: "POST",
+        body: JSON.stringify(documentToSend),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.json();
+  },
+};
+
 const CreateDocumentTemplatePage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const onCreate = async (documentToSend: DocumentToSend) => {
     try {
-      const res = await fetch(
-        "/api/documents/documentTemplate",
-        {
-          method: "POST",
-          body: JSON.stringify(documentToSend),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res =
+        await api.createDocumentTemplate(documentToSend);
 
       if (res.ok) {
         const data = await res.json();
