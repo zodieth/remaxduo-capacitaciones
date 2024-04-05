@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { DocumentTemplate } from "@prisma/client";
 import { DataTable } from "./_components/data-table";
 import { columns } from "./_components/columns";
 import { db } from "@/lib/db";
 
-const api = {
-  async getDocumentTemplates(): Promise<DocumentTemplate[]> {
-    const response = await fetch(
-      "/api/documents/documentTemplate"
-    );
-    return response.json();
-  },
-};
-
 const TemplatesPage = async () => {
-  const documentTemplates = await db.documentTemplate.findMany();
+  const documentTemplates: DocumentTemplate[] =
+    await db.documentTemplate.findMany();
 
   return (
     <div className="p-6">
