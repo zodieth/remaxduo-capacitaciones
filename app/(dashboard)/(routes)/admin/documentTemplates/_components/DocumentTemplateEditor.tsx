@@ -163,7 +163,7 @@ const DocumentTemplateEditor = ({
               <FormLabel>Titulo</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Titulo"
+                  placeholder="Titulo de la plantilla"
                   {...register("title")}
                 />
               </FormControl>
@@ -173,10 +173,10 @@ const DocumentTemplateEditor = ({
             </FormItem>
 
             <FormItem className="mt-2">
-              <FormLabel>Descripción</FormLabel>
+              <FormLabel>Descripción (opcional)</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Descripción"
+                  placeholder="Descripción acerca de la plantilla"
                   {...register("description")}
                 />
               </FormControl>
