@@ -4,7 +4,7 @@ import LoadingOverlay from "@/components/ui/loadingOverlay";
 import DocumentTemplateEditor from "../_components/DocumentTemplateEditor";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DocumentToSend } from "../create/page";
 import { DocumentVariable } from "@prisma/client";
 
@@ -69,7 +69,7 @@ const EditDocumentTemplatePage = ({
       if (res.ok) {
         const data = await res.json();
         toast.success("Plantilla editada con éxito");
-        console.log("Data received:", data);
+        // console.log("Data received:", data);
         router.push("/admin/documentTemplates");
       } else {
         toast.error("Error al editar la plantilla");

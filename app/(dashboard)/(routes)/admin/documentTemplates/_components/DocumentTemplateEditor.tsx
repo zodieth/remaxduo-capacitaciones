@@ -15,7 +15,6 @@ import { DocumentVariable } from "@prisma/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
 import { DocumentToSend } from "../create/page";
 import Link from "next/link";
@@ -25,11 +24,6 @@ const api = {
     const response = await fetch("/api/documentVariable");
     return response.json();
   },
-};
-
-type FormValues = {
-  title: string;
-  description: string;
 };
 
 const formSchema = z.object({
@@ -48,8 +42,6 @@ const DocumentTemplateEditor = ({
   documentTemplateId?: string;
   documentTemplateState?: DocumentToSend;
 }) => {
-  console.log("documentTemplateState: ", documentTemplateState);
-  const router = useRouter();
   const [documentVariables, setDocumentVariables] = useState<
     DocumentVariable[]
   >([]);
