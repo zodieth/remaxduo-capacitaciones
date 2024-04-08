@@ -12,7 +12,6 @@ const PropertyDetails = ({
   params: { id: string };
 }) => {
   const id = params.id;
-  // Directamente invoca el selector con el estado actual.
   const propiedad = usePropertiesStore(state =>
     state.getPropiedadById(id as string)
   );
@@ -28,28 +27,45 @@ const PropertyDetails = ({
         </Button>
       </Link>
       {propiedad ? (
-        <div className=" m-4">
+        <div className="m-4">
           <h1 className="text-2xl font-bold mb-2">
             {propiedad.title}
           </h1>
           <p className="mb-8">
             Dirección: {propiedad.address.displayAddress}
           </p>
-          <p>Descripcion: </p>
-          <p className="mb-4">{propiedad.description}</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {images?.map((image, index) => (
-              <div key={index} className="max-w-sm mx-auto">
-                <Image
-                  src={image}
-                  alt={`Imagen ${index + 1}`}
-                  width={600}
-                  height={400}
-                  layout="responsive"
-                  className="rounded-lg shadow-lg"
-                />
+
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1" style={{ maxWidth: "35%" }}>
+              <div className="grid grid-cols-1 gap-2">
+                {images?.slice(0, 4).map((image, index) => (
+                  <div
+                    key={index}
+                    className="w-full h-32 relative"
+                  >
+                    <Image
+                      src={image}
+                      alt={`Imagen ${index + 1}`}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold mb-2">
+                Documentos
+              </h2>
+              <ul>
+                <li>Contrato de arrendamiento</li>
+                <li>Documento de propiedad</li>
+                <li>Últimos recibos de servicios</li>
+                <li>Documento de reglas de la comunidad</li>
+              </ul>
+            </div>
           </div>
         </div>
       ) : (

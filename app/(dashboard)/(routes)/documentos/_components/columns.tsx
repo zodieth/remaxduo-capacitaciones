@@ -54,18 +54,7 @@ export const columns: ColumnDef<PropertydApi>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const {
-        id,
-        propertyTypeV2,
-        address,
-        photos,
-        description,
-      } = row.original;
-      const addressToDisplay = address.displayAddress;
-      const photoUrl = photos[0]?.cdn;
-
-      // const href = `/documentos/${id}/property-details?propertyTypeV2=${encodeURIComponent(propertyTypeV2)}&description=${encodeURIComponent(description)}&photoUrl=${encodeURIComponent(photoUrl)}&addressToDisplay=${encodeURIComponent(addressToDisplay)}`;
-      // const href = `/documentos/${id}/property-details?propertyTypeV2=${encodeURIComponent(propertyTypeV2)}`;
+      const { id } = row.original;
       const href = `documentos/${id}`;
 
       return (
@@ -78,7 +67,7 @@ export const columns: ColumnDef<PropertydApi>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <Link href={href}>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
                 <Eye className="h-4 w-4 mr-2" />
                 Ver
               </DropdownMenuItem>
