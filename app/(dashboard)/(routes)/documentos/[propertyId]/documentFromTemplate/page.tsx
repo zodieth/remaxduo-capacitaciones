@@ -24,6 +24,9 @@ import {
 } from "@/types/next-auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import LoadingOverlay from "@/components/ui/loadingOverlay";
 
 type VariableForDocument = {
   variable: string;
@@ -73,17 +76,15 @@ const CreateDocumentFromTemplatePage = ({
 }: {
   params: { propertyId: string };
 }) => {
+  const router = useRouter();
   const propertyId = params.propertyId;
   const [documentTemplates, setDocumentTemplates] = useState<
     DocumentTemplate[]
   >([]);
-  console.log("documentTemplates", documentTemplates);
   const [selectedDocumentTemplate, setSelectedDocumentTemplate] =
     useState<DocumentTemplate>();
-  console.log(
-    "selectedDocumentTemplate",
-    selectedDocumentTemplate?.variables
-  );
+  const [isLoading, setIsLoading] = useState(false);
+
   const [variables, setVariables] = useState<
     VariableForDocument[]
   >([]);
@@ -156,8 +157,8 @@ const CreateDocumentFromTemplatePage = ({
     });
   };
 
-  const onSubmit = async (data: any) => {
-    console.log("SUBMIT");
+  const onSubmit = async () => {
+    setIsLoading(true);
 
     try {
       if (!selectedDocumentTemplate) {
@@ -170,24 +171,33 @@ const CreateDocumentFromTemplatePage = ({
         propertyId
       );
       if (response.ok) {
-        const { finalContent } = await response.json();
-        console.log("finalContent", finalContent);
+        setIsLoading(false);
+        toast.success("Documento creado correctamente");
+        await response.json();
+        router.push(`/documentos/${propertyId}`);
       } else {
+        toast.error("Error al crear el documento");
         throw new Error(`Error: ${response.status}`);
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Error al crear el documento:", error);
       toast.error("Error al crear el documento");
     }
   };
 
   return (
-    <div className="m-2">
-      <h1 className="font-bold text-2xl">
+    <div className="m-4">
+      <Link href={`/documentos/${propertyId}`}>
+        <Button size="sm">
+          <ArrowLeft />
+          Volver a propiedad
+        </Button>
+      </Link>
+      <h1 className="font-bold text-2xl m-4">
         Crear documento desde plantilla
       </h1>
 
-      <p>ID la propiedad: {propertyId}</p>
       <Form {...selectForm}>
         <form>
           <FormControl>
@@ -197,7 +207,7 @@ const CreateDocumentFromTemplatePage = ({
                 onChange: handleInputChange,
               })}
               value={selectedDocumentTemplate?.id}
-              className="input border w-fit py-2 px-1 rounded-md"
+              className="input border w-fit py-2 px-1 rounded-md m-3"
             >
               <option value="">Selecciona una plantilla</option>
               {documentTemplates.map(documentTemplate => (
@@ -236,7 +246,6 @@ const CreateDocumentFromTemplatePage = ({
                                 `{${variable.name}}`
                             )?.value
                           }
-                          // value={(editUser as User)?.email}
                           {...registerVariables(variable.name, {
                             onChange: e =>
                               onChangeVariable(
@@ -245,11 +254,6 @@ const CreateDocumentFromTemplatePage = ({
                               ),
                           })}
                         />
-                        {/* <input
-                        type="text"
-                        placeholder={variable.name}
-                        {...registerVariables(variable.name)}
-                      /> */}
                       </FormControl>
                     </FormItem>
                   )
@@ -270,19 +274,14 @@ const CreateDocumentFromTemplatePage = ({
                 updateDocumentContent={() => {
                   console.log("updateDocumentContent");
                 }}
+                hideControls={true}
+                disableEditing={true}
               />
             </div>
           </div>
         </div>
       )}
-      {/* <p>
-        {selectedDocumentTemplate && (
-          <div>
-            {selectedDocumentTemplate?.title}
-            {selectedDocumentTemplate?.content}
-          </div>
-        )}
-      </p> */}
+      {isLoading && <LoadingOverlay />}
     </div>
   );
 };

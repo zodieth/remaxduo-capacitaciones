@@ -70,63 +70,59 @@ const TextEditor = ({
   // ---------- END EDITOR SETUP ----------
 
   return (
-    <div>
-      {!content ? (
-        <LoadingSpinner />
-      ) : (
-        <div className="mt-10 w-[100%] border border-gray-300 rounded-lg p-3">
-          {!hideControls && (
-            <div className="flex justify-between items-center">
-              <div>
-                <Button
-                  onClick={() =>
-                    editor.chain().focus().toggleBold().run()
-                  }
-                  // className={`${editor.isActive("italic") ? "is-active" : ""} m-2`}
-                  className={`m-2 ${boldIsActive ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}
-                >
-                  Negrita
-                </Button>
-                <Button
-                  onClick={() =>
-                    editor.chain().focus().toggleItalic().run()
-                  }
-                  className={`m-2 ${italicIsActive ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}
-                >
-                  Cursiva
-                </Button>
-              </div>
-              <div className="flex justify-between items-center w-1/2">
-                {documentVariables.length > 0 && (
-                  <select
-                    value={selectedVariable}
-                    onChange={e =>
-                      setSelectedVariable(e.target.value)
-                    }
-                    className="border border-gray-300 rounded p-1 w-1/2"
-                  >
-                    {documentVariables.map(variable => (
-                      <option
-                        key={variable.name}
-                        value={variable.value}
-                      >
-                        {variable.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
-                <Button onClick={insertVariable} className="m-2">
-                  Insertar Variable
-                </Button>
-              </div>
+    <div className="w-[100%]">
+      <div className="mt-10 w-[100%] border border-gray-300 rounded-lg p-3">
+        {!hideControls && (
+          <div className="flex justify-between items-center">
+            <div>
+              <Button
+                onClick={() =>
+                  editor.chain().focus().toggleBold().run()
+                }
+                // className={`${editor.isActive("italic") ? "is-active" : ""} m-2`}
+                className={`m-2 ${boldIsActive ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}
+              >
+                Negrita
+              </Button>
+              <Button
+                onClick={() =>
+                  editor.chain().focus().toggleItalic().run()
+                }
+                className={`m-2 ${italicIsActive ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}
+              >
+                Cursiva
+              </Button>
             </div>
-          )}
-          <EditorContent
-            className="mt-10 border border-gray-300 rounded-lg"
-            editor={editor}
-          />
-        </div>
-      )}
+            <div className="flex justify-between items-center w-1/2">
+              {documentVariables.length > 0 && (
+                <select
+                  value={selectedVariable}
+                  onChange={e =>
+                    setSelectedVariable(e.target.value)
+                  }
+                  className="border border-gray-300 rounded p-1 w-1/2"
+                >
+                  {documentVariables.map(variable => (
+                    <option
+                      key={variable.name}
+                      value={variable.value}
+                    >
+                      {variable.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+              <Button onClick={insertVariable} className="m-2">
+                Insertar Variable
+              </Button>
+            </div>
+          </div>
+        )}
+        <EditorContent
+          className="mt-10 border border-gray-300 rounded-lg"
+          editor={editor}
+        />
+      </div>
     </div>
   );
 };

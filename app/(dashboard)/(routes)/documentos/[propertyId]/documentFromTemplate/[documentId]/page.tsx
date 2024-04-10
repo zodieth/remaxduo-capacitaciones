@@ -7,6 +7,7 @@ import LoadingSpinner from "@/components/ui/loadingSpinner";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import PdfGenerator from "../_components/pdf-generator";
 
 const api = {
   async getDocument(documentId: string) {
@@ -36,34 +37,38 @@ const DocumentFromTemplatePage = ({
   }, [documentId]);
 
   return (
-    <div className="m-2">
+    <div className="m-4">
       <Link href={`/documentos/${propertyId}`}>
         <Button size="sm">
           <ArrowLeft />
           Volver a propiedad
         </Button>
       </Link>
-      <h1 className="font-bold text-2xl m-3">
+      <h1 className="font-bold text-2xl m-5">
         Visualizar documento
       </h1>
 
-      <div className="flex flew-row m-4">
+      <div>
         <div>
           {isLoading ? (
             <LoadingSpinner />
           ) : (
             <div>
-              {documentFromTemplate && (
-                <TextEditor
-                  content={documentFromTemplate.content}
-                  documentVariables={[]}
-                  updateDocumentContent={() => {
-                    console.log("updateDocumentContent");
-                  }}
-                  hideControls={true}
-                  disableEditing={true}
+              <div className="flex justify-end mr-7">
+                <PdfGenerator
+                  content={documentFromTemplate?.content || ""}
+                  title={documentFromTemplate?.title}
                 />
-              )}
+              </div>
+              <TextEditor
+                content={documentFromTemplate?.content}
+                documentVariables={[]}
+                updateDocumentContent={() => {
+                  console.log("updateDocumentContent");
+                }}
+                hideControls={true}
+                disableEditing={true}
+              />
             </div>
           )}
         </div>
