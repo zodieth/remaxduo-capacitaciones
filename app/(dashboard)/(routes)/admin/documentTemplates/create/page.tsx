@@ -25,7 +25,7 @@ const api = {
         },
       }
     );
-    return response.json();
+    return response;
   },
 };
 
@@ -38,7 +38,7 @@ const CreateDocumentTemplatePage = () => {
         await api.createDocumentTemplate(documentToSend);
 
       if (res.ok) {
-        const data = await res.json();
+        await res.json();
         toast.success("Plantilla creada con éxito");
         router.push("/admin/documentTemplates");
       } else {
@@ -59,7 +59,7 @@ const CreateDocumentTemplatePage = () => {
   return (
     <>
       {isLoading && <LoadingOverlay />}
-      <DocumentTemplateEditor onCreate={onCreate} />;
+      <DocumentTemplateEditor onCreate={onCreate} />
     </>
   );
 };

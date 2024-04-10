@@ -11,7 +11,7 @@ import {
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import TextEditor from "@/components/TextEditor";
-import { DocumentVariable } from "@prisma/client";
+import { DocumentVariable } from "@/types/next-auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";

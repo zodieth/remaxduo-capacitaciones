@@ -363,3 +363,33 @@ export type Agent = {
 };
 
 // ----------------------------------------------
+
+export type DocumentVariable = {
+  id: string;
+  name: string;
+  value: string;
+  description?: string;
+  referenceTo?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type DocumentTemplate = {
+  id: string;
+  title: string;
+  description?: string;
+  content: string;
+  variables: DocumentVariable[];
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type DocumentFromTemplate = {
+  id: string;
+  title: string;
+  description?: string;
+  content: string;
+  propertyId: string;
+  createdAt: Date;
+  updatedAt: Date;
+};

@@ -29,7 +29,7 @@ const api = {
         },
       }
     );
-    return response.json();
+    return response;
   },
 };
 
@@ -67,7 +67,7 @@ const EditDocumentTemplatePage = ({
       );
 
       if (res.ok) {
-        const data = await res.json();
+        await res.json();
         toast.success("Plantilla editada con éxito");
         // console.log("Data received:", data);
         router.push("/admin/documentTemplates");

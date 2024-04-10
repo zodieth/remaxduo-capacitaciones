@@ -4,17 +4,22 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
-import { DocumentVariable } from "@prisma/client";
+// import { DocumentVariable } from "@prisma/client";
 import LoadingSpinner from "./ui/loadingSpinner";
+import { DocumentVariable } from "@/types/next-auth";
 
 const TextEditor = ({
   documentVariables,
   updateDocumentContent,
   content,
+  hideControls,
+  disableEditing,
 }: {
   documentVariables: DocumentVariable[];
   updateDocumentContent: (html: string) => void;
   content?: string;
+  hideControls?: boolean;
+  disableEditing?: boolean;
 }) => {
   // state used for adding variables to the editor
   const [selectedVariable, setSelectedVariable] = useState(
@@ -34,6 +39,7 @@ const TextEditor = ({
   const editor = useEditor({
     extensions: [StarterKit],
     content: documentContent,
+    editable: disableEditing ? false : true,
 
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
@@ -42,6 +48,12 @@ const TextEditor = ({
       updateDocumentContent(html);
     },
   });
+
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content || "");
+    }
+  }, [content, editor]);
 
   if (!editor) {
     return null;
@@ -59,52 +71,56 @@ const TextEditor = ({
 
   return (
     <div>
-      {documentVariables.length === 0 ? (
+      {!content ? (
         <LoadingSpinner />
       ) : (
         <div className="mt-10 w-[100%] border border-gray-300 rounded-lg p-3">
-          <div className="flex justify-between items-center">
-            <div>
-              <Button
-                onClick={() =>
-                  editor.chain().focus().toggleBold().run()
-                }
-                // className={`${editor.isActive("italic") ? "is-active" : ""} m-2`}
-                className={`m-2 ${boldIsActive ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}
-              >
-                Negrita
-              </Button>
-              <Button
-                onClick={() =>
-                  editor.chain().focus().toggleItalic().run()
-                }
-                className={`m-2 ${italicIsActive ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}
-              >
-                Cursiva
-              </Button>
-            </div>
-            <div className="flex justify-between items-center w-1/2">
-              <select
-                value={selectedVariable}
-                onChange={e =>
-                  setSelectedVariable(e.target.value)
-                }
-                className="border border-gray-300 rounded p-1 w-1/2"
-              >
-                {documentVariables.map(variable => (
-                  <option
-                    key={variable.name}
-                    value={variable.value}
+          {!hideControls && (
+            <div className="flex justify-between items-center">
+              <div>
+                <Button
+                  onClick={() =>
+                    editor.chain().focus().toggleBold().run()
+                  }
+                  // className={`${editor.isActive("italic") ? "is-active" : ""} m-2`}
+                  className={`m-2 ${boldIsActive ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}
+                >
+                  Negrita
+                </Button>
+                <Button
+                  onClick={() =>
+                    editor.chain().focus().toggleItalic().run()
+                  }
+                  className={`m-2 ${italicIsActive ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}
+                >
+                  Cursiva
+                </Button>
+              </div>
+              <div className="flex justify-between items-center w-1/2">
+                {documentVariables.length > 0 && (
+                  <select
+                    value={selectedVariable}
+                    onChange={e =>
+                      setSelectedVariable(e.target.value)
+                    }
+                    className="border border-gray-300 rounded p-1 w-1/2"
                   >
-                    {variable.name}
-                  </option>
-                ))}
-              </select>
-              <Button onClick={insertVariable} className="m-2">
-                Insertar Variable
-              </Button>
+                    {documentVariables.map(variable => (
+                      <option
+                        key={variable.name}
+                        value={variable.value}
+                      >
+                        {variable.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <Button onClick={insertVariable} className="m-2">
+                  Insertar Variable
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
           <EditorContent
             className="mt-10 border border-gray-300 rounded-lg"
             editor={editor}
