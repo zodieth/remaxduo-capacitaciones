@@ -1,6 +1,5 @@
-// stores/usePropertiesStore.js
-
-import create from "zustand";
+import { create } from "zustand";
+import { useEffect } from "react"; // Importa useEffect
 import { PropertydApi } from "@/types/next-auth";
 
 interface PropertiesState {
@@ -14,27 +13,32 @@ const usePropertiesStore = create<PropertiesState>(
     propiedades: [],
     setPropiedades: propiedades => {
       set({ propiedades });
-      // Guarda las propiedades en localStorage cada vez que se actualizan
-      localStorage.setItem(
-        "propiedades",
-        JSON.stringify(propiedades)
-      );
+      // Verifica si está en el cliente antes de acceder a localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "propiedades",
+          JSON.stringify(propiedades)
+        );
+      }
     },
     getPropiedadById: id =>
       get().propiedades.find(p => p.id === id),
   })
 );
 
-// Inicializa la tienda con propiedades guardadas en localStorage si existen
-const initializeStore = () => {
-  const savedPropiedades = localStorage.getItem("propiedades");
-  if (savedPropiedades) {
-    usePropertiesStore
-      .getState()
-      .setPropiedades(JSON.parse(savedPropiedades));
-  }
+// Función para inicializar la tienda con propiedades guardadas, ahora como un hook para usar en componentes
+export const useInitializeStore = () => {
+  useEffect(() => {
+    const savedPropiedades =
+      typeof window !== "undefined"
+        ? localStorage.getItem("propiedades")
+        : null;
+    if (savedPropiedades) {
+      usePropertiesStore
+        .getState()
+        .setPropiedades(JSON.parse(savedPropiedades));
+    }
+  }, []); // Se ejecuta solo una vez al montar el componente
 };
-
-initializeStore();
 
 export default usePropertiesStore;
