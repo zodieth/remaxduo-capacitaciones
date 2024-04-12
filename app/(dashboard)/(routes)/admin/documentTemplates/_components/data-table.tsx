@@ -31,13 +31,28 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
+const api = {
+  async getDocumentTemplates() {
+    const response = await fetch(
+      "/api/documents/documentTemplate"
+    );
+    return response.json();
+  },
+};
+
 export function DataTable<TData, TValue>({
   columns,
-  data,
+  // data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] =
     React.useState<ColumnFiltersState>([]);
+
+  const [data, setData] = React.useState<TData[]>([]);
+
+  React.useEffect(() => {
+    api.getDocumentTemplates().then(setData);
+  }, []);
 
   const table = useReactTable({
     data,
