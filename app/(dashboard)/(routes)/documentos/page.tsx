@@ -3,83 +3,115 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
-import { Propiedad } from "@/types/next-auth";
-import { PropertyCard } from "@/components/property-card";
+import { PropertydApi } from "@/types/next-auth";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { DataTable } from "./_components/data-table";
+import { columns } from "./_components/columns";
+import {
+  jwtHandler,
+  refreshTokenJWT,
+} from "@/components/jwtHandler";
+import usePropertiesStore from "@/stores/usePropertiesStore";
 
-const fetchPropiedades = {
-  fetchPropiedades: async (): Promise<ApiResponse> => {
-    const response = await fetch(
-      "https://api-ar.redremax.com/remaxweb-ar/api/listings/findAll?page=0&pageSize=200&sort=-createdAt&in:operationId=1,2,3&officeid=AR.42.170&officeName=RE/MAX%20Up&filterCount=0&viewMode=list"
+const PROPIEDADES_API_URL =
+  process.env.NEXT_PUBLIC_REMAX_API_PROPIEDADES_URL;
+
+const fetchPropiedades = async (
+  agentId: string
+): Promise<ApiResponse | undefined> => {
+  let token = localStorage.getItem("remax-token") || "";
+  const { valid, expired } = await jwtHandler(token);
+
+  if (expired || !valid) {
+    const tokenToast = toast.loading(
+      "Token expirado. Refrescando..."
     );
-    if (!response.ok) {
-      toast.error("Error al cargar las propiedades");
-      throw new Error("Error al cargar las propiedades");
+    const newToken = await refreshTokenJWT();
+
+    newToken && (token = newToken) && toast.dismiss(tokenToast);
+  }
+
+  if (agentId) {
+    try {
+      const response = await fetch(
+        `${PROPIEDADES_API_URL}&agent=${agentId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        toast.error("Error al cargar las propiedades");
+        throw new Error("Error al cargar las propiedades");
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error("Error al obtener propiedades:", error);
     }
-    return response.json();
-  },
+  }
 };
 
 interface ApiResponse {
-  data: {
-    data: Propiedad[];
-  };
+  data: PropertydApi[];
 }
 
 const Propiedades = () => {
   const { data: session } = useSession();
+  const agentId = session?.user?.agentId || "";
+  const user = session?.user;
   const [loading, setLoading] = useState(true);
-  const [propiedades, setPropiedades] = useState<Propiedad[]>(
+  const [propiedades, setPropiedades] = useState<PropertydApi[]>(
     []
+  );
+
+  const setPropiedadesToStore = usePropertiesStore(
+    state => state.setPropiedades
   );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const propiedadesData =
-          await fetchPropiedades.fetchPropiedades();
+        const propiedadesData = await fetchPropiedades(agentId);
 
-        const propiedadesFiltradas =
-          propiedadesData.data.data.filter(
-            propiedad =>
-              propiedad.associate.emails[0].value ===
-              session?.user?.email
-          );
+        if (propiedadesData) {
+          console.log("propiedadesData", propiedadesData.data);
+          setPropiedades(propiedadesData.data);
+          setPropiedadesToStore(propiedadesData.data);
+          setLoading(false);
+        }
 
-        setPropiedades(propiedadesFiltradas);
-        setLoading(false);
+        // if (!propiedadesData) {
+        //   toast.error("No se encontraron propiedades");
+        //   return;
+        // }
       } catch (error) {
         console.error("Error al obtener propiedades:", error);
       }
     };
 
     fetchData();
-  }, [session?.user?.email]);
+  }, [user?.email, agentId]);
 
   return (
     <div className="m-5 flex flex-col">
       <div className="mb-2 mx-6">
-        {session?.user?.name ? (
+        {user?.name ? (
           <h1 className="font-bold text-2xl">
-            Propiedades de {session?.user?.name}
+            Propiedades de {user?.name}
           </h1>
         ) : (
           ""
         )}
       </div>
-      <div className="p-6 w-full grid md:grid-cols-3 gap-4 lg:grid-cols-4">
+      <div className="p-6 w-full">
         {loading ? (
           <LoadingSpinner />
         ) : propiedades.length ? (
-          propiedades.map(propiedad => (
-            <PropertyCard
-              key={propiedad.id}
-              id={propiedad.id}
-              title={propiedad.title}
-              slug={propiedad.slug}
-              photo={propiedad.photos[0].value}
-            />
-          ))
+          <DataTable data={propiedades} columns={columns} />
         ) : !propiedades.length ? (
           <h1 className=" text-1xl">
             No se encontraron propiedades

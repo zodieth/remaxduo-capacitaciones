@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { ToastProvider } from "@/components/providers/toaster-provider";
 import { ConfettiProvider } from "@/components/providers/confetti-provider";
 import Provider from "@/provider/Provider";
+import usePropertiesStore from "@/stores/usePropertiesStore";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +18,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // usePropertiesStore();
+
   return (
     <html lang="en">
       <Provider>
