@@ -5,11 +5,6 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSessionFunc } from "@/app/api/auth/_components/getSessionFunction";
 
-const { Video } = new Mux(
-  process.env.MUX_TOKEN_ID!,
-  process.env.MUX_TOKEN_SECRET!
-);
-
 export async function DELETE(
   req: Request,
   { params }: { params: { courseId: string; chapterId: string } }
@@ -53,15 +48,6 @@ export async function DELETE(
           chapterId: params.chapterId,
         },
       });
-
-      if (existingMuxData) {
-        await Video.Assets.del(existingMuxData.assetId);
-        await db.muxData.delete({
-          where: {
-            id: existingMuxData.id,
-          },
-        });
-      }
     }
 
     const deletedChapter = await db.chapter.delete({
