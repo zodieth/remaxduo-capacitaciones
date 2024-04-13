@@ -5,21 +5,25 @@ import {
   View,
   Document,
   StyleSheet,
-  PDFDownloadLink, // Importa PDFDownloadLink
+  PDFDownloadLink,
+  Image,
 } from "@react-pdf/renderer";
 import { convert } from "html-to-text";
 import { Button } from "@/components/ui/button";
 
 const styles = StyleSheet.create({
-  page: {
-    flexDirection: "row",
-    backgroundColor: "#E4E4E4",
-  },
   section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1,
-    fontSize: 12,
+    flexDirection: "column",
+    backgroundColor: "#FFFFFF",
+  },
+  text: {
+    fontSize: 11,
+    paddingTop: 35,
+    paddingBottom: 65,
+    paddingHorizontal: 35,
+  },
+  image: {
+    width: 529,
   },
 });
 
@@ -43,21 +47,22 @@ const PdfGenerator = ({
       <PDFDownloadLink
         document={
           <Document>
-            <Page size="A4" style={styles.page}>
-              <View style={styles.section}>
-                <Text>{text}</Text>
+            <Page size="A4" style={styles.section}>
+              <Image
+                fixed
+                src="https://res.cloudinary.com/dea89zeui/image/upload/v1712927677/1_gtn9pp.jpg"
+              />
+              <View>
+                <Text style={styles.text}>{text}</Text>
               </View>
+              <Image
+                fixed
+                src="https://res.cloudinary.com/dea89zeui/image/upload/v1712927677/2_f8vmhi.jpg"
+              />
             </Page>
           </Document>
         }
         fileName={`${title}.pdf` || "documento.pdf"} // Nombre del archivo PDF descargable
-        // style={{
-        //   textDecoration: "none",
-        //   padding: "10px",
-        //   color: "#4a4a4a",
-        //   border: "1px solid #4a4a4a",
-        //   borderRadius: "5px",
-        // }} // Estilos opcionales para el enlace
       >
         {({ blob, url, loading, error }) =>
           loading ? "Cargando documento..." : "Descargar PDF"
