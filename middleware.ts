@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
-  const isPublicPath = path === "/login";
+  const isPublicPath = path === "/dashboard";
 
   const token =
     req.cookies.get("next-auth.session-token")?.value ||
@@ -14,10 +14,12 @@ export function middleware(req: NextRequest) {
   if (token === "") console.log("token: empty? ", token);
 
   if (isPublicPath && token) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
+    return NextResponse.redirect(
+      new URL("/dashboard", req.nextUrl)
+    );
   }
 
-  if (!isPublicPath && !token) {
+  if (isPublicPath && !token) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 }

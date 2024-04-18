@@ -19,7 +19,7 @@ const AdminLayout = ({
       !isAdmin(session?.user?.role)
     ) {
       console.log("No es admin");
-      router.push("/");
+      router.push("/dashboard");
     }
   }, [status, session?.user?.role, router]);
 

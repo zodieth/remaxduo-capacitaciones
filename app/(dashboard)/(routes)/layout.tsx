@@ -1,11 +1,20 @@
-import { Navbar } from "./_components/navbar";
-import { Sidebar } from "./_components/sidebar";
+import { getServerSession } from "next-auth";
+import { Navbar } from "../_components/navbar";
+import { Sidebar } from "../_components/sidebar";
+import { authOptions } from "../../api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
-const DashboardLayout = ({
+const DashboardLayout = async ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
+  if (!userId) {
+    return redirect("/login");
+  }
+
   return (
     <div className="h-full">
       <div className="h-[80px] md:pl-56 fixed inset-y-0 w-full z-50">

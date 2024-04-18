@@ -5,11 +5,11 @@ import { SearchInput } from "@/components/search-input";
 import { getCourses } from "@/actions/get-courses";
 import { CoursesList } from "@/components/courses-list";
 
-import { Categories } from "./_components/categories";
+import { Categories } from "../_components/categories";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getDashboardCourses } from "@/actions/get-dashboard-courses";
-import { InfoCard } from "../(root)/_components/info-card";
+import { InfoCard } from "../_components/info-card";
 import { CheckCircle, Clock } from "lucide-react";
 
 interface SearchPageProps {
@@ -23,7 +23,7 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   if (!userId) {
-    return redirect("/");
+    return redirect("/login");
   }
 
   const { completedCourses, coursesInProgress } =

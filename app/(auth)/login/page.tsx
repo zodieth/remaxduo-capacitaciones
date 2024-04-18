@@ -69,7 +69,8 @@ const LoginPage = () => {
     const res = await signIn("credentials", {
       email: data.email.trim(),
       password: data.password,
-      redirect: false,
+      redirect: true,
+      callbackUrl: `${window.location.origin}/dashboard`,
     });
 
     res && res.ok && (await refreshTokenJWT());

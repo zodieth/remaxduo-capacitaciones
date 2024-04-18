@@ -16,7 +16,7 @@ const guestRoutes = [
   {
     icon: Tv2,
     label: "Capacitaciones",
-    href: "/",
+    href: "/dashboard",
   },
   {
     icon: FileStack,
