@@ -2,12 +2,26 @@ import React from "react";
 
 function Hero() {
   return (
-    <div className="flex items-center justify-center h-screen mb-12 bg-fixed bg-center bg-cover text-black">
-      <video />
-      <div className="absolute top-0 left-0 rigt-0 bottom-0 bg-black/70 z-[2]" />
-      <div className="p-5 text-black z-[2]  mt-[-10rem]">
-        <h2 className="text-5xl font-bold">Heading</h2>
-        <p className="py-5 text-xl">aa</p>
+    <div className="relative">
+      <video
+        className="absolute w-full mb-12 bg-fixed bg-center bg-cover"
+        loop
+        autoPlay
+        muted
+        src={"./video-propiedades.mp4"}
+      />
+
+      <div className="absolute p-5 text-white z-[2] mt-[10rem] text-left max-w-[700px] mx-10">
+        <div className="">
+          <h2 className="text-7xl font-bold">
+            LÍDER MUNDIAL EN SERVICIOS INMOBILIARIOS
+          </h2>
+          <p className="py-5 text-xl">
+            En RE/MAX Up vas a tener la oportunidad de
+            vender/comprar o alquilar tu propiedad, asistido por
+            los número uno del país y de la región.
+          </p>
+        </div>
       </div>
     </div>
   );
