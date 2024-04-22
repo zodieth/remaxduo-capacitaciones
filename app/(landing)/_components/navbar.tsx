@@ -10,8 +10,8 @@ function NavBar() {
   };
 
   return (
-    <div className="fixed left-0 w-full z-10 duration-300">
-      <div className="max-w-[1240px] m-auto flex justify-between items-center p-4 text-black">
+    <div className="fixed left-0 w-full z-10 duration-300 text-white">
+      <div className="max-w-[1240px] m-auto flex justify-between items-center p-4 ">
         <Link href="/">
           <Image
             alt="logo"
@@ -49,7 +49,7 @@ function NavBar() {
               : "sm:hidden absolute top-0 left-[-100%] right-0 bottom-0 flex justify-center items-center w-full h-screen bg-black text-white text-center ease-in duration-300"
           }
         >
-          <ul>
+          <ul className="">
             <li className="p-4 text-4xl hover:text-gray-500">
               <Link href="/">Inicio</Link>
             </li>
