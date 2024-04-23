@@ -26,7 +26,7 @@ export function PropertyCarousel() {
     ApiResponde | undefined
   > => {
     const data = await fetch(
-      "https://api-ar.redremax.com/remaxweb-ar/api/listings/findAll?page=0&pageSize=200&sort=-createdAt&in:operationId=1,2,3&officeid=AR.42.170&officeName=RE/MAX%20Up&filterCount=0&viewMode=list",
+      "https://api-ar.redremax.com/remaxweb-ar/api/listings/findAll?page=0&pageSize=10&sort=-createdAt&in:operationId=1,2,3&officeid=AR.42.170&officeName=RE/MAX%20Up&filterCount=0&viewMode=list",
       {
         headers: {
           "Content-Type": "application/json",
@@ -35,6 +35,9 @@ export function PropertyCarousel() {
     );
 
     const json = await data.json();
+
+    console.log(json);
+
     setProperties(json.data.data);
 
     return json.data.data;
