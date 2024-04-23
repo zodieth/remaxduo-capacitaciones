@@ -5,7 +5,7 @@ import NavBar from "./navbar";
 
 function Header() {
   return (
-    <header className="fixed left-0 right-0  top-0 z-[100] flex w-full flex-col items-center transition-colors  duration-[350ms] ease-in-out will-change-transform bg-[#222222] false false  false border-b !border-midnight/5">
+    <header className="absolute left-0 right-0  top-0 z-[100] flex w-full flex-col items-center transition-colors  duration-[350ms] ease-in-out will-change-transform bg-[#222222] false false  false border-b !border-midnight/5">
       <div className="flex h-[45px] w-full items-center justify-center bg-lemon text-center text-[0.7rem] font-medium leading-[1.14] tracking-[-0.01em] text-midnight sm:text-[0.875rem] text-white">
         <a
           className="group flex items-center gap-[10px]"

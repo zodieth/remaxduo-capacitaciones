@@ -161,7 +161,14 @@ type ClientData = {
 };
 
 export type PropertydApi = {
+  dimensionTotalBuilt: number;
+  dimensionCovered: number;
+  slug: string;
+  currency: {
+    value: string;
+  };
   id: string;
+  price: string;
   expiresOn: string;
   propertyTypeV2: string;
   featureV2: Array<any>;

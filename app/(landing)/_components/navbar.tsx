@@ -37,16 +37,16 @@ function NavBar() {
           className="block sm:hidden z-10 cursor-pointer"
         >
           {nav ? (
-            <XIcon className="text-white" size={20} />
+            <XIcon className="text-white" size={30} />
           ) : (
-            <Menu size={20} />
+            <Menu size={30} />
           )}
         </div>
         <div
           className={
             nav
-              ? "sm:hidden absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center w-full h-screen bg-black text-white text-center ease-in duration-300"
-              : "sm:hidden absolute top-0 left-[-100%] right-0 bottom-0 flex justify-center items-center w-full h-screen bg-black text-white text-center ease-in duration-300"
+              ? "sm:hidden absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center w-full h-screen bg-[#222222] text-white text-center ease-in duration-300"
+              : "sm:hidden absolute top-0 left-[-100%] right-0 bottom-0 flex justify-center items-center w-full h-screen bg-[#222222] text-white text-center ease-in duration-300"
           }
         >
           <ul className="">

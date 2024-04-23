@@ -2,15 +2,15 @@ import React from "react";
 
 function Hero() {
   return (
-    <section className="relative ">
+    <section className="relative h-4/6 md:h-5/6">
       <video
-        className="fixed w-full h-4/6 object-cover md:h-5/6"
+        className="absolute inset-0 w-full h-full object-cover"
         loop
         autoPlay
         muted
         src={"./property-video.mp4"}
       />
-      <div className="absolute inset-0 bg-black/25"></div>
+      <div className="absolute inset-0 bg-black/25 h-full"></div>
 
       <div className="relative mx-auto max-w-screen-xl px-6 flex items-center py-[13rem] md:px-8 lg:px-12">
         <div className="max-w-xl text-left ltr:sm:text-left md:max-w-2xl">
