@@ -30,9 +30,12 @@ function NavBar() {
             </Link>
           </li>
           <li className="p-4">
-            <Link href="/https://www.remax.com.ar/up">
+            <Link href="https://www.remax.com.ar/up">
               Nosotros
             </Link>
+          </li>
+          <li className="p-4">
+            <Link href="/dashboard">Exclusivo agentes</Link>
           </li>
         </ul>
 
@@ -58,10 +61,17 @@ function NavBar() {
               <Link href="/">Inicio</Link>
             </li>
             <li className="p-4 text-4xl hover:text-gray-500">
-              <Link href="/">Oficina</Link>
+              <Link href="https://www.google.com/maps/place/Remax+Up/@-34.5069239,-58.5315408,17z/data=!3m1!4b1!4m6!3m5!1s0x95bcb1c7a39a11a3:0x87aa6ff0aa949b2a!8m2!3d-34.5069239!4d-58.5289605!16s%2Fg%2F11rq3gmdqr?entry=ttu">
+                Oficina
+              </Link>
             </li>
             <li className="p-4 text-4xl hover:text-gray-500">
-              <Link href="/">Nosotros</Link>
+              <Link href="https://www.remax.com.ar/up">
+                Nosotros
+              </Link>
+            </li>
+            <li className="p-4 text-4xl hover:text-gray-500">
+              <Link href="/dashboard">Exclusivo agentes</Link>
             </li>
           </ul>
         </div>
