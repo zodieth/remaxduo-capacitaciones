@@ -20,6 +20,8 @@ import { Input } from "@/components/ui/input";
 // import { DeleteConfirmationDialog } from "./deleteConfirmationDialog";
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const api = {
   fetchCategories: async (): Promise<Category[]> => {
@@ -90,6 +92,8 @@ type Category = {
   name: string;
 };
 
+interface ApiCategories extends Array<Category> {}
+
 const CategoriesABM = () => {
   const [editingIndex, setEditingIndex] = useState<
     number | null
@@ -98,7 +102,7 @@ const CategoriesABM = () => {
   const [categoryToDelete, setCategoryToDelete] = useState<
     number | null
   >(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -116,18 +120,10 @@ const CategoriesABM = () => {
     },
   });
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const fetchedCategories = await api.fetchCategories();
-        setCategories(fetchedCategories);
-      } catch (error) {
-        console.error(error);
-        // Manejo del error en api.fetchCategories...
-      }
-    };
-    fetchCategories();
-  }, []);
+  const { data, isLoading, isSuccess } = useQuery({
+    queryKey: ["categories"],
+    queryFn: api.fetchCategories,
+  });
 
   const onSubmit: SubmitHandler<FormValues> = async data => {
     if (editingIndex === null) {
@@ -173,7 +169,7 @@ const CategoriesABM = () => {
 
   const onDelete = async () => {
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
 
       if (categoryToDelete !== null) {
         await handleDelete(categoryToDelete);
@@ -183,7 +179,7 @@ const CategoriesABM = () => {
     } catch {
       toast.error("Algo no funcionó correctamente");
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
@@ -216,11 +212,13 @@ const CategoriesABM = () => {
           )}
         </form>
       </Form>
-      {categories.length === 0 ? (
-        <LoadingSpinner />
-      ) : (
+      {isLoading ? (
+        Array.from({ length: 6 }).map((_, index) => (
+          <Skeleton className="h-[3rem] w-[20rem]" />
+        ))
+      ) : isSuccess ? (
         <ul className="mt-4">
-          {categories.map((category, index) => (
+          {data?.map((category: Category, index: number) => (
             <li
               key={category.id}
               className={`flex justify-between items-center p-1 rounded mt-1 ${
@@ -229,10 +227,7 @@ const CategoriesABM = () => {
                   : "bg-gray-100"
               }`}
             >
-              <div className="mx-2 text-sm">
-                {" "}
-                {category.name}
-              </div>
+              <div className="mx-2 text-sm">{category.name}</div>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -254,6 +249,10 @@ const CategoriesABM = () => {
             </li>
           ))}
         </ul>
+      ) : data?.length === 0 ? (
+        <p>No se encontraron categorías</p>
+      ) : (
+        ""
       )}
     </div>
   );

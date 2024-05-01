@@ -45,7 +45,7 @@ export const NavbarRoutes = () => {
       </div>
       {/* button de logout */}
       <div className="ml-5">
-        <Link href="/">
+        <Link href="/login">
           <Button
             size="sm"
             variant="ghost"

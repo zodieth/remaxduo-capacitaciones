@@ -14,7 +14,9 @@ export function middleware(req: NextRequest) {
   if (token === "") console.log("token: empty? ", token);
 
   if (isPublicPath && token) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
+    return NextResponse.redirect(
+      new URL("/dashboard", req.nextUrl)
+    );
   }
 
   if (!isPublicPath && !token) {
@@ -23,10 +25,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/admin/:path*",
-    "/documentos/:path*",
-    "/",
-    "/login",
-  ],
+  matcher: ["/admin/:path*", "/documentos/:path*", "/login"],
 };

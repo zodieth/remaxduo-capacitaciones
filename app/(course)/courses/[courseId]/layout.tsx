@@ -19,7 +19,7 @@ const CourseLayout = async ({
   const userId = session?.user?.id;
 
   if (!userId) {
-    return redirect("/");
+    return redirect("/login");
   }
 
   const course = await db.course.findUnique({
