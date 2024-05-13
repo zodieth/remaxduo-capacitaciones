@@ -16,9 +16,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { Property } from "@prisma/client";
+import { Document } from "@prisma/client";
 
-export const columns: ColumnDef<Property>[] = [
+export const authorizationColumns: ColumnDef<Document>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => {
@@ -29,23 +29,7 @@ export const columns: ColumnDef<Property>[] = [
             column.toggleSorting(column.getIsSorted() === "asc")
           }
         >
-          Propiedad
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "address",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === "asc")
-          }
-        >
-          Dirección
+          Nombre
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -54,8 +38,8 @@ export const columns: ColumnDef<Property>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const { mlsid } = row.original;
-      const href = `documentos/${mlsid}`;
+      const { id } = row.original;
+      const href = `documentos/autorizacion/${id}`;
 
       return (
         <DropdownMenu>

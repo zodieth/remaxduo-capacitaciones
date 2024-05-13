@@ -187,6 +187,7 @@ model DocumentTemplate {
   title       String
   description String? @db.Text
   content     String  @db.MediumText
+  category   DocumentCategory @default(OTROS)
 
   variables DocumentVariable[] @relation("DocumentToVariables")
 
@@ -195,12 +196,36 @@ model DocumentTemplate {
 }
 
 model Document {
-  id          String  @id @default(uuid())
+  id          String  @id @default(uuid()) @unique
   title       String
   description String? @db.Text
   content     String  @db.MediumText
+  category   DocumentCategory @default(OTROS)
+  createdBy   String @default("system")
 
-  propertyId String? @db.Text
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [mlsid])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+}
+
+enum DocumentCategory {
+  AUTORIZACIONES
+  CONTRATOS
+  INFORMES
+  OTROS
+}
+
+model Property {
+  mlsid   String @id @unique
+  title   String
+  address String
+  photos    String @db.MediumText // Almacena JSON serializado
+
+  documents Document[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

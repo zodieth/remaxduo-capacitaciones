@@ -8,8 +8,13 @@ import { getServerSessionFunc } from "../../auth/_components/getSessionFunction"
 export async function POST(req: Request) {
   try {
     const { userId, role } = await getServerSessionFunc();
-    const { title, description, content, variablesIds } =
-      await req.json();
+    const {
+      title,
+      description,
+      content,
+      category,
+      variablesIds,
+    } = await req.json();
 
     if (!userId || !isAdmin(role)) {
       return new NextResponse("Unauthorized", {
@@ -22,6 +27,7 @@ export async function POST(req: Request) {
         title,
         description,
         content,
+        category,
         variables: {
           connect: variablesIds.map((id: string) => {
             return { id };

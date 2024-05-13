@@ -400,3 +400,16 @@ export type DocumentFromTemplate = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type PropertyCreateDTO = {
+  mlsid: string;
+  title: string;
+  address: string;
+  photos: string[];
+};
+
+export type DocumentCategory =
+  | "AUTORIZACIONES"
+  | "CONTRATOS"
+  | "INFORMES"
+  | "OTROS";

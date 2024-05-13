@@ -6,16 +6,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import { DataTable } from "./_components/data-table";
 import { DocumentFromTemplate } from "@/types/next-auth";
 import { createColumns } from "./_components/columns";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 const api = {
   async getPropertyDocuments(propertyId: string) {
     const response = await fetch(
       `/api/documents/fromTemplate/${propertyId}`
     );
+    return response.json();
+  },
+  async getProperty(propertyId: string) {
+    const response = await fetch(`/api/property/${propertyId}`);
     return response.json();
   },
 };
@@ -27,24 +32,29 @@ const PropertyDetails = ({
 }) => {
   const router = useRouter();
   const propertyId = params.propertyId;
+  const [propiedad, setPropiedad] = useState<any>();
 
   const columns = useMemo(
     () => createColumns(propertyId),
     [propertyId]
   );
 
-  const propiedad = usePropertiesStore(state =>
-    state.getPropiedadById(propertyId as string)
-  );
+  // const propiedad = usePropertiesStore(state =>
+  //   state.getPropiedadById(propertyId as string)
+  // );
   const [documents, setDocuments] = useState<
     DocumentFromTemplate[]
   >([]);
 
-  const images = propiedad?.photos.map(photo => photo.cdn);
+  const images = propiedad?.photos;
 
   useEffect(() => {
     api.getPropertyDocuments(propertyId).then(documents => {
       setDocuments(documents);
+    });
+
+    api.getProperty(propertyId).then(propiedad => {
+      setPropiedad(propiedad);
     });
   }, [propertyId]);
 
@@ -74,20 +84,22 @@ const PropertyDetails = ({
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1" style={{ maxWidth: "35%" }}>
               <div className="grid grid-cols-1 gap-2">
-                {images?.slice(0, 4).map((image, index) => (
-                  <div
-                    key={index}
-                    className="w-full h-32 relative"
-                  >
-                    <Image
-                      src={image}
-                      alt={`Imagen ${index + 1}`}
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-lg"
-                    />
-                  </div>
-                ))}
+                {images
+                  ?.slice(0, 4)
+                  .map((image: string, index: number) => (
+                    <div
+                      key={index}
+                      className="w-full h-32 relative"
+                    >
+                      <Image
+                        src={image}
+                        alt={`Imagen ${index + 1}`}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-lg"
+                      />
+                    </div>
+                  ))}
               </div>
             </div>
 

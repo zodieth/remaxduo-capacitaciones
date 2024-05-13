@@ -11,9 +11,15 @@ import { isAdmin } from "@/lib/isAdminCheck";
 import { getServerSessionFunc } from "../../auth/_components/getSessionFunction";
 
 export async function POST(req: Request) {
+  const { userId, role } = await getServerSessionFunc();
+
+  if (!userId || !isAdmin(role)) {
+    return new NextResponse("Unauthorized", {
+      status: 401,
+    });
+  }
   const { template, variables, propertyId } = await req.json();
 
-  console.log("llegaron: ", template, variables);
   // variables is an array of objects with key value pairs variable: "{name}", value: "rodri"
   // content is html content
 
@@ -69,7 +75,9 @@ export async function POST(req: Request) {
       title: template.title,
       content: finalContent,
       description: template.description,
-      propertyId: propertyId || null,
+      category: template.category,
+      propertyId: propertyId,
+      createdBy: userId,
     },
   });
 

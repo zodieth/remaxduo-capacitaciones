@@ -5,11 +5,13 @@ import DocumentTemplateEditor from "../_components/DocumentTemplateEditor";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { DocumentCategory } from "@prisma/client";
 
 export type DocumentToSend = {
   title: string;
   description?: string;
   content: string;
+  category: DocumentCategory;
   variablesIds: string[];
 };
 

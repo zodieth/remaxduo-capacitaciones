@@ -45,8 +45,13 @@ export async function PUT(
 ) {
   try {
     const { userId, role } = await getServerSessionFunc();
-    const { title, description, content, variablesIds } =
-      await req.json();
+    const {
+      title,
+      description,
+      content,
+      category,
+      variablesIds,
+    } = await req.json();
 
     if (!userId || !isAdmin(role)) {
       return new NextResponse("Unauthorized", {
@@ -62,6 +67,7 @@ export async function PUT(
         title,
         description,
         content,
+        category,
         variables: {
           connect: variablesIds.map((id: string) => ({ id })),
         },
@@ -69,6 +75,37 @@ export async function PUT(
     });
 
     return NextResponse.json(documentTemplate);
+  } catch (error) {
+    console.log("[DOCUMENT TEMPLATE]", error);
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
+  }
+}
+
+// delete
+export async function DELETE(
+  req: Request,
+  { params }: { params: { documentTemplateId: string } }
+) {
+  try {
+    const { userId, role } = await getServerSessionFunc();
+
+    if (!userId || !isAdmin(role)) {
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
+    }
+
+    await db.documentTemplate.delete({
+      where: {
+        id: params.documentTemplateId as string,
+      },
+    });
+
+    return new NextResponse("Deleted", {
+      status: 200,
+    });
   } catch (error) {
     console.log("[DOCUMENT TEMPLATE]", error);
     return new NextResponse("Internal Error", {
