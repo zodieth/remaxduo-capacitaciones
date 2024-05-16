@@ -24,7 +24,7 @@ export async function GET(
           id: params.documentTemplateId as string,
         },
         include: {
-          variables: true, // Incluye las DocumentVariable asociadas
+          templateBlocks: true, // Incluye los bloques de plantilla asociados
         },
       });
 
@@ -38,27 +38,20 @@ export async function GET(
 }
 
 // update
-
 export async function PUT(
   req: Request,
   { params }: { params: { documentTemplateId: string } }
 ) {
   try {
     const { userId, role } = await getServerSessionFunc();
-    const {
-      title,
-      description,
-      content,
-      category,
-      variablesIds,
-    } = await req.json();
+    const { title, description, category, templateBlocks } =
+      await req.json();
 
     if (!userId || !isAdmin(role)) {
-      return new NextResponse("Unauthorized", {
-        status: 401,
-      });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    // Actualiza la información principal del template
     const documentTemplate = await db.documentTemplate.update({
       where: {
         id: params.documentTemplateId as string,
@@ -66,20 +59,71 @@ export async function PUT(
       data: {
         title,
         description,
-        content,
         category,
-        variables: {
-          connect: variablesIds.map((id: string) => ({ id })),
-        },
       },
     });
 
-    return NextResponse.json(documentTemplate);
+    // Obtener los bloques existentes para el template actual
+    const existingBlocks = await db.templateBlock.findMany({
+      where: { documentTemplateId: documentTemplate.id },
+    });
+
+    console.log("existingBlocks: ", existingBlocks);
+
+    // Crear un mapa de los bloques existentes por ID para un acceso más rápido
+    const existingBlockMap = new Map(
+      existingBlocks.map(block => [block.id, block])
+    );
+
+    console.log("existingBlockMap: ", existingBlockMap);
+
+    // Promesas de actualización y creación
+    const promises = templateBlocks.map(async (block: any) => {
+      const { id, content, variablesIds } = block;
+
+      console.log("block: ", block);
+      if (id && existingBlockMap.has(id)) {
+        console.log("Updating block: ", id);
+        // Actualizar bloque existente
+        return db.templateBlock.update({
+          where: { id },
+          data: {
+            content,
+            variables: {
+              set:
+                variablesIds.length > 0
+                  ? variablesIds.map((id: string) => ({ id }))
+                  : [],
+            },
+          },
+        });
+      } else {
+        console.log("Creating block: ", id);
+        // Crear nuevo bloque
+        return db.templateBlock.create({
+          data: {
+            content,
+            documentTemplateId: documentTemplate.id,
+            variables: {
+              connect:
+                variablesIds.length > 0
+                  ? variablesIds.map((id: string) => ({ id }))
+                  : [],
+            },
+          },
+        });
+      }
+    });
+
+    await Promise.all(promises);
+
+    return NextResponse.json({
+      documentTemplate,
+      templateBlocks,
+    });
   } catch (error) {
     console.log("[DOCUMENT TEMPLATE]", error);
-    return new NextResponse("Internal Error", {
-      status: 500,
-    });
+    return new NextResponse("Internal Error", { status: 500 });
   }
 }
 

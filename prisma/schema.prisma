@@ -176,32 +176,35 @@ model DocumentVariable {
   description String? @db.Text
   referenceTo String? @db.Text
 
-  templates DocumentTemplate[] @relation("DocumentToVariables")
+  templates      DocumentTemplate[] @relation("DocumentToVariables")
+  templateBlocks TemplateBlock[]    @relation("BlockToVariables")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model DocumentTemplate {
-  id          String  @id @default(uuid())
+  id          String           @id @default(uuid())
   title       String
-  description String? @db.Text
-  content     String  @db.MediumText
-  category   DocumentCategory @default(OTROS)
+  description String?          @db.Text
+  content     String?          @db.MediumText
+  category    DocumentCategory @default(OTROS)
 
   variables DocumentVariable[] @relation("DocumentToVariables")
+
+  templateBlocks TemplateBlock[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Document {
-  id          String  @id @default(uuid()) @unique
+  id          String           @id @unique @default(uuid())
   title       String
-  description String? @db.Text
-  content     String  @db.MediumText
-  category   DocumentCategory @default(OTROS)
-  createdBy   String @default("system")
+  description String?          @db.Text
+  content     String           @db.MediumText
+  category    DocumentCategory @default(OTROS)
+  createdBy   String           @default("system")
 
   propertyId String?
   property   Property? @relation(fields: [propertyId], references: [mlsid])
@@ -219,11 +222,26 @@ enum DocumentCategory {
   OTROS
 }
 
+model TemplateBlock {
+  id      String @id @default(uuid())
+  content String @db.MediumText
+
+  documentTemplateId String
+  documentTemplate   DocumentTemplate @relation(fields: [documentTemplateId], references: [id])
+
+  variables DocumentVariable[] @relation("BlockToVariables")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([documentTemplateId])
+}
+
 model Property {
   mlsid   String @id @unique
   title   String
   address String
-  photos    String @db.MediumText // Almacena JSON serializado
+  photos  String @db.MediumText // Almacena JSON serializado
 
   documents Document[]
 

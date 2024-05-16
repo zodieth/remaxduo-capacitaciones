@@ -55,20 +55,19 @@ const EditDocumentTemplatePage = ({
     api
       .getDocumentTemplate(params.documentTemplateId)
       .then(document => {
+        console.log("Document received:", document);
         let documentToSend: DocumentToSend = {
           title: document.title,
           description: document.description,
-          content: document.content,
+          templateBlocks: document.templateBlocks,
           category: document.category,
-          variablesIds: document.variables.map(
-            (variable: DocumentVariable) => variable.id
-          ),
         };
         setDocument(documentToSend);
       });
   }, [params.documentTemplateId]);
 
   const onEdit = async (documentToSend: DocumentToSend) => {
+    console.log("Document to send ON EDIT:", documentToSend);
     setIsLoading(true);
 
     console.log("Document to send:", documentToSend);

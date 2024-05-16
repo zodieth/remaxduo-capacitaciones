@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import DocumentTemplateEditor from "../_components/DocumentTemplateEditor";
+import DocumentTemplateEditor, {
+  TemplateBlockWithVariables,
+} from "../_components/DocumentTemplateEditor";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -10,9 +12,9 @@ import { DocumentCategory } from "@prisma/client";
 export type DocumentToSend = {
   title: string;
   description?: string;
-  content: string;
+  templateBlocks: TemplateBlockWithVariables[];
   category: DocumentCategory;
-  variablesIds: string[];
+  // variablesIds: string[];
 };
 
 const api = {
@@ -34,6 +36,7 @@ const api = {
 const CreateDocumentTemplatePage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
   const onCreate = async (documentToSend: DocumentToSend) => {
     try {
       const res =
