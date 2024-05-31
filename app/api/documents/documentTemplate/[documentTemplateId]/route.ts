@@ -24,7 +24,11 @@ export async function GET(
           id: params.documentTemplateId as string,
         },
         include: {
-          templateBlocks: true, // Incluye los bloques de plantilla asociados
+          templateBlocks: {
+            orderBy: {
+              index: "asc",
+            },
+          },
         },
       });
 
@@ -68,27 +72,24 @@ export async function PUT(
       where: { documentTemplateId: documentTemplate.id },
     });
 
-    console.log("existingBlocks: ", existingBlocks);
-
     // Crear un mapa de los bloques existentes por ID para un acceso más rápido
     const existingBlockMap = new Map(
       existingBlocks.map(block => [block.id, block])
     );
 
-    console.log("existingBlockMap: ", existingBlockMap);
-
     // Promesas de actualización y creación
     const promises = templateBlocks.map(async (block: any) => {
-      const { id, content, variablesIds } = block;
+      const { id, content, index, isDuplicable, variablesIds } =
+        block;
 
-      console.log("block: ", block);
       if (id && existingBlockMap.has(id)) {
-        console.log("Updating block: ", id);
         // Actualizar bloque existente
         return db.templateBlock.update({
           where: { id },
           data: {
             content,
+            index,
+            isDuplicable,
             variables: {
               set:
                 variablesIds.length > 0
@@ -103,6 +104,8 @@ export async function PUT(
         return db.templateBlock.create({
           data: {
             content,
+            index,
+            isDuplicable,
             documentTemplateId: documentTemplate.id,
             variables: {
               connect:

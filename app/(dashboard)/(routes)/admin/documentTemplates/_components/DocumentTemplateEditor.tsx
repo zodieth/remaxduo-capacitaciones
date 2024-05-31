@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import TextEditor from "@/components/TextEditor";
 import { DocumentVariable } from "@/types/next-auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,9 @@ import Link from "next/link";
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import { Trash } from "lucide-react";
 import { DocumentCategory, TemplateBlock } from "@prisma/client";
-import MultiTextEditor from "@/components/MultiTextEditor";
+import MultiTextEditor, {
+  Editor,
+} from "@/components/MultiTextEditor";
 
 type DocumentToManage = {
   title: string;
@@ -64,18 +65,22 @@ const DocumentTemplateEditor = ({
   >([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [document, setDocument] = useState<DocumentToManage>({
-    title: documentTemplateState?.title || "",
-    templateBlocks:
-      documentTemplateState?.templateBlocks?.map(block => ({
-        ...block,
-        variablesIds: [],
-      })) || [],
-    description: documentTemplateState?.description || "",
-    category: documentTemplateState?.category || "OTROS",
-  });
-
-  console.log("Document: ", document);
+  const [document, setDocument] = useState<DocumentToManage>(
+    () => {
+      const sortedBlocks = (
+        documentTemplateState?.templateBlocks || []
+      ).sort((a, b) => a.index - b.index);
+      return {
+        title: documentTemplateState?.title || "",
+        templateBlocks: sortedBlocks.map(block => ({
+          ...block,
+          variablesIds: [],
+        })),
+        description: documentTemplateState?.description || "",
+        category: documentTemplateState?.category || "OTROS",
+      };
+    }
+  );
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -120,17 +125,11 @@ const DocumentTemplateEditor = ({
     values: z.infer<typeof formSchema>
   ) => {
     setIsLoading(true);
-
-    console.log("values: ", document.templateBlocks);
     // Procesar los bloques para extraer las variables
     const updatedBlocks = document.templateBlocks.map(block => {
       const variablesExtractedFromBlock =
         block.content.match(/{([^}]+)}/g);
 
-      console.log(
-        "variablesExtractedFromBlock: ",
-        variablesExtractedFromBlock
-      );
       const variablesUsedIds = documentVariables
         .filter(variable =>
           variablesExtractedFromBlock?.includes(
@@ -138,13 +137,6 @@ const DocumentTemplateEditor = ({
           )
         )
         .map(variable => variable.id);
-
-      console.log("variablesUsedIds: ", variablesUsedIds);
-
-      console.log("block: ", {
-        ...block,
-        variablesIds: variablesUsedIds,
-      });
 
       return {
         ...block,
@@ -168,39 +160,18 @@ const DocumentTemplateEditor = ({
     setIsLoading(false);
   };
 
-  // const updateDocumentContent = (
-  //   editors: { id: number; content: string }[]
-  // ) => {
-  //   console.log("editors: ", editors);
-  //   setDocument(prev => {
-  //     const updatedDocument = {
-  //       ...prev,
-  //       templateBlocks: prev.templateBlocks.map(
-  //         (block, index) => ({
-  //           ...block,
-  //           content: editors[index]?.content || block.content,
-  //         })
-  //       ),
-  //     };
-  //     console.log("Updated Document: ", updatedDocument);
-  //     return updatedDocument;
-  //   });
-  // };
-
-  const updateDocumentContent = (
-    editors: { id: string; content: string }[]
-  ) => {
-    // in each update, i want to replace mi actual blocks with the new ones editors
+  const updateDocumentContent = (editors: Editor[]) => {
     setDocument((prev: any) => {
       const updatedDocument = {
         ...prev,
         templateBlocks: editors.map(editor => ({
           id: editor.id,
+          index: editor.index,
           content: editor.content,
+          isDuplicable: editor.isDuplicable,
           // variablesIds: [],
         })),
       };
-      console.log("Updated Document: ", updatedDocument);
       return updatedDocument;
     });
   };
@@ -311,14 +282,12 @@ const DocumentTemplateEditor = ({
 
         <MultiTextEditor
           updateDocumentContent={updateDocumentContent}
-          initialContent={
-            document.templateBlocks.map((block, index) => ({
-              id: block.id,
-              content: block.content,
-            })) || [
-              { id: "1", content: "<p>Editor inicial</p>" },
-            ]
-          }
+          initialContent={document.templateBlocks.map(block => ({
+            id: block.id,
+            index: block.index,
+            isDuplicable: block.isDuplicable,
+            content: block.content,
+          }))}
           documentVariables={documentVariables}
         />
       </div>

@@ -55,7 +55,6 @@ const EditDocumentTemplatePage = ({
     api
       .getDocumentTemplate(params.documentTemplateId)
       .then(document => {
-        console.log("Document received:", document);
         let documentToSend: DocumentToSend = {
           title: document.title,
           description: document.description,
@@ -67,10 +66,7 @@ const EditDocumentTemplatePage = ({
   }, [params.documentTemplateId]);
 
   const onEdit = async (documentToSend: DocumentToSend) => {
-    console.log("Document to send ON EDIT:", documentToSend);
     setIsLoading(true);
-
-    console.log("Document to send:", documentToSend);
     try {
       const res = await api.editDocumentTemplate(
         params.documentTemplateId,
