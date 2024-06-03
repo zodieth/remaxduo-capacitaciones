@@ -20,7 +20,11 @@ export async function GET(req: Request) {
           category: "AUTORIZACIONES",
         },
         include: {
-          variables: true, // Incluye las DocumentVariable asociadas
+          templateBlocks: {
+            include: {
+              variables: true, // Incluye las variables de documento asociadas a cada bloque de plantilla
+            },
+          },
         },
       });
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { CreateDocumentFromTemplate } from "@/components/createDocumentFromTemplateNEW";
+import { CreateDocumentFromTemplate } from "@/components/createDocumentFromTemplate";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";

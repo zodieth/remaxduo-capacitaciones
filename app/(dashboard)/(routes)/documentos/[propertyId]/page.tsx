@@ -1,16 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import usePropertiesStore from "@/stores/usePropertiesStore";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Key, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DataTable } from "./_components/data-table";
 import { DocumentFromTemplate } from "@/types/next-auth";
 import { createColumns } from "./_components/columns";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
 
 const api = {
   async getPropertyDocuments(propertyId: string) {
@@ -108,17 +107,20 @@ const PropertyDetails = ({
                 Documentos
               </h2>
 
-              <Button onClick={handleClick}>
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Nuevo documento
-              </Button>
+              <div className="flex justify-end">
+                <Button onClick={handleClick}>
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Nuevo documento
+                </Button>
+              </div>
 
               <DataTable data={documents} columns={columns} />
             </div>
           </div>
         </div>
       ) : (
-        <p>Propiedad no encontrada.</p>
+        <LoadingSpinner size="large" />
+        // <p>Propiedad no encontrada.</p>
       )}
     </div>
   );

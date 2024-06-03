@@ -60,7 +60,11 @@ export async function GET(req: Request) {
     const documentTemplates = await db.documentTemplate.findMany(
       {
         include: {
-          templateBlocks: true, // Incluye los bloques de plantilla asociados
+          templateBlocks: {
+            include: {
+              variables: true, // Incluye las variables de documento asociadas a cada bloque de plantilla
+            },
+          },
         },
       }
     );
