@@ -7,10 +7,12 @@ import TextEditor from "@/components/TextEditor";
 import {
   DocumentTemplate,
   DocumentVariable,
+  Profile,
 } from "@/types/next-auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
+import { NewProfileModal } from "./modals/NewProfileModal";
 
 type Block = {
   id: number;
@@ -19,17 +21,14 @@ type Block = {
   profileId: string | null;
   isDuplicable: boolean;
   index: number;
+  isOriginal: boolean;
 };
 
 type VariableForDocument = {
+  id: string;
   name: string;
   variable: string;
   value: string;
-};
-
-type Profile = {
-  id: string;
-  name: string;
 };
 
 const api = {
@@ -48,8 +47,7 @@ const api = {
   async createDocumentFromTemplate(
     template: DocumentTemplate,
     blocks: Block[],
-    propertyId: string | undefined,
-    isAuthDocument: boolean
+    propertyId: string | undefined
   ) {
     const response = await fetch("/api/documents/fromTemplate", {
       method: "POST",
@@ -76,6 +74,29 @@ const api = {
     });
     return response.json();
   },
+  async createProfileDocumentVariable({
+    profileId,
+    documentVariableId,
+    value,
+  }: {
+    profileId: string;
+    documentVariableId: string;
+    value: string;
+  }) {
+    const response = await fetch(
+      "/api/profileDocumentVariable",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          profileId,
+          documentVariableId,
+          value,
+        }),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return response.json();
+  },
 };
 
 export const CreateDocumentFromTemplate = ({
@@ -94,7 +115,6 @@ export const CreateDocumentFromTemplate = ({
   const [editorBlocks, setEditorBlocks] = useState<Block[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [newProfileName, setNewProfileName] = useState("");
 
   useEffect(() => {
     const fetchTemplates = isAuthDocument
@@ -123,10 +143,12 @@ export const CreateDocumentFromTemplate = ({
           ...block,
           variables: block.variables.map(
             (variable: DocumentVariable) => ({
+              id: variable.id,
               variable: `{${variable.name}}`,
               value: "",
             })
           ),
+          isOriginal: true,
           profileId: null,
         })
       );
@@ -135,15 +157,17 @@ export const CreateDocumentFromTemplate = ({
     }
   };
 
-  const createProfile = async () => {
+  const createProfile = async (newProfileName: string) => {
     if (newProfileName.trim() === "") return;
     const profile = await api.createProfile({
       name: newProfileName,
       propertyId: propertyId || "",
     });
+    if (profile) toast.success("Perfil creado correctamente");
     setProfiles([...profiles, profile]);
-    setNewProfileName("");
   };
+
+  console.log("editorBlocks", editorBlocks);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -152,11 +176,33 @@ export const CreateDocumentFromTemplate = ({
       if (!selectedDocumentTemplate) {
         throw new Error("No se ha seleccionado una plantilla");
       }
+
+      const profileDocumentVariablesPromises = editorBlocks
+        .filter(block => block.profileId)
+        .map(block =>
+          block.variables.map(variable =>
+            api.createProfileDocumentVariable({
+              profileId: block.profileId || "",
+              documentVariableId: variable.id,
+              value: variable.value,
+            })
+          )
+        );
+
+      const profileDocumentVariablesResponse = await Promise.all(
+        profileDocumentVariablesPromises
+      );
+
+      console.log(
+        "profileDocumentVariablesResponse",
+        profileDocumentVariablesResponse
+      );
+
+      console.log("editorBlocks", editorBlocks);
       const response = await api.createDocumentFromTemplate(
         selectedDocumentTemplate,
         editorBlocks,
-        propertyId,
-        isAuthDocument
+        propertyId
       );
       if (response.ok) {
         toast.success("Documento creado correctamente");
@@ -215,11 +261,11 @@ export const CreateDocumentFromTemplate = ({
       if (blockIndex !== -1 && prev[blockIndex].isDuplicable) {
         const newBlock = {
           ...prev[blockIndex],
-          id: Date.now(), // Unique key using current timestamp
+          id: Date.now(),
           index: prev[blockIndex].index + 1,
+          isOriginal: false,
         };
 
-        // Adjust indices of blocks below the duplicated block
         const updatedBlocks = prev.map((block, index) => {
           if (index > blockIndex) {
             return { ...block, index: block.index + 1 };
@@ -251,9 +297,45 @@ export const CreateDocumentFromTemplate = ({
     blockId: number,
     profileId: string | null
   ) => {
-    const updatedBlocks = editorBlocks.map(block =>
-      block.id === blockId ? { ...block, profileId } : block
-    );
+    const updatedBlocks = editorBlocks.map(block => {
+      if (block.id === blockId) {
+        if (profileId === null) {
+          const resetVariables = block.variables.map(
+            variable => ({
+              ...variable,
+              value: "",
+            })
+          );
+          return {
+            ...block,
+            profileId,
+            variables: resetVariables,
+          };
+        } else {
+          const selectedProfile = profiles.find(
+            profile => profile.id === profileId
+          );
+          const updatedVariables = block.variables.map(
+            variable => {
+              const foundVariable =
+                selectedProfile?.variables.find(
+                  v => v.documentVariable.id === variable.id
+                );
+              return {
+                ...variable,
+                value: foundVariable ? foundVariable.value : "",
+              };
+            }
+          );
+          return {
+            ...block,
+            profileId,
+            variables: updatedVariables,
+          };
+        }
+      }
+      return block;
+    });
     setEditorBlocks(updatedBlocks);
   };
 
@@ -275,16 +357,14 @@ export const CreateDocumentFromTemplate = ({
           ))}
         </select>
         {selectedDocumentTemplate && (
-          <div className="flex items-center space-x-2 w-1/3">
-            <Input
-              type="text"
-              placeholder="Nombre del perfil"
-              value={newProfileName}
-              onChange={e => setNewProfileName(e.target.value)}
-              className="w-full"
-            />
-            <Button onClick={createProfile}>Crear Perfil</Button>
-          </div>
+          <NewProfileModal
+            trigger={
+              <Button variant="secondary">Añadir Perfil</Button>
+            }
+            onCreate={profileName => {
+              createProfile(profileName);
+            }}
+          />
         )}
       </div>
 
@@ -362,12 +442,14 @@ export const CreateDocumentFromTemplate = ({
                     Duplicar
                   </Button>
                 )}
-                <Button
-                  variant="secondary"
-                  onClick={() => removeBlock(block.id)}
-                >
-                  Eliminar
-                </Button>
+                {!block.isOriginal && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => removeBlock(block.id)}
+                  >
+                    Eliminar
+                  </Button>
+                )}
               </div>
             </div>
           ))}
