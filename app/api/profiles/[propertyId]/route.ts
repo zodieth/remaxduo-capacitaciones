@@ -21,6 +21,13 @@ export async function GET(
       where: {
         propertyId: params.propertyId as string,
       },
+      include: {
+        variables: {
+          include: {
+            documentVariable: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json(profiles);

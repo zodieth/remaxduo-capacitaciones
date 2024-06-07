@@ -34,7 +34,7 @@ export async function GET(
 
     return NextResponse.json(documentTemplate);
   } catch (error) {
-    console.log("[DOCUMENT TEMPLATE]", error);
+    console.log("[DOCUMENT TEMPLATE GET BY ID]", error);
     return new NextResponse("Internal Error", {
       status: 500,
     });
@@ -125,7 +125,7 @@ export async function PUT(
       templateBlocks,
     });
   } catch (error) {
-    console.log("[DOCUMENT TEMPLATE]", error);
+    console.log("[DOCUMENT TEMPLATE PUT]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
@@ -144,6 +144,14 @@ export async function DELETE(
       });
     }
 
+    // Primero, elimina todos los TemplateBlock asociados
+    await db.templateBlock.deleteMany({
+      where: {
+        documentTemplateId: params.documentTemplateId,
+      },
+    });
+
+    // Luego, elimina el DocumentTemplate
     await db.documentTemplate.delete({
       where: {
         id: params.documentTemplateId as string,
@@ -154,7 +162,7 @@ export async function DELETE(
       status: 200,
     });
   } catch (error) {
-    console.log("[DOCUMENT TEMPLATE]", error);
+    console.log("[DOCUMENT TEMPLATE DELETE]", error);
     return new NextResponse("Internal Error", {
       status: 500,
     });
