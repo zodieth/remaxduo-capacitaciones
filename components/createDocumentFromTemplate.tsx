@@ -422,7 +422,7 @@ export const CreateDocumentFromTemplate = ({
                   </div>
                 ))}
               </div>
-              <div className="w-3/4">
+              <div className="w-3/4 flex flex-col">
                 <TextEditor
                   content={block.content}
                   documentVariables={block.variables}
@@ -432,24 +432,24 @@ export const CreateDocumentFromTemplate = ({
                   hideControls={true}
                   disableEditing={true}
                 />
-              </div>
-              <div className="flex flex-col mt-2 ml-2">
-                {block.isDuplicable && (
-                  <Button
-                    onClick={() => duplicateBlock(block.id)}
-                    className="mb-5"
-                  >
-                    Duplicar
-                  </Button>
-                )}
-                {!block.isOriginal && (
-                  <Button
-                    variant="secondary"
-                    onClick={() => removeBlock(block.id)}
-                  >
-                    Eliminar
-                  </Button>
-                )}
+                <div className="flex flex-row gap-2 mt-2 ml-2">
+                  {block.isDuplicable && (
+                    <Button
+                      onClick={() => duplicateBlock(block.id)}
+                      className="mb-5"
+                    >
+                      Duplicar
+                    </Button>
+                  )}
+                  {!block.isOriginal && (
+                    <Button
+                      variant="secondary"
+                      onClick={() => removeBlock(block.id)}
+                    >
+                      Eliminar
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           ))}

@@ -80,7 +80,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Ingrese un nombre"),
   value: z.string().min(1),
   description: z.string().optional(),
-  referenceTo: z.string().optional(),
+  // referenceTo: z.string().optional(),
 });
 
 interface FormValues {
@@ -116,7 +116,7 @@ const DocumentVariablesABM = () => {
       name: "",
       value: "",
       description: "",
-      referenceTo: "",
+      // referenceTo: "",
     },
   });
 
@@ -173,7 +173,7 @@ const DocumentVariablesABM = () => {
         name: "",
         value: "",
         description: "",
-        referenceTo: "",
+        // referenceTo: "",
       });
     } catch (error) {
       console.error(error);
@@ -195,7 +195,7 @@ const DocumentVariablesABM = () => {
       name: "",
       value: "",
       description: "",
-      referenceTo: "",
+      // referenceTo: "",
     });
   };
 
