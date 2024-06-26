@@ -54,6 +54,9 @@ export function DataTableAuthorizations<TData, TValue>({
     },
   });
 
+  const generateUniqueId = () =>
+    "auth-" + Math.random().toString(36).substr(2, 9);
+
   return (
     <div>
       <div className="flex items-center py-4 justify-between">
@@ -72,7 +75,9 @@ export function DataTableAuthorizations<TData, TValue>({
           className="max-w-sm"
         />
 
-        <Link href="/documentos/crearAutorizacion">
+        <Link
+          href={`/documentos/crearAutorizacion/${generateUniqueId()}`}
+        >
           <Button size="sm">
             <PlusCircle className="h-4 w-4 mr-2" />
             Nueva Autorización

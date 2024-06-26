@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isAdmin } from "@/lib/isAdminCheck";
 import { getServerSessionFunc } from "../../../auth/_components/getSessionFunction";
+import { DocumentCategory } from "@prisma/client";
 
 // to get all document templates of category "AUTORIZACIONES"
 // when creating a new document, the user can choose a template from this list
@@ -17,7 +18,7 @@ export async function GET(req: Request) {
     const documentTemplatesAuthorizations =
       await db.documentTemplate.findMany({
         where: {
-          category: "AUTORIZACIONES",
+          category: DocumentCategory.AUTORIZACIONES,
         },
         include: {
           templateBlocks: {

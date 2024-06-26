@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import TextEditor from "./TextEditor";
 import { DocumentVariable } from "@/types/next-auth";
 import { Button } from "./ui/button";
-import { Combobox } from "./ui/combobox";
 
 export type Editor = {
   id: string;
   index: number;
   content: string;
   isDuplicable: boolean;
+  containsProfile: boolean;
+  canBeDeleted: boolean;
 };
 
 const MultiTextEditor = ({
@@ -46,6 +47,8 @@ const MultiTextEditor = ({
         id: newId,
         index: newIndex,
         isDuplicable: false,
+        containsProfile: false,
+        canBeDeleted: false,
         content: "<p>Nuevo Bloque</p>",
       },
     ]);
@@ -67,6 +70,26 @@ const MultiTextEditor = ({
     const updatedEditors = editors.map(editor =>
       editor.id === id
         ? { ...editor, isDuplicable: !editor.isDuplicable }
+        : editor
+    );
+    setEditors(updatedEditors);
+    updateDocumentContent(updatedEditors);
+  };
+
+  const toggleContainsProfile = (id: string) => {
+    const updatedEditors = editors.map(editor =>
+      editor.id === id
+        ? { ...editor, containsProfile: !editor.containsProfile }
+        : editor
+    );
+    setEditors(updatedEditors);
+    updateDocumentContent(updatedEditors);
+  };
+
+  const toggleCanBeDeleted = (id: string) => {
+    const updatedEditors = editors.map(editor =>
+      editor.id === id
+        ? { ...editor, canBeDeleted: !editor.canBeDeleted }
         : editor
     );
     setEditors(updatedEditors);
@@ -100,6 +123,27 @@ const MultiTextEditor = ({
                   className="mr-2"
                 />
                 Duplicable
+              </label>
+              <label className="flex items-center mr-2">
+                <input
+                  type="checkbox"
+                  checked={editor.containsProfile}
+                  onChange={() =>
+                    toggleContainsProfile(editor.id)
+                  }
+                  className="mr-2"
+                />
+                Contiene Perfil
+              </label>
+
+              <label className="flex items-center mr-2">
+                <input
+                  type="checkbox"
+                  checked={editor.canBeDeleted}
+                  onChange={() => toggleCanBeDeleted(editor.id)}
+                  className="mr-2"
+                />
+                Puede ser eliminado
               </label>
 
               <Button

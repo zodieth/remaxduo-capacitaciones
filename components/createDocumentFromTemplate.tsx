@@ -3,23 +3,24 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import TextEditor from "@/components/TextEditor";
 import {
   DocumentTemplate,
   DocumentVariable,
   Profile,
 } from "@/types/next-auth";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
-import { NewProfileModal } from "./modals/NewProfileModal";
+import { EditorBlockComponent } from "./EditorBlockComponent";
+import { ProfileCategory } from "@prisma/client";
 
-type Block = {
+export type Block = {
   id: number;
   content: string;
   variables: VariableForDocument[];
   profileId: string | null;
   isDuplicable: boolean;
+  containsProfile: boolean;
+  canBeDeleted: boolean;
   index: number;
   isOriginal: boolean;
 };
@@ -39,9 +40,11 @@ const api = {
     return response.json();
   },
   async getAuthorizationDocumentTemplates() {
+    console.log("getAuthorizationDocumentTemplates");
     const response = await fetch(
       "/api/documents/documentTemplate/authTemplate"
     );
+    console.log("response", response);
     return response.json();
   },
   async createDocumentFromTemplate(
@@ -62,14 +65,20 @@ const api = {
   },
   async createProfile({
     name,
+    profileCategory,
     propertyId,
   }: {
     name: string;
+    profileCategory: ProfileCategory;
     propertyId: string;
   }) {
     const response = await fetch("/api/profiles", {
       method: "POST",
-      body: JSON.stringify({ name, propertyId }),
+      body: JSON.stringify({
+        name,
+        profileCategory,
+        propertyId,
+      }),
       headers: { "Content-Type": "application/json" },
     });
     return response.json();
@@ -103,7 +112,7 @@ export const CreateDocumentFromTemplate = ({
   propertyId,
   isAuthDocument = false,
 }: {
-  propertyId?: string;
+  propertyId: string;
   isAuthDocument?: boolean;
 }) => {
   const router = useRouter();
@@ -117,16 +126,50 @@ export const CreateDocumentFromTemplate = ({
   const [profiles, setProfiles] = useState<Profile[]>([]);
 
   useEffect(() => {
-    const fetchTemplates = isAuthDocument
-      ? api.getAuthorizationDocumentTemplates
-      : api.getDocumentTemplates;
-    fetchTemplates().then(setDocumentTemplates);
-    propertyId &&
-      api
-        .getProfiles({
-          propertyId: propertyId || "",
-        })
-        .then(setProfiles);
+    const fetchTemplatesAndProfiles = async () => {
+      const templates = isAuthDocument
+        ? await api.getAuthorizationDocumentTemplates()
+        : await api.getDocumentTemplates();
+      setDocumentTemplates(templates);
+
+      const fetchedProfiles = await api.getProfiles({
+        propertyId: propertyId || "",
+      });
+      setProfiles(fetchedProfiles);
+
+      const propiedadProfile = fetchedProfiles.find(
+        (p: Profile) => p.name === "propiedad"
+      );
+
+      if (propiedadProfile && templates) {
+        const initialBlocks =
+          templates.length > 0
+            ? templates[0].templateBlocks.map(
+                (block: Block) => ({
+                  ...block,
+                  profileId: block.containsProfile
+                    ? null
+                    : propiedadProfile.id,
+                  variables: block.variables.map(variable => ({
+                    ...variable,
+                    value: block.containsProfile
+                      ? ""
+                      : propiedadProfile.variables.find(
+                          (v: any) => v.id === variable.id
+                        )?.value || "",
+                  })),
+                  isOriginal: true,
+                })
+              )
+            : [];
+
+        setEditorBlocks(initialBlocks);
+      }
+    };
+
+    if (propertyId) {
+      fetchTemplatesAndProfiles();
+    }
   }, [isAuthDocument, propertyId]);
 
   const handleInputChange = (e: any) => {
@@ -135,36 +178,67 @@ export const CreateDocumentFromTemplate = ({
         template => template.id === e.target.value
       ) || null;
     setSelectedDocumentTemplate(selected);
-    console.log("selected", selected);
 
     if (selected) {
       const contentArray = selected.templateBlocks.map(
-        (block: any) => ({
-          ...block,
-          variables: block.variables.map(
-            (variable: DocumentVariable) => ({
-              id: variable.id,
-              variable: `{${variable.name}}`,
-              value: "",
-            })
-          ),
-          isOriginal: true,
-          profileId: null,
-        })
+        (block: any) => {
+          if (!block.containsProfile) {
+            const propiedadProfile = profiles.find(
+              p => p.name === "propiedad"
+            );
+
+            return {
+              ...block,
+              variables: block.variables.map(
+                (variable: DocumentVariable) => ({
+                  id: variable.id,
+                  variable: `{${variable.name}}`,
+                  value:
+                    propiedadProfile?.variables.find(
+                      v => v.documentVariable.id === variable.id
+                    )?.value || "",
+                })
+              ),
+              isOriginal: true,
+              profileId: null,
+            };
+          } else {
+            return {
+              ...block,
+              variables: block.variables.map(
+                (variable: DocumentVariable) => ({
+                  id: variable.id,
+                  variable: `{${variable.name}}`,
+                  value: "",
+                })
+              ),
+              isOriginal: true,
+              profileId: null,
+            };
+          }
+        }
       );
       console.log("contentArray", contentArray);
       setEditorBlocks(contentArray);
     }
   };
 
-  const createProfile = async (newProfileName: string) => {
+  const createProfile = async ({
+    newProfileName,
+    profileCategory,
+  }: {
+    newProfileName: string;
+    profileCategory: ProfileCategory;
+  }) => {
     if (newProfileName.trim() === "") return;
     const profile = await api.createProfile({
       name: newProfileName,
+      profileCategory: profileCategory,
       propertyId: propertyId || "",
     });
     if (profile) toast.success("Perfil creado correctamente");
     setProfiles([...profiles, profile]);
+    return profile;
   };
 
   console.log("editorBlocks", editorBlocks);
@@ -177,33 +251,35 @@ export const CreateDocumentFromTemplate = ({
         throw new Error("No se ha seleccionado una plantilla");
       }
 
-      const profileDocumentVariablesPromises = editorBlocks
-        .filter(block => block.profileId)
-        .map(block =>
-          block.variables.map(variable =>
+      const propiedadProfile = profiles.find(
+        p => p.name === "propiedad"
+      );
+
+      const profileDocumentVariablesPromises = editorBlocks.map(
+        block => {
+          const effectiveProfileId = block.containsProfile
+            ? block.profileId
+            : propiedadProfile?.id;
+          return block.variables.map(variable =>
             api.createProfileDocumentVariable({
-              profileId: block.profileId || "",
+              profileId: effectiveProfileId || "",
               documentVariableId: variable.id,
               value: variable.value,
             })
-          )
-        );
+          );
+        }
+      );
 
       const profileDocumentVariablesResponse = await Promise.all(
-        profileDocumentVariablesPromises
+        profileDocumentVariablesPromises.flat()
       );
 
-      console.log(
-        "profileDocumentVariablesResponse",
-        profileDocumentVariablesResponse
-      );
-
-      console.log("editorBlocks", editorBlocks);
       const response = await api.createDocumentFromTemplate(
         selectedDocumentTemplate,
         editorBlocks,
         propertyId
       );
+
       if (response.ok) {
         toast.success("Documento creado correctamente");
         const redirectPath = isAuthDocument
@@ -306,6 +382,7 @@ export const CreateDocumentFromTemplate = ({
               value: "",
             })
           );
+
           return {
             ...block,
             profileId,
@@ -315,18 +392,21 @@ export const CreateDocumentFromTemplate = ({
           const selectedProfile = profiles.find(
             profile => profile.id === profileId
           );
+
           const updatedVariables = block.variables.map(
             variable => {
               const foundVariable =
-                selectedProfile?.variables.find(
+                selectedProfile?.variables?.find(
                   v => v.documentVariable.id === variable.id
                 );
+
               return {
                 ...variable,
                 value: foundVariable ? foundVariable.value : "",
               };
             }
           );
+
           return {
             ...block,
             profileId,
@@ -356,16 +436,6 @@ export const CreateDocumentFromTemplate = ({
             </option>
           ))}
         </select>
-        {selectedDocumentTemplate && (
-          <NewProfileModal
-            trigger={
-              <Button variant="secondary">Añadir Perfil</Button>
-            }
-            onCreate={profileName => {
-              createProfile(profileName);
-            }}
-          />
-        )}
       </div>
 
       {selectedDocumentTemplate && (
@@ -381,77 +451,17 @@ export const CreateDocumentFromTemplate = ({
         editorBlocks
           .sort((a, b) => a.index - b.index)
           .map(block => (
-            <div
+            <EditorBlockComponent
               key={block.id}
-              className="p-4 border mt-4 flex rounded-md"
-            >
-              <div className="w-1/4 pr-4">
-                <label>Perfil:</label>
-                <select
-                  value={block.profileId || ""}
-                  onChange={e =>
-                    handleProfileChange(
-                      block.id,
-                      e.target.value || null
-                    )
-                  }
-                  className="input border w-fit py-2 px-1 rounded-md ml-3"
-                >
-                  <option value="">SIN PERFIL</option>
-                  {profiles.map(profile => (
-                    <option key={profile.id} value={profile.id}>
-                      {profile.name}
-                    </option>
-                  ))}
-                </select>
-
-                {block.variables.map((variable, varIndex) => (
-                  <div key={varIndex} className="mt-2">
-                    <label>{variable.variable}</label>
-                    <Input
-                      type="text"
-                      value={variable.value}
-                      onChange={(e: any) =>
-                        onChangeVariable(
-                          block.id,
-                          variable.variable,
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className="w-3/4 flex flex-col">
-                <TextEditor
-                  content={block.content}
-                  documentVariables={block.variables}
-                  updateDocumentContent={newContent =>
-                    updateBlockContent(block.id, newContent)
-                  }
-                  hideControls={true}
-                  disableEditing={true}
-                />
-                <div className="flex flex-row gap-2 mt-2 ml-2">
-                  {block.isDuplicable && (
-                    <Button
-                      onClick={() => duplicateBlock(block.id)}
-                      className="mb-5"
-                    >
-                      Duplicar
-                    </Button>
-                  )}
-                  {!block.isOriginal && (
-                    <Button
-                      variant="secondary"
-                      onClick={() => removeBlock(block.id)}
-                    >
-                      Eliminar
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
+              block={block}
+              profiles={profiles}
+              onChangeVariable={onChangeVariable}
+              updateBlockContent={updateBlockContent}
+              duplicateBlock={duplicateBlock}
+              removeBlock={removeBlock}
+              handleProfileChange={handleProfileChange}
+              createProfile={createProfile}
+            />
           ))}
 
       {isLoading && <LoadingOverlay />}

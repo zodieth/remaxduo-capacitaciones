@@ -5,8 +5,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
   MoreHorizontal,
-  Pencil,
   Eye,
+  Link2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,9 @@ import {
 import Link from "next/link";
 import { Property } from "@prisma/client";
 
-export const columns: ColumnDef<Property>[] = [
+export const columns = (
+  onLinkAuthorization: (mlsid: string) => void
+): ColumnDef<Property>[] => [
   {
     accessorKey: "title",
     header: ({ column }) => {
@@ -72,6 +74,13 @@ export const columns: ColumnDef<Property>[] = [
                 Ver
               </DropdownMenuItem>
             </Link>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => onLinkAuthorization(mlsid)}
+            >
+              <Link2 className="h-4 w-4 mr-2" />
+              Vincular Autorización
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

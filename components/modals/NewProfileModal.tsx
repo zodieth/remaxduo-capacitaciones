@@ -12,10 +12,26 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { ProfileCategory } from "@prisma/client";
+import toast from "react-hot-toast";
 
 interface NewProfileModalProps {
   trigger: React.ReactNode;
-  onCreate: (profileName: string) => void;
+  onCreate: {
+    (profile: {
+      newProfileName: string;
+      profileCategory: ProfileCategory;
+    }): void;
+  };
 }
 
 export const NewProfileModal = ({
@@ -23,10 +39,25 @@ export const NewProfileModal = ({
   onCreate,
 }: NewProfileModalProps) => {
   const [newProfileName, setNewProfileName] = useState("");
+  const [categorySelected, setCategorySelected] =
+    useState<ProfileCategory>();
 
   const handleCreateProfile = () => {
-    onCreate(newProfileName);
+    if (!newProfileName || !categorySelected) {
+      toast.error("Debes completar todos los campos");
+      return;
+    }
+
+    onCreate({
+      newProfileName,
+      profileCategory: categorySelected,
+    });
     setNewProfileName("");
+    setCategorySelected(undefined);
+  };
+
+  const handleCategoryChange = (category: ProfileCategory) => {
+    setCategorySelected(category);
   };
 
   return (
@@ -46,6 +77,40 @@ export const NewProfileModal = ({
           }
           className="w-full"
         />
+
+        <Select
+          value={categorySelected}
+          onValueChange={handleCategoryChange}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Selecciona una categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Profiles</SelectLabel>
+
+              <SelectItem value={ProfileCategory.COMPRADOR}>
+                {ProfileCategory.COMPRADOR}
+              </SelectItem>
+
+              <SelectItem value={ProfileCategory.VENDEDOR}>
+                {ProfileCategory.VENDEDOR}
+              </SelectItem>
+
+              <SelectItem value={ProfileCategory.LOCADOR}>
+                {ProfileCategory.LOCADOR}
+              </SelectItem>
+
+              <SelectItem value={ProfileCategory.LOCATARIO}>
+                {ProfileCategory.LOCATARIO}
+              </SelectItem>
+
+              <SelectItem value={ProfileCategory.OTRO}>
+                {ProfileCategory.OTRO}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>

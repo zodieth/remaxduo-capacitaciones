@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import {
@@ -19,6 +19,8 @@ import { Property } from "@prisma/client";
 import { DataTableAuthorizations } from "./_components/data-table-authorizations";
 import { authorizationColumns } from "./_components/authorizationColumns";
 import { Document } from "@prisma/client";
+import { AssignAuthorizationModal } from "@/components/modals/AssignAuthorizationModal";
+import { Button } from "@/components/ui/button";
 
 const PROPIEDADES_API_URL =
   process.env.NEXT_PUBLIC_REMAX_API_PROPIEDADES_URL;
@@ -48,10 +50,28 @@ const api = {
     }
     return response.json();
   },
-  // TODO: fetch documents with no property ID.
   async getAuthotizationDocuments() {
     const response = await fetch(
       "/api/documents/authorizations"
+    );
+    return response.json();
+  },
+  authAssignProperty: async ({
+    authId,
+    propertyId,
+  }: {
+    authId: string;
+    propertyId: string;
+  }) => {
+    const response = await fetch(
+      `/api/documents/authorizations/assignAuthToProperty`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ authId, propertyId }),
+      }
     );
     return response.json();
   },
@@ -109,6 +129,10 @@ const Propiedades = () => {
   const [authDocuments, setAuthDocuments] = useState<Document[]>(
     []
   );
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const [propertyToAssignId, setPropertyToAssignId] = useState<
+    string | null
+  >(null);
 
   const setPropiedadesToStore = usePropertiesStore(
     state => state.setPropiedades
@@ -122,10 +146,12 @@ const Propiedades = () => {
         const propiedadesDB = await api.fetchProperties();
 
         if (propiedadesDB) {
-          setPropiedades(propiedadesDB);
-          setPropiedadesToStore(propiedadesDB);
+          const properties = propiedadesDB.filter(
+            prop => prop.title !== "Propiedad temporal"
+          );
+          setPropiedades(properties);
+          setPropiedadesToStore(properties);
           setLoading(false);
-          // parse propiedadesData to Property[]
         }
 
         if (propiedadesData) {
@@ -146,11 +172,6 @@ const Propiedades = () => {
 
           await api.postProperties(propiedades);
         }
-
-        // if (!propiedadesData) {
-        //   toast.error("No se encontraron propiedades");
-        //   return;
-        // }
       } catch (error) {
         console.error("Error al obtener propiedades:", error);
       }
@@ -174,17 +195,26 @@ const Propiedades = () => {
     fetchAuthotizationDocuments();
   }, [user?.email, agentId, setPropiedadesToStore]);
 
+  const onLinkAuthorization = (mlsid: string) => {
+    setPropertyToAssignId(mlsid);
+    triggerRef.current && triggerRef.current.click();
+  };
+
+  const columnsToSend = columns(onLinkAuthorization);
+
+  const handleAssignAuthorization = async (authId: string) => {
+    if (!propertyToAssignId) {
+      toast.error("Debes seleccionar una propiedad");
+      return;
+    }
+    api.authAssignProperty({
+      authId,
+      propertyId: propertyToAssignId,
+    });
+  };
+
   return (
     <div className="m-5 flex flex-col">
-      {/* <div className="mb-2 mx-6">
-        {user?.name ? (
-          <h1 className="font-bold text-2xl">
-            Propiedades de {user?.name}
-          </h1>
-        ) : (
-          ""
-        )}
-      </div> */}
       <div className="p-6 w-full">
         {loading ? (
           <LoadingSpinner />
@@ -212,7 +242,24 @@ const Propiedades = () => {
                 ""
               )}
             </div>
-            <DataTable data={propiedades} columns={columns} />
+            <DataTable
+              data={propiedades}
+              columns={columnsToSend}
+            />
+            <AssignAuthorizationModal
+              trigger={
+                <Button
+                  ref={triggerRef}
+                  style={{ display: "none" }}
+                >
+                  Asignar autorización
+                </Button>
+              }
+              onCreate={authId => {
+                handleAssignAuthorization(authId);
+              }}
+              authDocuments={authDocuments}
+            />
           </>
         ) : !propiedades.length ? (
           <h1 className=" text-1xl">

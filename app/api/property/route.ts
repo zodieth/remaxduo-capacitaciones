@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
     // Recorre las propiedades para upsert
     for (const property of properties) {
-      await db.property.upsert({
+      const createdProperty = await db.property.upsert({
         where: { mlsid: property.mlsid }, // Identifica por mlsid
         update: {
           title: property.title,
@@ -43,6 +43,22 @@ export async function POST(req: Request) {
           updatedAt: new Date(),
         },
       });
+
+      const existingProfile = await db.profile.findFirst({
+        where: {
+          name: "propiedad",
+          propertyId: createdProperty.mlsid,
+        },
+      });
+
+      if (!existingProfile) {
+        const createdProfile = await db.profile.create({
+          data: {
+            name: "propiedad",
+            propertyId: createdProperty.mlsid,
+          },
+        });
+      }
     }
 
     return NextResponse.json(properties);

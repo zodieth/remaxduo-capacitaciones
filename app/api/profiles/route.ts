@@ -8,7 +8,8 @@ export async function POST(req: Request) {
   try {
     const { userId, role: userRole } =
       await getServerSessionFunc();
-    const { name, propertyId } = await req.json();
+    const { name, profileCategory, propertyId } =
+      await req.json();
 
     if (!userId || !isAdmin(userRole)) {
       return new NextResponse("Unauthorized", {
@@ -19,6 +20,7 @@ export async function POST(req: Request) {
     const profile = await db.profile.create({
       data: {
         name,
+        category: profileCategory,
         property: {
           connect: {
             mlsid: propertyId,

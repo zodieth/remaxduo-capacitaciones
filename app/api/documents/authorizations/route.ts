@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isAdmin } from "@/lib/isAdminCheck";
 import { getServerSessionFunc } from "../../auth/_components/getSessionFunction";
+import { DocumentCategory } from "@prisma/client";
 
 export async function GET(req: Request) {
   const { userId, role } = await getServerSessionFunc();
@@ -15,8 +16,15 @@ export async function GET(req: Request) {
     const authorizationDocuments = await db.document.findMany({
       where: {
         createdBy: userId,
-        category: "AUTORIZACIONES",
-        propertyId: null,
+        category: DocumentCategory.AUTORIZACIONES,
+        OR: [
+          { propertyId: null },
+          {
+            propertyId: {
+              startsWith: "auth-",
+            },
+          },
+        ],
       },
     });
 

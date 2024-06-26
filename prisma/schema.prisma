@@ -201,6 +201,7 @@ model DocumentTemplate {
 model Document {
   id          String           @id @unique @default(uuid())
   title       String
+  documentName String?
   description String?          @db.Text
   content     String           @db.MediumText
   category    DocumentCategory @default(OTROS)
@@ -226,6 +227,8 @@ model TemplateBlock {
   id      String @id @default(uuid())
   content String @db.MediumText
   isDuplicable Boolean @default(false)
+  containsProfile Boolean @default(false)
+  canBeDeleted Boolean @default(false)
   index Int
 
   documentTemplateId String
@@ -244,6 +247,7 @@ model Property {
   title   String
   address String
   photos  String @db.MediumText // Almacena JSON serializado
+  isTemporalProperty Boolean @default(false)
 
   profiles   Profile[]
   documents  Document[]
@@ -256,10 +260,11 @@ model Profile {
   id          String @id @default(uuid())
   name        String
   description String? @db.Text
+  category    ProfileCategory @default(OTRO)
 
   variables   ProfileDocumentVariable[]
 
-  property    Property @relation(fields: [propertyId], references: [mlsid])
+  property    Property @relation(fields: [propertyId], references: [mlsid], onDelete: Cascade)
   propertyId  String
 
   createdAt   DateTime @default(now())
@@ -268,13 +273,21 @@ model Profile {
   @@index([propertyId])
 }
 
+enum ProfileCategory {
+  VENDEDOR
+  COMPRADOR
+  LOCADOR
+  LOCATARIO
+  OTRO
+}
+
 model ProfileDocumentVariable {
   id                 String           @id @default(uuid())
   value              String           @db.Text
 
-  profile            Profile          @relation(fields: [profileId], references: [id])
+  profile            Profile?          @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId          String
-  documentVariable   DocumentVariable @relation(fields: [documentVariableId], references: [id])
+  documentVariable   DocumentVariable @relation(fields: [documentVariableId], references: [id], onDelete: Cascade)
   documentVariableId String
 
   createdAt          DateTime         @default(now())

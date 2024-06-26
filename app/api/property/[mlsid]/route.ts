@@ -41,3 +41,55 @@ export async function GET(
     });
   }
 }
+
+// post para crear una propiedad
+export async function POST(
+  req: Request,
+  { params }: { params: { mlsid: string } }
+) {
+  try {
+    const { userId, role: userRole } =
+      await getServerSessionFunc();
+    const property = await req.json();
+
+    if (!userId || !isAdmin(userRole)) {
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
+    }
+
+    const createdProperty = await db.property.create({
+      data: {
+        mlsid: params.mlsid,
+        title: property.title,
+        address: property.address,
+        isTemporalProperty: property.isTemporalProperty,
+        documents: property.documents,
+        photos: JSON.stringify(property.photos),
+      },
+    });
+
+    const existingProfile = await db.profile.findFirst({
+      where: {
+        name: "propiedad",
+        propertyId: createdProperty.mlsid,
+      },
+    });
+
+    if (!existingProfile) {
+      const createdProfile = await db.profile.create({
+        data: {
+          name: "propiedad",
+          propertyId: createdProperty.mlsid,
+        },
+      });
+    }
+
+    return NextResponse.json(createdProperty);
+  } catch (error) {
+    console.log("[PROPERTY]", error);
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
+  }
+}
