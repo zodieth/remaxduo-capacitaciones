@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 "use client";
 
 import React from "react";
@@ -74,7 +75,6 @@ const PdfGenerator = ({
               <Text style={styles.text}>{text}</Text>
               {/* </View> */}
               <Image
-                alt="footer"
                 style={styles.imageFooter}
                 fixed
                 src="https://res.cloudinary.com/dea89zeui/image/upload/v1712927677/2_f8vmhi.jpg"
