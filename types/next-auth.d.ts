@@ -406,6 +406,7 @@ export type PropertyCreateDTO = {
   title: string;
   address: string;
   photos: string[];
+  isTemporalProperty?: boolean;
 };
 
 // TemplateBlock Type

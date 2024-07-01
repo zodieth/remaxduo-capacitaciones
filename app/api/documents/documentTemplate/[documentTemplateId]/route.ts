@@ -79,8 +79,15 @@ export async function PUT(
 
     // Promesas de actualización y creación
     const promises = templateBlocks.map(async (block: any) => {
-      const { id, content, index, isDuplicable, variablesIds } =
-        block;
+      const {
+        id,
+        content,
+        index,
+        isDuplicable,
+        canBeDeleted,
+        variablesIds,
+        containsProfile,
+      } = block;
 
       if (id && existingBlockMap.has(id)) {
         // Actualizar bloque existente
@@ -90,6 +97,8 @@ export async function PUT(
             content,
             index,
             isDuplicable,
+            containsProfile,
+            canBeDeleted,
             variables: {
               set:
                 variablesIds.length > 0
@@ -106,6 +115,8 @@ export async function PUT(
             content,
             index,
             isDuplicable,
+            containsProfile,
+            canBeDeleted,
             documentTemplateId: documentTemplate.id,
             variables: {
               connect:

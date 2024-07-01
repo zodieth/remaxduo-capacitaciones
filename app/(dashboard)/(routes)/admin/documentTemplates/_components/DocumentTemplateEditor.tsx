@@ -169,6 +169,8 @@ const DocumentTemplateEditor = ({
           index: editor.index,
           content: editor.content,
           isDuplicable: editor.isDuplicable,
+          containsProfile: editor.containsProfile,
+          canBeDeleted: editor.canBeDeleted,
           // variablesIds: [],
         })),
       };
@@ -286,6 +288,8 @@ const DocumentTemplateEditor = ({
             id: block.id,
             index: block.index,
             isDuplicable: block.isDuplicable,
+            containsProfile: block.containsProfile,
+            canBeDeleted: block.canBeDeleted,
             content: block.content,
           }))}
           documentVariables={documentVariables}

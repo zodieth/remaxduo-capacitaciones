@@ -26,14 +26,22 @@ export async function POST(req: Request) {
 
     // Crear los bloques de plantilla y asociar las variables correspondientes
     for (const block of templateBlocks) {
-      const { content, variablesIds, index, isDuplicable } =
-        block;
+      const {
+        content,
+        variablesIds,
+        index,
+        isDuplicable,
+        containsProfile,
+        canBeDeleted,
+      } = block;
 
       await db.templateBlock.create({
         data: {
           content,
           index,
           isDuplicable,
+          containsProfile,
+          canBeDeleted,
           documentTemplateId: documentTemplate.id,
           variables: {
             connect:
