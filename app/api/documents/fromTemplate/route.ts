@@ -14,7 +14,8 @@ export async function POST(req: Request) {
     });
   }
 
-  const { template, blocks, propertyId } = await req.json();
+  const { template, blocks, propertyId, documentName } =
+    await req.json();
 
   function replaceVariablesInContent(
     content: string,
@@ -68,6 +69,7 @@ export async function POST(req: Request) {
       description: template.description,
       category: template.category,
       propertyId: propertyId,
+      documentName: documentName,
       createdBy: userId,
     },
   });

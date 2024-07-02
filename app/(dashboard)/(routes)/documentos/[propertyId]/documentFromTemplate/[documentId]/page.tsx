@@ -73,12 +73,16 @@ const DocumentFromTemplatePage = ({
         <h1 className="font-bold text-2xl m-5">
           Visualizar documento
         </h1>
+
         <ConfirmModal onConfirm={() => onDelete(documentId)}>
           <Button size="sm" disabled={isLoading}>
             <Trash className="h-4 w-4" />
           </Button>
         </ConfirmModal>
       </div>
+      <h2 className="m-7">
+        {documentFromTemplate?.documentName}
+      </h2>
 
       <div>
         <div>

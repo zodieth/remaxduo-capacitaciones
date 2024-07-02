@@ -395,6 +395,7 @@ export type DocumentFromTemplate = {
   id: string;
   title: string;
   description?: string;
+  documentName?: string;
   content: string;
   propertyId: string;
   createdAt: Date;

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
 import { EditorBlockComponent } from "./EditorBlockComponent";
 import { ProfileCategory } from "@prisma/client";
+import { Input } from "./ui/input";
 
 export type Block = {
   id: number;
@@ -50,11 +51,17 @@ const api = {
   async createDocumentFromTemplate(
     template: DocumentTemplate,
     blocks: Block[],
-    propertyId: string | undefined
+    propertyId: string | undefined,
+    documentName: string
   ) {
     const response = await fetch("/api/documents/fromTemplate", {
       method: "POST",
-      body: JSON.stringify({ template, blocks, propertyId }),
+      body: JSON.stringify({
+        template,
+        blocks,
+        propertyId,
+        documentName,
+      }),
       headers: { "Content-Type": "application/json" },
     });
     return response;
@@ -124,6 +131,7 @@ export const CreateDocumentFromTemplate = ({
   const [editorBlocks, setEditorBlocks] = useState<Block[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [documentName, setDocumentName] = useState<string>("");
 
   useEffect(() => {
     const fetchTemplatesAndProfiles = async () => {
@@ -241,14 +249,15 @@ export const CreateDocumentFromTemplate = ({
     return profile;
   };
 
-  console.log("editorBlocks", editorBlocks);
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       if (!selectedDocumentTemplate) {
-        throw new Error("No se ha seleccionado una plantilla");
+        toast.error("No se ha seleccionado ninguna plantilla");
+        throw new Error(
+          "No se ha seleccionado ninguna plantilla"
+        );
       }
 
       const propiedadProfile = profiles.find(
@@ -277,7 +286,8 @@ export const CreateDocumentFromTemplate = ({
       const response = await api.createDocumentFromTemplate(
         selectedDocumentTemplate,
         editorBlocks,
-        propertyId
+        propertyId,
+        documentName
       );
 
       if (response.ok) {
@@ -445,6 +455,21 @@ export const CreateDocumentFromTemplate = ({
         >
           <Button type="submit">Crear Documento</Button>
         </form>
+      )}
+
+      {selectedDocumentTemplate && (
+        <>
+          <label className="m-4">
+            Nombre del documento (opcional)
+          </label>
+          <div className="m-4">
+            <Input
+              placeholder="Ingresa el nombre del documento aquí"
+              className="w-1/3"
+              onChange={e => setDocumentName(e.target.value)}
+            />
+          </div>
+        </>
       )}
 
       {selectedDocumentTemplate &&
