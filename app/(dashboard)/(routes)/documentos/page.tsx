@@ -181,7 +181,6 @@ const Propiedades = () => {
       try {
         const authDocuments =
           await api.getAuthotizationDocuments();
-        console.log(authDocuments);
         setAuthDocuments(authDocuments);
       } catch (error) {
         console.error(
@@ -207,10 +206,25 @@ const Propiedades = () => {
       toast.error("Debes seleccionar una propiedad");
       return;
     }
-    api.authAssignProperty({
+    const res = await api.authAssignProperty({
       authId,
       propertyId: propertyToAssignId,
     });
+    if (res.success) {
+      toast.success("Autorización asignada correctamente");
+      try {
+        const authDocuments =
+          await api.getAuthotizationDocuments();
+        setAuthDocuments(authDocuments);
+      } catch (error) {
+        console.error(
+          "Error al obtener documentos de autorización:",
+          error
+        );
+      }
+    } else {
+      toast.error("Error al asignar autorización");
+    }
   };
 
   return (
