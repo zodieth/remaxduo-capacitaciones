@@ -177,6 +177,13 @@ export const UserManagement = ({
           )
         );
 
+      if (!foundAgent) {
+        toast.error(
+          "No se encontro el email del agente en Remax"
+        );
+        return;
+      }
+
       api.createUser({ ...data, agentId: foundAgent.id }).then(
         res => {
           toast.success("Usuario creado");
@@ -187,6 +194,9 @@ export const UserManagement = ({
           });
         },
         err => {
+          toast.error(
+            "Error al crear el usuario. Intente nuevamente."
+          );
           console.log("error", err);
         }
       );

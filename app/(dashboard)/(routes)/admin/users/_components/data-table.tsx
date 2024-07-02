@@ -33,7 +33,7 @@ import { Input } from "@/components/ui/input";
 import { UserManagement } from "./user-manage";
 import { User } from "./user-manage";
 import toast from "react-hot-toast";
-import { User as UserIcon } from "lucide-react";
+import { ConfirmModal } from "@/components/modals/confirm-modal";
 
 const api = {
   deleteUser: async (id: string): Promise<void> => {
@@ -62,6 +62,9 @@ export function DataTable<TData, TValue>({
     User | undefined
   >(undefined);
   const [users, setUsers] = useState<User[]>([]);
+  const [userToDelete, setUserToDelete] = useState<
+    User | undefined
+  >(undefined);
 
   useEffect(() => setUsers(data as any), [data]);
 
@@ -93,16 +96,21 @@ export function DataTable<TData, TValue>({
     setUsers(users);
   };
 
-  const handleDelete = (user: User) => {
+  const handleDelete = async (user: User) => {
     const id = user.id;
 
     id &&
-      api
+      (await api
         .deleteUser(id)
-        .then(() => toast.success("Usuario eliminado"));
+        .then(() => toast.success("Usuario eliminado")));
 
     const newData = users.filter((user: User) => user.id !== id);
     setUsers(newData);
+  };
+
+  const onDelete = async () => {
+    await handleDelete(userToDelete as User);
+    setUserToDelete(undefined);
   };
 
   const handleRefreshUsers = (user: any) => {
@@ -227,13 +235,15 @@ export function DataTable<TData, TValue>({
                       >
                         <Pencil className="h-4 w-4 " />
                       </Button>
-                      <Button
-                        onClick={() =>
-                          handleDelete(row.original as User)
-                        }
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
+                      <ConfirmModal onConfirm={onDelete}>
+                        <Button
+                          onClick={() =>
+                            setUserToDelete(row.original as User)
+                          }
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </ConfirmModal>
                     </div>
                   </TableCell>
                 </TableRow>
