@@ -76,7 +76,6 @@ const EditDocumentTemplatePage = ({
       if (res.ok) {
         await res.json();
         toast.success("Plantilla editada con éxito");
-        // console.log("Data received:", data);
         router.push("/admin/documentTemplates");
       } else {
         toast.error("Error al editar la plantilla");

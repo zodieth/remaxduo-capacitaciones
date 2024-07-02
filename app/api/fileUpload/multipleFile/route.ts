@@ -33,7 +33,6 @@ const templateHandler = ({
   // get { values}
 
   const values = doc.getFullText().match(/{([^}]+)}/g);
-  console.log("values", values);
 
   return values;
 };

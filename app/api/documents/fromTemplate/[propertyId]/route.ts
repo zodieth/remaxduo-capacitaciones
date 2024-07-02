@@ -8,7 +8,6 @@ export async function GET(
   req: Request,
   { params }: { params: { propertyId: string } }
 ) {
-  console.log("llegaron: ", params.propertyId);
   try {
     const { userId, role } = await getServerSessionFunc();
 

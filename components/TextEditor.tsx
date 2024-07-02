@@ -34,8 +34,6 @@ const TextEditor = ({
     setSelectedVariable(documentVariables[0]?.value);
   }, [documentVariables]);
 
-  console.log(documentVariables);
-
   const documentContent =
     content ||
     "<p>Comienze a escribir su documento aqui...</p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p>";
@@ -50,7 +48,6 @@ const TextEditor = ({
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
 
-      console.log(html);
       updateDocumentContent(html);
     },
   });

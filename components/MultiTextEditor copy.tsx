@@ -50,10 +50,6 @@ const MultiTextEditor = ({
       editor.id === id ? { ...editor, content: html } : editor
     );
     setEditors(updatedEditors);
-    console.log(
-      "Updated Editors Array: ",
-      JSON.stringify(updatedEditors)
-    );
     updateDocumentContent(updatedEditors);
   };
 

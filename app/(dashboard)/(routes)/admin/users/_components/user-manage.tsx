@@ -102,7 +102,6 @@ const api = {
       }
       const data = await response.json();
       const agents = data.data;
-      console.log("Agentes de Remax:", agents);
       return agents;
     } catch (error) {
       console.error("Error al obtener agentes de Remax:", error);

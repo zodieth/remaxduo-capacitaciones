@@ -46,12 +46,6 @@ export const AssignAuthorizationModal = ({
       toast.error("Debes seleccionar una autorización");
       return;
     }
-
-    console.log(
-      "authorizationSelected: ",
-      authorizationSelected
-    );
-
     onCreate(
       authorizationSelectedId || authorizationSelected.id
     );
@@ -61,7 +55,6 @@ export const AssignAuthorizationModal = ({
   const handleAuthorizationChange = (
     authorizationId: string
   ) => {
-    console.log("authorizationId: ", authorizationId);
     setAuthorizationSelectedId(authorizationId);
     const auth = authDocuments.find(
       auth => auth.id === authorizationId

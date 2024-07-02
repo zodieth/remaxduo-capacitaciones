@@ -43,9 +43,7 @@ export function ProfileSelect({
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const handleSelectChange = (value: string) => {
-    console.log("value", value);
     if (value === "newProfile") {
-      // Abrir modal para crear perfil
       triggerRef.current && triggerRef.current.click();
     } else {
       setSelectedProfileId(value);

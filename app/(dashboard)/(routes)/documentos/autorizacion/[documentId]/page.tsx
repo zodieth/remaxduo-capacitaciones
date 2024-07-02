@@ -100,9 +100,7 @@ const AuthorizationDocumentPage = ({
               <TextEditor
                 content={documentFromTemplate?.content}
                 documentVariables={[]}
-                updateDocumentContent={() => {
-                  console.log("updateDocumentContent");
-                }}
+                updateDocumentContent={() => {}}
                 hideControls={true}
                 disableEditing={true}
               />

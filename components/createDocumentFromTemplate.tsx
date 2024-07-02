@@ -41,11 +41,9 @@ const api = {
     return response.json();
   },
   async getAuthorizationDocumentTemplates() {
-    console.log("getAuthorizationDocumentTemplates");
     const response = await fetch(
       "/api/documents/documentTemplate/authTemplate"
     );
-    console.log("response", response);
     return response.json();
   },
   async createDocumentFromTemplate(
@@ -226,7 +224,6 @@ export const CreateDocumentFromTemplate = ({
           }
         }
       );
-      console.log("contentArray", contentArray);
       setEditorBlocks(contentArray);
     }
   };
