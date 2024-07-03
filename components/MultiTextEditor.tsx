@@ -14,10 +14,17 @@ export type Editor = {
 
 const MultiTextEditor = ({
   documentVariables,
+  createDocumentVariable,
   updateDocumentContent,
   initialContent,
 }: {
   documentVariables: DocumentVariable[];
+  createDocumentVariable: (
+    data: Omit<
+      DocumentVariable,
+      "id" | "createdAt" | "updatedAt"
+    >
+  ) => Promise<void>;
   updateDocumentContent: (editors: Editor[]) => void;
   initialContent: Editor[];
 }) => {
@@ -104,6 +111,7 @@ const MultiTextEditor = ({
           <div key={editor.id}>
             <TextEditor
               documentVariables={documentVariables}
+              createDocumentVariable={createDocumentVariable}
               updateDocumentContent={html =>
                 updateMultiDocumentContent({
                   id: editor.id,

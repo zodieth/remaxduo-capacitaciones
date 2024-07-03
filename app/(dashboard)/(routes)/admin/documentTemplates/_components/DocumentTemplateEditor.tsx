@@ -23,6 +23,7 @@ import { DocumentCategory, TemplateBlock } from "@prisma/client";
 import MultiTextEditor, {
   Editor,
 } from "@/components/MultiTextEditor";
+import toast from "react-hot-toast";
 
 type DocumentToManage = {
   title: string;
@@ -36,8 +37,31 @@ export type TemplateBlockWithVariables = TemplateBlock & {
 };
 
 const api = {
-  async getDocumentVariables(): Promise<DocumentVariable[]> {
+  async fetchDocumentVariables(): Promise<DocumentVariable[]> {
     const response = await fetch("/api/documentVariable");
+    if (!response.ok) {
+      toast.error("Error al cargar las variables");
+      throw new Error("Error al cargar las variables");
+    }
+    return response.json();
+  },
+  async createDocumentVariable(
+    data: Omit<
+      DocumentVariable,
+      "id" | "createdAt" | "updatedAt"
+    >
+  ): Promise<DocumentVariable> {
+    const response = await fetch("/api/documentVariable", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      toast.error("Error al crear la variable");
+      throw new Error("Error al crear la variable");
+    }
     return response.json();
   },
 };
@@ -82,6 +106,20 @@ const DocumentTemplateEditor = ({
     }
   );
 
+  const handleCreateDocumentVariable = async (
+    data: Omit<
+      DocumentVariable,
+      "id" | "createdAt" | "updatedAt"
+    >
+  ) => {
+    try {
+      const newVariable = await api.createDocumentVariable(data);
+      setDocumentVariables(prev => [...prev, newVariable]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: documentTemplateState
@@ -116,7 +154,7 @@ const DocumentTemplateEditor = ({
   }, [title, description]);
 
   useEffect(() => {
-    api.getDocumentVariables().then(variables => {
+    api.fetchDocumentVariables().then(variables => {
       setDocumentVariables(variables);
     });
   }, []);
@@ -293,6 +331,7 @@ const DocumentTemplateEditor = ({
             content: block.content,
           }))}
           documentVariables={documentVariables}
+          createDocumentVariable={handleCreateDocumentVariable}
         />
       </div>
     </div>
