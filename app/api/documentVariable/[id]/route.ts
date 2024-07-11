@@ -28,7 +28,6 @@ export async function PUT(
         name,
         value,
         description,
-        referenceTo,
       },
     });
 

@@ -17,20 +17,13 @@ import { Input } from "./ui/input";
 export type Block = {
   id: number;
   content: string;
-  variables: VariableForDocument[];
+  variables: DocumentVariable[];
   profileId: string | null;
   isDuplicable: boolean;
   containsProfile: boolean;
   canBeDeleted: boolean;
   index: number;
   isOriginal: boolean;
-};
-
-type VariableForDocument = {
-  id: string;
-  name: string;
-  variable: string;
-  value: string;
 };
 
 const api = {
@@ -129,6 +122,7 @@ export const CreateDocumentFromTemplate = ({
   const [editorBlocks, setEditorBlocks] = useState<Block[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  console.log("profiles: ", profiles);
   const [documentName, setDocumentName] = useState<string>("");
 
   useEffect(() => {

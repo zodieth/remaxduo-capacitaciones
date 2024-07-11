@@ -20,7 +20,7 @@ const TextEditor = ({
   content?: string;
   hideControls?: boolean;
   disableEditing?: boolean;
-  createDocumentVariable: (
+  createDocumentVariable?: (
     data: Omit<
       DocumentVariable,
       "id" | "createdAt" | "updatedAt"
@@ -108,7 +108,8 @@ const TextEditor = ({
                       setSelectedVariable(variable)
                     }
                     createDocumentVariable={async data => {
-                      await createDocumentVariable(data);
+                      createDocumentVariable &&
+                        (await createDocumentVariable(data));
                     }}
                   />
                 </>

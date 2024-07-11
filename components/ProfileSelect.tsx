@@ -12,6 +12,7 @@ import { NewProfileModal } from "./modals/NewProfileModal";
 import { Button } from "./ui/button";
 import { useRef } from "react";
 import { ProfileCategory } from "@prisma/client";
+import { Profile } from "@/types/next-auth";
 
 export function ProfileSelect({
   profiles,
@@ -21,11 +22,7 @@ export function ProfileSelect({
   selectedProfileId,
   setSelectedProfileId,
 }: {
-  profiles: {
-    id: string;
-    name: string;
-    category: ProfileCategory;
-  }[];
+  profiles: Profile[];
   handleProfileChange: (
     blockId: number,
     profileId: string

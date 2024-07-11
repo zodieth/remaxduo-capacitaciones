@@ -376,7 +376,7 @@ export type DocumentVariable = {
   name: string;
   value: string;
   description?: string;
-  referenceTo?: string;
+  variable: string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -445,6 +445,7 @@ export type Profile = {
   id: string;
   name: string;
   description?: string;
+  category: ProfileCategory;
 
   variables: ProfileDocumentVariable[];
 
@@ -499,8 +500,17 @@ export type Document = {
   updatedAt: Date;
 };
 
-export type DocumentCategory =
-  | "AUTORIZACIONES"
-  | "CONTRATOS"
-  | "INFORMES"
-  | "OTROS";
+export enum DocumentCategory {
+  AUTORIZACIONES = "AUTORIZACIONES",
+  CONTRATOS = "CONTRATOS",
+  INFORMES = "INFORMES",
+  OTROS = "OTROS",
+}
+
+export enum ProfileCategory {
+  VENDEDOR = "VENDEDOR",
+  COMPRADOR = "COMPRADOR",
+  LOCADOR = "LOCADOR",
+  LOCATARIO = "LOCATARIO",
+  OTRO = "OTRO",
+}

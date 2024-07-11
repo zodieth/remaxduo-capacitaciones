@@ -4,7 +4,8 @@ import TextEditor from "./TextEditor";
 import { Block } from "./createDocumentFromTemplate";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Profile, ProfileCategory } from "@prisma/client";
+import { ProfileCategory } from "@prisma/client";
+import { Profile } from "@/types/next-auth";
 import {
   Select,
   SelectContent,
@@ -26,11 +27,7 @@ export const EditorBlockComponent = ({
   createProfile,
 }: {
   block: Block;
-  profiles: {
-    id: string;
-    category: ProfileCategory;
-    name: string;
-  }[];
+  profiles: Profile[];
   onChangeVariable: (
     blockId: number,
     variable: string,

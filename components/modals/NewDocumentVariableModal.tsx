@@ -20,7 +20,7 @@ interface DocumentVariableModalProps {
   onCreate: (
     data: Omit<
       DocumentVariable,
-      "id" | "createdAt" | "updatedAt"
+      "id" | "createdAt" | "updatedAt" | "variable"
     >
   ) => void;
 }
