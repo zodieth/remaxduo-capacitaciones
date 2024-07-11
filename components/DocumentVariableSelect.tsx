@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DocumentVariable } from "@/types/next-auth";
 import { DocumentVariableModal } from "./modals/NewDocumentVariableModal";
+import toast from "react-hot-toast";
 
 export function DocumentVariableSelect({
   documentVariables,
@@ -78,6 +79,7 @@ export function DocumentVariableSelect({
         }
         onCreate={async (data: any) => {
           await createDocumentVariable(data);
+          toast.success("Variable creada con éxito");
         }}
       />
     </>
