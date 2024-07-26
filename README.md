@@ -45,8 +45,7 @@ El endpoint `/api/fileUpload/multipleFile` gestiona la recepción y procesamient
 
 - **Autorización:** Verifica si el usuario está autorizado para subir archivos.
 - **Procesamiento de Archivos:** Extrae los archivos y datos del objeto `FormData`, determina el directorio de destino basado en los datos proporcionados y guarda los archivos.
-- **Guardar Archivos y Extraer Variables:** Para documentos DOCX (cuando el `endpoint` es `templateDocs`), extrae las variables del documento usando `Docxtemplater` y `PizZip`.
-- **Respuesta:** Devuelve información sobre los archivos subidos, incluyendo URLs y variables extraídas.
+- **Respuesta:** Devuelve información sobre los archivos subidos, incluyendo URLs
 
 ### 3. Integración con la Base de Datos
 

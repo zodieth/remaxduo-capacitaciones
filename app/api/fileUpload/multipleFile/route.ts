@@ -1,41 +1,9 @@
-import { isAdmin } from "@/lib/isAdminCheck";
-import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { getServerSessionFunc } from "../../auth/_components/getSessionFunction";
-import PizZip from "pizzip";
-import Docxtemplater from "docxtemplater";
-
-// file: app/api/fileUpload/multipleFile/route.ts
-const templateHandler = ({
-  folder,
-  fileName,
-}: {
-  folder: string;
-  fileName: string;
-}) => {
-  const templatePath = path.resolve(
-    folder, // path to folder
-    fileName // name of file
-  );
-  const content = fs.readFileSync(templatePath, "binary");
-  const zip = new PizZip(content);
-  const doc = new Docxtemplater(zip, {
-    paragraphLoop: true,
-    linebreaks: true,
-  });
-
-  // get data from docx file
-  // const data = doc.getFullText();
-  // console.log("data", data);
-
-  // get { values}
-
-  const values = doc.getFullText().match(/{([^}]+)}/g);
-
-  return values;
-};
+import { isAdmin } from "@/lib/isAdminCheck";
+import { writeFile } from "fs/promises";
 
 // este endpoint es para subir multiples archivos a la carpeta public/FilesUploaded
 export async function POST(request: NextRequest) {
@@ -104,32 +72,9 @@ export async function POST(request: NextRequest) {
         break;
     }
 
-    const documentVariables = templateHandler({
-      folder,
-      fileName: files[0].name,
-    });
-
     if (!fs.existsSync(folder)) {
       fs.mkdirSync(folder, { recursive: true });
     }
-
-    // const uploadedFilesInfo = await Promise.all(
-    //   files.map(async file => {
-    //     const bytes = await file.arrayBuffer();
-    //     const buffer = Buffer.from(bytes);
-    //     const filePath = path.join(folder, file.name);
-
-    //     await writeFile(filePath, buffer);
-
-    //     const urlPath = `/${filePath.replace("public/", "")}`;
-
-    //     return {
-    //       name: file.name,
-    //       url: `${urlPath}`,
-    //       variables: documentVariables,
-    //     };
-    //   })
-    // );
 
     const uploadedFilesInfo = await Promise.all(
       files.map(async file => {
@@ -140,6 +85,7 @@ export async function POST(request: NextRequest) {
           console.log("YA EXISTE");
           return NextResponse.json({
             success: false,
+            message: "File already exists",
           });
         }
 
@@ -153,11 +99,6 @@ export async function POST(request: NextRequest) {
         return {
           name: file.name,
           url: urlPath,
-          // Asume que `templateHandler` extrae las variables del archivo correctamente
-          variables: templateHandler({
-            folder,
-            fileName: file.name,
-          }),
         };
       })
     );

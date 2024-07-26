@@ -17,18 +17,18 @@ export async function POST(
       });
     }
 
-    const courseOwner = await db.course.findUnique({
-      where: {
-        id: params.courseId,
-        userId: userId,
-      },
-    });
+    // const courseOwner = await db.course.findUnique({
+    //   where: {
+    //     id: params.courseId,
+    //     userId: userId,
+    //   },
+    // });
 
-    if (!courseOwner) {
-      return new NextResponse("Unauthorized", {
-        status: 401,
-      });
-    }
+    // if (!courseOwner) {
+    //   return new NextResponse("Unauthorized", {
+    //     status: 401,
+    //   });
+    // }
 
     const lastChapter = await db.chapter.findFirst({
       where: {
