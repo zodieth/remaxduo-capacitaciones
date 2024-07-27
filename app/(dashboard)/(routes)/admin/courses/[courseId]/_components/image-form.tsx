@@ -66,6 +66,7 @@ export const ImageForm = ({
           )}
         </Button>
       </div>
+
       {!isEditing &&
         (!initialData.imageUrl ? (
           <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
@@ -77,7 +78,7 @@ export const ImageForm = ({
               alt="Upload"
               fill
               className="object-cover rounded-md"
-              src={initialData.imageUrl}
+              src={initialData?.imageUrl?.slice(7)}
             />
           </div>
         ))}
