@@ -90,9 +90,6 @@ export const ChapterVideoForm = ({
       {isEditing && (
         <div>
           <FileUpload
-            endpoint="chapterVideo"
-            courseId={courseId}
-            chapterId={chapterId}
             onChange={({ url }) => {
               if (url) {
                 onSubmit({ videoUrl: url });

@@ -78,15 +78,13 @@ export const ImageForm = ({
               alt="Upload"
               fill
               className="object-cover rounded-md"
-              src={initialData?.imageUrl?.slice(7)}
+              src={initialData?.imageUrl}
             />
           </div>
         ))}
       {isEditing && (
         <div>
           <FileUpload
-            endpoint="courseImage"
-            courseId={courseId}
             onChange={({ url }) => {
               if (url) {
                 onSubmit({ imageUrl: url });

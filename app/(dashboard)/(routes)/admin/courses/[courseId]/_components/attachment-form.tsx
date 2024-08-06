@@ -126,8 +126,6 @@ export const AttachmentForm = ({
       {isEditing && (
         <div>
           <FileUpload
-            endpoint="courseAttachment"
-            courseId={courseId}
             onChange={({ url, name }) => {
               if (url && name) {
                 onSubmit({ url: url, name: name });
