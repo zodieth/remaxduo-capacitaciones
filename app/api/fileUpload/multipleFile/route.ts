@@ -5,6 +5,9 @@ import { getServerSessionFunc } from "../../auth/_components/getSessionFunction"
 import { isAdmin } from "@/lib/isAdminCheck";
 import { writeFile } from "fs/promises";
 
+// ESTE ENDPOINT ESTA DEPRECADO DESDE QUE USAMOS S3-MIN.IO
+// usamos una action para subirlo directamente. Ver: app/actions/upload-files.ts
+
 // este endpoint es para subir multiples archivos a la carpeta public/FilesUploaded
 export async function POST(request: NextRequest) {
   try {
