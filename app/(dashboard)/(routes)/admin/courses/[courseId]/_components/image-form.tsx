@@ -11,6 +11,8 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
+import { SingleImageDropzone } from "@/components/SingleImageDropzone";
+import { submitFormAction } from "@/actions/upload-files";
 
 interface ImageFormProps {
   initialData: Course;
@@ -28,6 +30,7 @@ export const ImageForm = ({
   courseId,
 }: ImageFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [file, setFile] = useState<File>();
 
   const toggleEdit = () => setIsEditing(current => !current);
 
@@ -39,6 +42,7 @@ export const ImageForm = ({
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Curso actualizado");
+      setFile(undefined);
       toggleEdit();
       router.refresh();
     } catch {
@@ -84,13 +88,36 @@ export const ImageForm = ({
         ))}
       {isEditing && (
         <div>
-          <FileUpload
-            onChange={({ url }) => {
-              if (url) {
-                onSubmit({ imageUrl: url });
-              }
+          <SingleImageDropzone
+            width={200}
+            height={200}
+            value={file}
+            onChange={file => {
+              console.log(file);
+              setFile(file);
             }}
           />
+          <Button
+            className="mt-4"
+            onClick={async () => {
+              if (file) {
+                const formData = new FormData();
+                formData.append("file", file);
+
+                const response = await submitFormAction(
+                  null,
+                  formData
+                );
+
+                if (response.url) {
+                  onSubmit({ imageUrl: response.url });
+                }
+              }
+            }}
+          >
+            Subir Imagen
+          </Button>
+
           <div className="text-xs text-muted-foreground mt-4">
             Recomencación de 16:9 aspect ratio
           </div>

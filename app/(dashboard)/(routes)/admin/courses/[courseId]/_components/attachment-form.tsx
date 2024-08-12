@@ -17,6 +17,12 @@ import { Attachment, Course } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
+import {
+  FileState,
+  MultiFileDropzone,
+} from "@/components/MultiFileDropzone";
+import { submitFormAction } from "@/actions/upload-files";
+import { uploadMultipleFilesAction } from "@/actions/upload-multiple-files";
 
 interface AttachmentFormProps {
   initialData: Course & { attachments: Attachment[] };
@@ -36,6 +42,7 @@ export const AttachmentForm = ({
   const [deletingId, setDeletingId] = useState<string | null>(
     null
   );
+  const [files, setFiles] = useState<FileState[]>();
 
   const toggleEdit = () => setIsEditing(current => !current);
 
@@ -49,8 +56,9 @@ export const AttachmentForm = ({
         `/api/courses/${courseId}/attachments`,
         values
       );
-      toast.success("Curso actualizado");
+      toast.success("Archivos subidos con éxito");
       toggleEdit();
+      setFiles(undefined);
       router.refresh();
     } catch {
       toast.error("Algo no funcionó correctamente");
@@ -125,13 +133,59 @@ export const AttachmentForm = ({
       )}
       {isEditing && (
         <div>
-          <FileUpload
+          {/* <FileUpload
             onChange={({ url, name }) => {
               if (url && name) {
                 onSubmit({ url: url, name: name });
               }
             }}
+          /> */}
+          <MultiFileDropzone
+            value={files}
+            onChange={files => {
+              setFiles(files);
+            }}
           />
+          <Button
+            className="mt-4"
+            onClick={async () => {
+              if (files) {
+                const formData = new FormData();
+                files.forEach(fileState => {
+                  if (fileState.file) {
+                    formData.append("files", fileState.file);
+                  }
+                });
+
+                try {
+                  const response =
+                    await uploadMultipleFilesAction(formData);
+
+                  response.forEach(fileResult => {
+                    let path = fileResult.url.split("/").pop();
+
+                    if (path) {
+                      path = path.replace(/%20/g, " ");
+                      path = path.replace(/%28/g, "(");
+                      path = path.replace(/%29/g, ")");
+                      path = path.replace(/%5B/g, "[");
+                      path = path.replace(/%5D/g, "]");
+
+                      onSubmit({
+                        url: fileResult.url,
+                        name: path,
+                      });
+                    }
+                  });
+                } catch (error) {
+                  toast.error("Error al subir los archivos");
+                  console.error("Upload error:", error);
+                }
+              }
+            }}
+          >
+            Subir Archivos
+          </Button>
           <div className="text-xs text-muted-foreground mt-4">
             Agrega lo que tus estudiantes necesiten para el
             curso.
