@@ -2,7 +2,12 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { Pencil, PlusCircle, ImageIcon } from "lucide-react";
+import {
+  Pencil,
+  PlusCircle,
+  ImageIcon,
+  Loader2,
+} from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -10,7 +15,6 @@ import { Course } from "@prisma/client";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
-import { FileUpload } from "@/components/file-upload";
 import { SingleImageDropzone } from "@/components/SingleImageDropzone";
 import { submitFormAction } from "@/actions/upload-files";
 
@@ -31,6 +35,7 @@ export const ImageForm = ({
 }: ImageFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [file, setFile] = useState<File>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleEdit = () => setIsEditing(current => !current);
 
@@ -48,6 +53,7 @@ export const ImageForm = ({
     } catch {
       toast.error("Algo no funcionó correctamente");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -97,26 +103,50 @@ export const ImageForm = ({
               setFile(file);
             }}
           />
-          <Button
-            className="mt-4"
-            onClick={async () => {
-              if (file) {
-                const formData = new FormData();
-                formData.append("file", file);
+          <div className="mt-4">
+            {isLoading ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Cargando
+              </Button>
+            ) : (
+              <Button
+                className="mt-4"
+                onClick={async () => {
+                  setIsLoading(true);
+                  if (file) {
+                    const formData = new FormData();
 
-                const response = await submitFormAction(
-                  null,
-                  formData
-                );
+                    // Modificar el nombre del archivo antes de añadirlo
+                    const modifiedFileName = `${courseId}/${file.name}`;
 
-                if (response.url) {
-                  onSubmit({ imageUrl: response.url });
-                }
-              }
-            }}
-          >
-            Subir Imagen
-          </Button>
+                    // Crear un nuevo archivo con el nombre modificado
+                    const renamedFile = new File(
+                      [file],
+                      modifiedFileName,
+                      {
+                        type: file.type,
+                      }
+                    );
+
+                    formData.append("file", renamedFile);
+
+                    const response = await submitFormAction(
+                      null,
+                      formData
+                    );
+
+                    if (response.url) {
+                      onSubmit({ imageUrl: response.url });
+                    }
+                  }
+                }}
+                disabled={!file || isLoading}
+              >
+                Subir Imagen
+              </Button>
+            )}
+          </div>
 
           <div className="text-xs text-muted-foreground mt-4">
             Recomencación de 16:9 aspect ratio

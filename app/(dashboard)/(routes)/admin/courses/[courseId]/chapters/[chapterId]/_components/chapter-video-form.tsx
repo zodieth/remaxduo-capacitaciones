@@ -2,18 +2,20 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { Pencil, PlusCircle, Video } from "lucide-react";
+import {
+  Loader2,
+  Pencil,
+  PlusCircle,
+  Video,
+} from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Chapter } from "@prisma/client";
-
 import { Button } from "@/components/ui/button";
-import { FileUpload } from "@/components/file-upload";
 import { VideoPlayer } from "@/app/(course)/courses/[courseId]/chapters/[chapterId]/_components/video-player";
 import { SingleImageDropzone } from "@/components/SingleImageDropzone";
 import { submitFormAction } from "@/actions/upload-files";
-import ProgressBar from "@/components/ProgressBar";
 
 interface ChapterVideoFormProps {
   initialData: Chapter;
@@ -47,13 +49,13 @@ export const ChapterVideoForm = ({
         values
       );
       toast.success("Capítulo actualizado");
-      setIsLoading(false);
       toggleEdit();
       setFile(undefined);
       router.refresh();
     } catch {
       toast.error("Algo no funcionó correctamente");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -112,35 +114,51 @@ export const ChapterVideoForm = ({
               setFile(file);
             }}
           />
-          <Button
-            className="mt-4 mb-4"
-            onClick={async () => {
-              if (file) {
-                const formData = new FormData();
-                formData.append("file", file);
 
-                setIsLoading(true);
-                const response = await submitFormAction(
-                  null,
-                  formData
-                );
+          <div className="mt-4">
+            {isLoading ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Cargando
+              </Button>
+            ) : (
+              <Button
+                className="mt-4 mb-4"
+                onClick={async () => {
+                  if (file) {
+                    setIsLoading(true);
+                    const formData = new FormData();
 
-                if (response.url) {
-                  onSubmit({ videoUrl: response.url });
-                }
-              }
-            }}
-          >
-            Subir Video
-          </Button>
-          {isLoading && (
-            // center items
-            <div className="mt-4 flex flex-col items-center justify-center">
-              {/* <Loader2 className="h-14 w-14 animate-spin" /> */}
-              <div>Cargando video, por favor espera...</div>
-              <ProgressBar />
-            </div>
-          )}
+                    // Modificar el nombre del archivo antes de añadirlo
+                    const modifiedFileName = `${courseId}/${chapterId}/${file.name}`;
+
+                    // Crear un nuevo archivo con el nombre modificado
+                    const renamedFile = new File(
+                      [file],
+                      modifiedFileName,
+                      {
+                        type: file.type,
+                      }
+                    );
+
+                    formData.append("file", renamedFile);
+
+                    const response = await submitFormAction(
+                      null,
+                      formData
+                    );
+
+                    if (response.url) {
+                      onSubmit({ videoUrl: response.url });
+                    }
+                  }
+                }}
+                disabled={!file || isLoading}
+              >
+                Subir Video
+              </Button>
+            )}
+          </div>
 
           {/* <div className="text-xs text-muted-foreground mt-4">
             Subir video
