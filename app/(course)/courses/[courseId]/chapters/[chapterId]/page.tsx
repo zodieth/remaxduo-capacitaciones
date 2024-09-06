@@ -11,6 +11,7 @@ import { CourseEnrollButton } from "./_components/course-enroll-button";
 import { CourseProgressButton } from "./_components/course-progress-button";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { sanitizeFileName } from "@/helpers/name-cleaner";
 
 const ChapterIdPage = async ({
   params,
@@ -108,7 +109,7 @@ const ChapterIdPage = async ({
                   >
                     <File />
                     <p className="line-clamp-1">
-                      {attachment.name}
+                      {sanitizeFileName(attachment.name)}
                     </p>
                   </a>
                 ))}

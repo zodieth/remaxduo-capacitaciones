@@ -2,7 +2,12 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { Pencil, PlusCircle, ImageIcon } from "lucide-react";
+import {
+  Pencil,
+  PlusCircle,
+  ImageIcon,
+  Loader2,
+} from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -10,7 +15,8 @@ import { Course } from "@prisma/client";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
-import { FileUpload } from "@/components/file-upload";
+import { SingleImageDropzone } from "@/components/SingleImageDropzone";
+import { submitFormAction } from "@/actions/upload-files";
 
 interface ImageFormProps {
   initialData: Course;
@@ -28,6 +34,8 @@ export const ImageForm = ({
   courseId,
 }: ImageFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [file, setFile] = useState<File>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleEdit = () => setIsEditing(current => !current);
 
@@ -39,14 +47,14 @@ export const ImageForm = ({
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Curso actualizado");
+      setFile(undefined);
       toggleEdit();
       router.refresh();
     } catch {
       toast.error("Algo no funcionó correctamente");
     }
+    setIsLoading(false);
   };
-
-  console.log("Initial data: ", initialData);
 
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
@@ -68,6 +76,7 @@ export const ImageForm = ({
           )}
         </Button>
       </div>
+
       {!isEditing &&
         (!initialData.imageUrl ? (
           <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
@@ -79,21 +88,66 @@ export const ImageForm = ({
               alt="Upload"
               fill
               className="object-cover rounded-md"
-              src={initialData.imageUrl}
+              src={initialData?.imageUrl}
             />
           </div>
         ))}
       {isEditing && (
         <div>
-          <FileUpload
-            endpoint="courseImage"
-            courseId={courseId}
-            onChange={({ url }) => {
-              if (url) {
-                onSubmit({ imageUrl: url });
-              }
+          <SingleImageDropzone
+            width={200}
+            height={200}
+            value={file}
+            onChange={file => {
+              console.log(file);
+              setFile(file);
             }}
           />
+          <div className="mt-4">
+            {isLoading ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Cargando
+              </Button>
+            ) : (
+              <Button
+                className="mt-4"
+                onClick={async () => {
+                  setIsLoading(true);
+                  if (file) {
+                    const formData = new FormData();
+
+                    // Modificar el nombre del archivo antes de añadirlo
+                    const modifiedFileName = `${courseId}/${file.name}`;
+
+                    // Crear un nuevo archivo con el nombre modificado
+                    const renamedFile = new File(
+                      [file],
+                      modifiedFileName,
+                      {
+                        type: file.type,
+                      }
+                    );
+
+                    formData.append("file", renamedFile);
+
+                    const response = await submitFormAction(
+                      null,
+                      formData
+                    );
+
+                    if (response.url) {
+                      onSubmit({ imageUrl: response.url });
+                    }
+                  }
+                }}
+                disabled={!file || isLoading}
+              >
+                Subir Imagen
+              </Button>
+            )}
+          </div>
+
           <div className="text-xs text-muted-foreground mt-4">
             Recomencación de 16:9 aspect ratio
           </div>

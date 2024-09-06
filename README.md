@@ -1,3 +1,5 @@
+# Remax Up Capacitaciones
+
 ## Database
 
 `npx prisma generate` para generar el cliente de la base de datos.
@@ -17,7 +19,7 @@ Also the filePath will be saved in the database. Example: `/FilesUploaded/<cours
 
 Para asegurar la consistencia en el estilo de nuestro código y facilitar la colaboración, hemos integrado Prettier y Husky en el proyecto.
 
-### Prettier
+## Prettier
 
 Prettier es una herramienta para formatear automáticamente nuestro código siguiendo un conjunto de reglas predefinidas. Esto nos ayuda a mantener un estilo coherente y a evitar discusiones sobre formatos en las revisiones de código.
 
@@ -26,3 +28,7 @@ Para formatear el código manualmente, ejecutá:
 ```bash
 npm run format
 ```
+
+## Flujo de Subida de Archivos
+
+Usamos la action 'upload-files.ts' para subir los archivos al bucket. esto devuelve la url, y ahi esa url la usamos para guardar en la db el url en la entidad que corresponda.

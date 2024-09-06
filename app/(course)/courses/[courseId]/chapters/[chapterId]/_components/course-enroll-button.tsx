@@ -26,7 +26,7 @@ export const CourseEnrollButton = ({
         `/api/courses/${courseId}/checkout`
       );
 
-      window.location.assign(response.data.url);
+      window.location.href = response.data.url;
     } catch {
       toast.error("Algo no funcionó correctamente");
     } finally {

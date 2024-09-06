@@ -34,7 +34,7 @@ export const NavbarRoutes = () => {
 
       <div className="flex gap-x-2 ml-auto">
         {isAdminPage || isCoursePage ? (
-          <Link href="/">
+          <Link href="/dashboard">
             <Button size="sm">Dashboard</Button>
           </Link>
         ) : isAdmin(role) ? (
@@ -45,7 +45,7 @@ export const NavbarRoutes = () => {
       </div>
       {/* button de logout */}
       <div className="ml-5">
-        <Link href="/">
+        <Link href="/login">
           <Button
             size="sm"
             variant="ghost"

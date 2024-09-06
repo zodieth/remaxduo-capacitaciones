@@ -16,7 +16,7 @@ const guestRoutes = [
   {
     icon: Tv2,
     label: "Capacitaciones",
-    href: "/",
+    href: "/dashboard",
   },
   // {
   //   icon: FileStack,
@@ -36,11 +36,11 @@ const adminRoutes = [
     label: "Cursos",
     href: "/admin/courses",
   },
-  {
-    icon: BarChart,
-    label: "Analíticas",
-    href: "/admin/analytics",
-  },
+  // {
+  //   icon: BarChart,
+  //   label: "Analíticas",
+  //   href: "/admin/analytics",
+  // },
   {
     icon: Settings,
     label: "Configuración",
@@ -50,6 +50,11 @@ const adminRoutes = [
     icon: User,
     label: "Usuarios",
     href: "/admin/users",
+  },
+  {
+    icon: FileStack,
+    label: "Plantillas",
+    href: "/admin/documentTemplates",
   },
 ];
 

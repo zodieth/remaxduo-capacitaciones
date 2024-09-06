@@ -2,15 +2,20 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { Pencil, PlusCircle, Video } from "lucide-react";
+import {
+  Loader2,
+  Pencil,
+  PlusCircle,
+  Video,
+} from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Chapter } from "@prisma/client";
-
 import { Button } from "@/components/ui/button";
-import { FileUpload } from "@/components/file-upload";
 import { VideoPlayer } from "@/app/(course)/courses/[courseId]/chapters/[chapterId]/_components/video-player";
+import { SingleImageDropzone } from "@/components/SingleImageDropzone";
+import { submitFormAction } from "@/actions/upload-files";
 
 interface ChapterVideoFormProps {
   initialData: Chapter;
@@ -28,6 +33,8 @@ export const ChapterVideoForm = ({
   chapterId,
 }: ChapterVideoFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [file, setFile] = useState<File>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleEdit = () => setIsEditing(current => !current);
 
@@ -43,10 +50,12 @@ export const ChapterVideoForm = ({
       );
       toast.success("Capítulo actualizado");
       toggleEdit();
+      setFile(undefined);
       router.refresh();
     } catch {
       toast.error("Algo no funcionó correctamente");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -89,19 +98,71 @@ export const ChapterVideoForm = ({
         ))}
       {isEditing && (
         <div>
-          <FileUpload
-            endpoint="chapterVideo"
-            courseId={courseId}
-            chapterId={chapterId}
+          {/* <FileUpload
             onChange={({ url }) => {
               if (url) {
                 onSubmit({ videoUrl: url });
               }
+            }} */}
+          {/* este es para imagenes nomas */}
+          <SingleImageDropzone
+            width={500}
+            height={200}
+            value={file}
+            onChange={file => {
+              console.log(file);
+              setFile(file);
             }}
           />
-          <div className="text-xs text-muted-foreground mt-4">
-            Subir video
+
+          <div className="mt-4">
+            {isLoading ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Cargando
+              </Button>
+            ) : (
+              <Button
+                className="mt-4 mb-4"
+                onClick={async () => {
+                  if (file) {
+                    setIsLoading(true);
+                    const formData = new FormData();
+
+                    // Modificar el nombre del archivo antes de añadirlo
+                    const modifiedFileName = `${courseId}/${chapterId}/${file.name}`;
+
+                    // Crear un nuevo archivo con el nombre modificado
+                    const renamedFile = new File(
+                      [file],
+                      modifiedFileName,
+                      {
+                        type: file.type,
+                      }
+                    );
+
+                    formData.append("file", renamedFile);
+
+                    const response = await submitFormAction(
+                      null,
+                      formData
+                    );
+
+                    if (response.url) {
+                      onSubmit({ videoUrl: response.url });
+                    }
+                  }
+                }}
+                disabled={!file || isLoading}
+              >
+                Subir Video
+              </Button>
+            )}
           </div>
+
+          {/* <div className="text-xs text-muted-foreground mt-4">
+            Subir video
+          </div> */}
         </div>
       )}
       {initialData.videoUrl && !isEditing && (

@@ -3,10 +3,8 @@
 import * as z from "zod";
 import axios from "axios";
 import {
-  Pencil,
   PlusCircle,
-  ImageIcon,
-  File,
+  File as FileIcon,
   Loader2,
   X,
 } from "lucide-react";
@@ -14,10 +12,13 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Attachment, Course } from "@prisma/client";
-import Image from "next/image";
-
 import { Button } from "@/components/ui/button";
-import { FileUpload } from "@/components/file-upload";
+import {
+  FileState,
+  MultiFileDropzone,
+} from "@/components/MultiFileDropzone";
+import { uploadMultipleFilesAction } from "@/actions/upload-multiple-files";
+import { sanitizeFileName } from "@/helpers/name-cleaner";
 
 interface AttachmentFormProps {
   initialData: Course & { attachments: Attachment[] };
@@ -37,6 +38,8 @@ export const AttachmentForm = ({
   const [deletingId, setDeletingId] = useState<string | null>(
     null
   );
+  const [files, setFiles] = useState<FileState[]>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleEdit = () => setIsEditing(current => !current);
 
@@ -50,12 +53,15 @@ export const AttachmentForm = ({
         `/api/courses/${courseId}/attachments`,
         values
       );
-      toast.success("Curso actualizado");
+
+      toast.success("Archivos subidos con éxito");
       toggleEdit();
+      setFiles(undefined);
       router.refresh();
     } catch {
       toast.error("Algo no funcionó correctamente");
     }
+    setIsLoading(false);
   };
 
   const onDelete = async (id: string) => {
@@ -101,9 +107,9 @@ export const AttachmentForm = ({
                   key={attachment.id}
                   className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md"
                 >
-                  <File className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <FileIcon className="h-4 w-4 mr-2 flex-shrink-0" />
                   <p className="text-xs line-clamp-1">
-                    {attachment.name}
+                    {sanitizeFileName(attachment.name)}
                   </p>
                   {deletingId === attachment.id && (
                     <div>
@@ -126,15 +132,92 @@ export const AttachmentForm = ({
       )}
       {isEditing && (
         <div>
-          <FileUpload
-            endpoint="courseAttachment"
-            courseId={courseId}
+          {/* <FileUpload
             onChange={({ url, name }) => {
               if (url && name) {
                 onSubmit({ url: url, name: name });
               }
             }}
+          /> */}
+          <MultiFileDropzone
+            value={files}
+            onChange={files => {
+              setFiles(files);
+            }}
           />
+
+          <div className="mt-4">
+            {isLoading ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Cargando
+              </Button>
+            ) : (
+              <Button
+                className="mt-4"
+                onClick={async () => {
+                  setIsLoading(true);
+                  if (files) {
+                    const formData = new FormData();
+                    files.forEach(fileState => {
+                      if (fileState.file) {
+                        // Modificar el nombre del archivo antes de agregarlo al FormData
+                        const modifiedFileName = `${courseId}/${fileState.file.name}`;
+
+                        // Crear un nuevo archivo con el nombre modificado
+                        const renamedFile = new File(
+                          [fileState.file],
+                          modifiedFileName,
+                          {
+                            type: fileState.file.type,
+                          }
+                        );
+
+                        formData.append("files", renamedFile);
+                      }
+                    });
+
+                    console.log("Files to upload:", formData);
+
+                    try {
+                      const response =
+                        await uploadMultipleFilesAction(
+                          formData
+                        );
+
+                      response.forEach(fileResult => {
+                        let path = fileResult.url
+                          .split("/")
+                          .pop();
+
+                        if (path) {
+                          path = path.replace(/%20/g, " ");
+                          path = path.replace(/%28/g, "(");
+                          path = path.replace(/%29/g, ")");
+                          path = path.replace(/%5B/g, "[");
+                          path = path.replace(/%5D/g, "]");
+
+                          onSubmit({
+                            url: fileResult.url,
+                            name: path,
+                          });
+                        }
+                      });
+                    } catch (error) {
+                      toast.error("Error al subir los archivos");
+                      console.error("Upload error:", error);
+                    }
+                  }
+                }}
+                disabled={
+                  !files || files.length === 0 || isLoading
+                }
+              >
+                Subir Archivos
+              </Button>
+            )}
+          </div>
+
           <div className="text-xs text-muted-foreground mt-4">
             Agrega lo que tus estudiantes necesiten para el
             curso.

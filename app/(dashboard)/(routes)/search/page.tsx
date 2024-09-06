@@ -23,7 +23,7 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   if (!userId) {
-    return redirect("/");
+    return redirect("/login");
   }
 
   const { completedCourses, coursesInProgress } =

@@ -14,12 +14,18 @@ import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
+import {
+  jwtHandler,
+  refreshTokenJWT,
+} from "@/components/jwtHandler";
+import { Agent, Email } from "@/types/next-auth";
 
 interface FormValues {
   name: string;
   email: string;
   role: string;
   password: string;
+  agentId?: string;
 }
 
 export type User = {
@@ -28,6 +34,7 @@ export type User = {
   email: string;
   role: string;
   password?: string;
+  agentId?: string;
 };
 
 type UserManagementProps = {
@@ -35,6 +42,9 @@ type UserManagementProps = {
   user?: User | undefined;
   handleRefreshUsers: (user: any) => void;
 };
+
+const AGENTES_API_URL =
+  process.env.NEXT_PUBLIC_REMAX_API_AGENTES_URL || "";
 
 const api = {
   createUser: async (user: User) => {
@@ -64,6 +74,40 @@ const api = {
       throw new Error("Error al actualizar el usuario");
     }
     return response.json();
+  },
+  getRemaxAgents: async () => {
+    let token = localStorage.getItem("remax-token") || "";
+    const { valid, expired } = await jwtHandler(token);
+
+    if (expired || !valid) {
+      const tokenToast = toast.loading(
+        "Token expirado. Refrescando..."
+      );
+      const newToken = await refreshTokenJWT();
+
+      newToken &&
+        (token = newToken) &&
+        toast.dismiss(tokenToast);
+    }
+
+    console.log("token", token);
+    try {
+      const response = await fetch(AGENTES_API_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        toast.error("Error al obtener los agentes de Remax");
+        throw new Error("Error al obtener los agentes de Remax");
+      }
+      const data = await response.json();
+      const agents = data.data;
+      return agents;
+    } catch (error) {
+      console.error("Error al obtener agentes de Remax:", error);
+    }
   },
 };
 
@@ -117,17 +161,46 @@ export const UserManagement = ({
     setShowPassword(prevState => !prevState);
   };
 
-  const onSubmit: SubmitHandler<FormValues> = data => {
+  const onSubmit: SubmitHandler<FormValues> = async data => {
     if (!user) {
-      api.createUser(data).then(
+      // si estoy creando un user, busco los agentes de remax, y busco si el email del user coincide con algun agente
+      // si coincide, le asigno el id del agente a la propiedad agentId del user
+      const agents = await api.getRemaxAgents();
+      console.log("agents", agents);
+      const registrationEmail = data.email;
+      console.log("data", data);
+      console.log("registrationEmail", registrationEmail);
+
+      const foundAgent =
+        agents &&
+        agents.find((agent: Agent) =>
+          agent.emails.some(
+            (email: Email) =>
+              email.primary === true &&
+              email.value === registrationEmail
+          )
+        );
+
+      if (!foundAgent) {
+        toast.error(
+          "No se encontro el email del agente en Remax"
+        );
+        return;
+      }
+
+      api.createUser({ ...data, agentId: foundAgent.id }).then(
         res => {
           toast.success("Usuario creado");
           handleRefreshUsers({
             ...data,
             id: res.id,
+            agentId: foundAgent.id,
           });
         },
         err => {
+          toast.error(
+            "Error al crear el usuario. Intente nuevamente."
+          );
           console.log("error", err);
         }
       );
@@ -213,6 +286,22 @@ export const UserManagement = ({
               <FormMessage>{errors.email.message}</FormMessage>
             )}
           </FormItem>
+          {/* <FormItem className="mt-4">
+            <FormLabel>Id de Agente (RED Remax)</FormLabel>
+            <FormControl>
+              <Input
+                id="agentId"
+                placeholder="AR.42.170.XX"
+                value={(editUser as User)?.agentId}
+                {...register("agentId", {
+                  onChange: handleInputChange,
+                })}
+              />
+            </FormControl>
+            {errors.agentId && (
+              <FormMessage>{errors.agentId.message}</FormMessage>
+            )}
+          </FormItem> */}
           <FormItem className="mt-4 flex flex-col">
             <FormLabel>Rol</FormLabel>
             <FormControl>

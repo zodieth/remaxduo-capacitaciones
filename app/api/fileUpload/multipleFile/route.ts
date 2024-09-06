@@ -1,9 +1,12 @@
-import { isAdmin } from "@/lib/isAdminCheck";
-import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { getServerSessionFunc } from "../../auth/_components/getSessionFunction";
+import { isAdmin } from "@/lib/isAdminCheck";
+import { writeFile } from "fs/promises";
+
+// ESTE ENDPOINT ESTA DEPRECADO DESDE QUE USAMOS S3-MIN.IO
+// usamos una action para subirlo directamente. Ver: app/actions/upload-files.ts
 
 // este endpoint es para subir multiples archivos a la carpeta public/FilesUploaded
 export async function POST(request: NextRequest) {
@@ -27,21 +30,49 @@ export async function POST(request: NextRequest) {
       | string
       | undefined;
 
-    let folder = "public/FilesUploaded";
-
     if (files.length === 0) {
       return NextResponse.json({
         success: false,
         message: "No files uploaded",
       });
     }
+    // let folder = "public/FilesUploaded";
+    // if (endpoint === "chapterVideo" && courseId && chapterId) {
+    //   folder = `public/FilesUploaded/${courseId}/chapters/${chapterId}`;
+    // }
 
-    if (endpoint === "chapterVideo" && courseId && chapterId) {
-      folder = `public/FilesUploaded/${courseId}/chapters/${chapterId}`;
-    }
+    // if (endpoint && courseId && !chapterId) {
+    //   folder = `public/FilesUploaded/${courseId}/${endpoint}`;
+    // }
 
-    if (endpoint && courseId && !chapterId) {
-      folder = `public/FilesUploaded/${courseId}/${endpoint}`;
+    let folder = "public";
+
+    switch (endpoint) {
+      case "chapterVideo":
+        if (!courseId || !chapterId) {
+          return NextResponse.json({
+            success: false,
+            message: "Missing courseId or chapterId",
+          });
+        } else {
+          folder = `public/FilesUploaded/${courseId}/chapters/${chapterId}`;
+        }
+        break;
+      case "courseImage":
+      case "courseVideo":
+        if (!courseId) {
+          return NextResponse.json({
+            success: false,
+            message: "Missing courseId",
+          });
+        } else {
+          folder = `public/FilesUploaded/${courseId}/${endpoint}`;
+        }
+        break;
+      case "templateDocs":
+        folder = `public/TemplateDocs`;
+      default:
+        break;
     }
 
     if (!fs.existsSync(folder)) {
@@ -50,15 +81,28 @@ export async function POST(request: NextRequest) {
 
     const uploadedFilesInfo = await Promise.all(
       files.map(async file => {
+        const filePath = path.join(folder, file.name);
+
+        // Verifica si el archivo ya existe
+        if (fs.existsSync(filePath)) {
+          console.log("YA EXISTE");
+          return NextResponse.json({
+            success: false,
+            message: "File already exists",
+          });
+        }
+
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        const filePath = path.join(folder, file.name);
 
         await writeFile(filePath, buffer);
 
         const urlPath = `/${filePath.replace("public/", "")}`;
 
-        return { name: file.name, url: `${urlPath}` };
+        return {
+          name: file.name,
+          url: urlPath,
+        };
       })
     );
 
