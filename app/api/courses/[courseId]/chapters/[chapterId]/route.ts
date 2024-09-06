@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
 import { getServerSessionFunc } from "@/app/api/auth/_components/getSessionFunction";
+import { MinioStorageProvider } from "@/services/storage/implementations/minio";
 
 // const { Video } = new Mux(
 //   process.env.MUX_TOKEN_ID!,
@@ -110,21 +111,34 @@ export async function PATCH(
         status: 401,
       });
     }
-    // Removimos la validación de que el usuario sea el dueño del curso
-    // const ownCourse = await db.course.findUnique({
-    //   where: {
-    //     id: params.courseId,
-    //     userId,
-    //   },
-    // });
 
-    // if (!ownCourse) {
-    //   return new NextResponse("Unauthorized", {
-    //     status: 401,
-    //   });
-    // }
+    const existingChapter = await db.chapter.findUnique({
+      where: {
+        id: params.chapterId,
+        courseId: params.courseId,
+      },
+    });
 
-    const chapter = await db.chapter.update({
+    if (existingChapter) {
+      if (
+        existingChapter.videoUrl &&
+        existingChapter.videoUrl !== values.videoUrl
+      ) {
+        const storageProvider = new MinioStorageProvider();
+
+        let path = existingChapter.videoUrl.split("/").pop();
+        if (path) {
+          path = path.replace(/%20/g, " ");
+          path = path.replace(/%28/g, "(");
+          path = path.replace(/%29/g, ")");
+          path = path.replace(/%5B/g, "[");
+          path = path.replace(/%5D/g, "]");
+          console.log("Deleting file from bucket:", path);
+          await storageProvider.delete(path);
+        }
+      }
+    }
+    const updatedChapter = await db.chapter.update({
       where: {
         id: params.chapterId,
         courseId: params.courseId,
@@ -134,7 +148,7 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json(chapter);
+    return NextResponse.json(updatedChapter);
   } catch (error) {
     console.log("[COURSES_CHAPTER_ID]", error);
     return new NextResponse("Internal Error", {

@@ -1,14 +1,7 @@
-import Mux from "@mux/mux-node";
-
 import { NextResponse } from "next/server";
-
 import { db } from "@/lib/db";
 import { getServerSessionFunc } from "../../auth/_components/getSessionFunction";
-
-// const { Video } = new Mux(
-//   process.env.MUX_TOKEN_ID!,
-//   process.env.MUX_TOKEN_SECRET!
-// );
+import { MinioStorageProvider } from "@/services/storage/implementations/minio";
 
 export async function DELETE(
   req: Request,
@@ -38,12 +31,6 @@ export async function DELETE(
 
     if (!course) {
       return new NextResponse("Not found", { status: 404 });
-    }
-
-    for (const chapter of course.chapters) {
-      // if (chapter.muxData?.assetId) {
-      //   await Video.Assets.del(chapter.muxData.assetId);
-      // }
     }
 
     const deletedCourse = await db.course.delete({
@@ -76,7 +63,33 @@ export async function PATCH(
       });
     }
 
-    const course = await db.course.update({
+    const existingCourse = await db.course.findUnique({
+      where: {
+        id: courseId,
+      },
+    });
+
+    if (existingCourse) {
+      if (
+        existingCourse.imageUrl &&
+        existingCourse.imageUrl !== values.imageUrl
+      ) {
+        const storageProvider = new MinioStorageProvider();
+
+        let path = existingCourse.imageUrl.split("/").pop();
+
+        if (path) {
+          path = path.replace(/%20/g, " ");
+          path = path.replace(/%28/g, "(");
+          path = path.replace(/%29/g, ")");
+
+          console.log("Deleting image:", path);
+          await storageProvider.delete(path);
+        }
+      }
+    }
+
+    const updatedCourse = await db.course.update({
       where: {
         id: courseId,
       },
@@ -85,7 +98,7 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json(course);
+    return NextResponse.json(updatedCourse);
   } catch (error) {
     console.log("[COURSE_ID]", error);
     return new NextResponse("Internal Error", {

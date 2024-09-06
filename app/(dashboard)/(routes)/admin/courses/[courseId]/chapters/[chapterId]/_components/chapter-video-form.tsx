@@ -11,6 +11,9 @@ import { Chapter } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
 import { VideoPlayer } from "@/app/(course)/courses/[courseId]/chapters/[chapterId]/_components/video-player";
+import { SingleImageDropzone } from "@/components/SingleImageDropzone";
+import { submitFormAction } from "@/actions/upload-files";
+import ProgressBar from "@/components/ProgressBar";
 
 interface ChapterVideoFormProps {
   initialData: Chapter;
@@ -28,6 +31,8 @@ export const ChapterVideoForm = ({
   chapterId,
 }: ChapterVideoFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [file, setFile] = useState<File>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleEdit = () => setIsEditing(current => !current);
 
@@ -42,7 +47,9 @@ export const ChapterVideoForm = ({
         values
       );
       toast.success("Capítulo actualizado");
+      setIsLoading(false);
       toggleEdit();
+      setFile(undefined);
       router.refresh();
     } catch {
       toast.error("Algo no funcionó correctamente");
@@ -89,19 +96,55 @@ export const ChapterVideoForm = ({
         ))}
       {isEditing && (
         <div>
-          <FileUpload
-            endpoint="chapterVideo"
-            courseId={courseId}
-            chapterId={chapterId}
+          {/* <FileUpload
             onChange={({ url }) => {
               if (url) {
                 onSubmit({ videoUrl: url });
               }
+            }} */}
+          {/* este es para imagenes nomas */}
+          <SingleImageDropzone
+            width={500}
+            height={200}
+            value={file}
+            onChange={file => {
+              console.log(file);
+              setFile(file);
             }}
           />
-          <div className="text-xs text-muted-foreground mt-4">
+          <Button
+            className="mt-4 mb-4"
+            onClick={async () => {
+              if (file) {
+                const formData = new FormData();
+                formData.append("file", file);
+
+                setIsLoading(true);
+                const response = await submitFormAction(
+                  null,
+                  formData
+                );
+
+                if (response.url) {
+                  onSubmit({ videoUrl: response.url });
+                }
+              }
+            }}
+          >
+            Subir Video
+          </Button>
+          {isLoading && (
+            // center items
+            <div className="mt-4 flex flex-col items-center justify-center">
+              {/* <Loader2 className="h-14 w-14 animate-spin" /> */}
+              <div>Cargando video, por favor espera...</div>
+              <ProgressBar />
+            </div>
+          )}
+
+          {/* <div className="text-xs text-muted-foreground mt-4">
             Subir video
-          </div>
+          </div> */}
         </div>
       )}
       {initialData.videoUrl && !isEditing && (

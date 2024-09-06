@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
-
 import { IconBadge } from "@/components/icon-badge";
-import { formatPrice } from "@/lib/format";
 import { CourseProgress } from "@/components/course-progress";
 import Image from "next/image";
 
@@ -33,7 +31,7 @@ export const CourseCard = ({
             fill
             className="object-cover"
             alt={title}
-            src={imageUrl?.slice(7) || "/placeholder.png"}
+            src={imageUrl || "/placeholder.png"}
           />
         </div>
         <div className="flex flex-col pt-2">
