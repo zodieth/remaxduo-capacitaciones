@@ -18,18 +18,18 @@ export async function DELETE(
       });
     }
 
-    const courseOwner = await db.course.findUnique({
-      where: {
-        id: params.courseId,
-        userId: userId,
-      },
-    });
+    // const courseOwner = await db.course.findUnique({
+    //   where: {
+    //     id: params.courseId,
+    //     userId: userId,
+    //   },
+    // });
 
-    if (!courseOwner) {
-      return new NextResponse("Unauthorized", {
-        status: 401,
-      });
-    }
+    // if (!courseOwner) {
+    //   return new NextResponse("Unauthorized", {
+    //     status: 401,
+    //   });
+    // }
 
     const attachment = await db.attachment.delete({
       where: {

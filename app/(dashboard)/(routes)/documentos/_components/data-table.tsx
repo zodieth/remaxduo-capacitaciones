@@ -75,7 +75,7 @@ export function DataTable<TData, TValue>({
         {/* <Link href="/admin/create">
           <Button>
             <PlusCircle className="h-4 w-4 mr-2" />
-            Nueva capacitación
+            Nueva Autorización
           </Button>
         </Link> */}
       </div>

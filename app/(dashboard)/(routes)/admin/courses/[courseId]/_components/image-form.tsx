@@ -46,8 +46,6 @@ export const ImageForm = ({
     }
   };
 
-  console.log("Initial data: ", initialData);
-
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
@@ -68,6 +66,7 @@ export const ImageForm = ({
           )}
         </Button>
       </div>
+
       {!isEditing &&
         (!initialData.imageUrl ? (
           <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
@@ -79,7 +78,7 @@ export const ImageForm = ({
               alt="Upload"
               fill
               className="object-cover rounded-md"
-              src={initialData.imageUrl}
+              src={initialData?.imageUrl?.slice(7)}
             />
           </div>
         ))}

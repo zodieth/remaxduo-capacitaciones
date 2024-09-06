@@ -5,10 +5,10 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSessionFunc } from "@/app/api/auth/_components/getSessionFunction";
 
-const { Video } = new Mux(
-  process.env.MUX_TOKEN_ID!,
-  process.env.MUX_TOKEN_SECRET!
-);
+// const { Video } = new Mux(
+//   process.env.MUX_TOKEN_ID!,
+//   process.env.MUX_TOKEN_SECRET!
+// );
 
 export async function DELETE(
   req: Request,
@@ -55,7 +55,7 @@ export async function DELETE(
       });
 
       if (existingMuxData) {
-        await Video.Assets.del(existingMuxData.assetId);
+        // await Video.Assets.del(existingMuxData.assetId);
         await db.muxData.delete({
           where: {
             id: existingMuxData.id,

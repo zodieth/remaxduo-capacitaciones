@@ -18,11 +18,11 @@ const guestRoutes = [
     label: "Capacitaciones",
     href: "/dashboard",
   },
-  {
-    icon: FileStack,
-    label: "Documentos",
-    href: "/documentos",
-  },
+  // {
+  //   icon: FileStack,
+  //   label: "Documentos",
+  //   href: "/documentos",
+  // },
   {
     icon: Link,
     label: "Links",
@@ -36,11 +36,11 @@ const adminRoutes = [
     label: "Cursos",
     href: "/admin/courses",
   },
-  {
-    icon: BarChart,
-    label: "Analíticas",
-    href: "/admin/analytics",
-  },
+  // {
+  //   icon: BarChart,
+  //   label: "Analíticas",
+  //   href: "/admin/analytics",
+  // },
   {
     icon: Settings,
     label: "Configuración",

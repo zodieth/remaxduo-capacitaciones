@@ -89,6 +89,8 @@ const api = {
         (token = newToken) &&
         toast.dismiss(tokenToast);
     }
+
+    console.log("token", token);
     try {
       const response = await fetch(AGENTES_API_URL, {
         headers: {
@@ -102,7 +104,6 @@ const api = {
       }
       const data = await response.json();
       const agents = data.data;
-      console.log("Agentes de Remax:", agents);
       return agents;
     } catch (error) {
       console.error("Error al obtener agentes de Remax:", error);
@@ -165,7 +166,10 @@ export const UserManagement = ({
       // si estoy creando un user, busco los agentes de remax, y busco si el email del user coincide con algun agente
       // si coincide, le asigno el id del agente a la propiedad agentId del user
       const agents = await api.getRemaxAgents();
+      console.log("agents", agents);
       const registrationEmail = data.email;
+      console.log("data", data);
+      console.log("registrationEmail", registrationEmail);
 
       const foundAgent =
         agents &&
@@ -177,6 +181,13 @@ export const UserManagement = ({
           )
         );
 
+      if (!foundAgent) {
+        toast.error(
+          "No se encontro el email del agente en Remax"
+        );
+        return;
+      }
+
       api.createUser({ ...data, agentId: foundAgent.id }).then(
         res => {
           toast.success("Usuario creado");
@@ -187,6 +198,9 @@ export const UserManagement = ({
           });
         },
         err => {
+          toast.error(
+            "Error al crear el usuario. Intente nuevamente."
+          );
           console.log("error", err);
         }
       );

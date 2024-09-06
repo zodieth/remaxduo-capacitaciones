@@ -31,3 +31,34 @@ export async function GET(
     });
   }
 }
+
+// delete
+export async function DELETE(
+  req: Request,
+  { params }: { params: { documentId: string } }
+) {
+  try {
+    const { userId, role } = await getServerSessionFunc();
+
+    if (!userId || !isAdmin(role)) {
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
+    }
+
+    await db.document.delete({
+      where: {
+        id: params.documentId as string,
+      },
+    });
+
+    return new NextResponse("Document deleted", {
+      status: 200,
+    });
+  } catch (error) {
+    console.log("[DOCUMENT]", error);
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
+  }
+}

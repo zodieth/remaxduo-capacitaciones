@@ -6,8 +6,7 @@ import { getServerSessionFunc } from "../auth/_components/getSessionFunction";
 export async function POST(req: Request) {
   try {
     const { userId, role } = await getServerSessionFunc();
-    const { name, value, description, referenceTo } =
-      await req.json();
+    const { name, value, description } = await req.json();
 
     if (!userId || !isAdmin(role)) {
       return new NextResponse("Unauthorized", {
@@ -20,7 +19,6 @@ export async function POST(req: Request) {
         name,
         value,
         description,
-        referenceTo,
       },
     });
 
@@ -50,8 +48,7 @@ export async function GET(req: Request) {
 export async function PUT(req: Request) {
   try {
     const { userId, role } = await getServerSessionFunc();
-    const { id, name, value, description, referenceTo } =
-      await req.json();
+    const { id, name, value, description } = await req.json();
 
     if (!userId || !isAdmin(role)) {
       return new NextResponse("Unauthorized", {
@@ -61,7 +58,7 @@ export async function PUT(req: Request) {
 
     const documentVariable = await db.documentVariable.update({
       where: { id },
-      data: { name, value, description, referenceTo },
+      data: { name, value, description },
     });
 
     return NextResponse.json(documentVariable);

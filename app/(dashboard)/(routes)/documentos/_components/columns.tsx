@@ -5,8 +5,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
   MoreHorizontal,
-  Pencil,
   Eye,
+  Link2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,10 +15,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PropertydApi } from "@/types/next-auth";
 import Link from "next/link";
+import { Property } from "@prisma/client";
 
-export const columns: ColumnDef<PropertydApi>[] = [
+export const columns = (
+  onLinkAuthorization: (mlsid: string) => void
+): ColumnDef<Property>[] => [
   {
     accessorKey: "title",
     header: ({ column }) => {
@@ -36,7 +38,7 @@ export const columns: ColumnDef<PropertydApi>[] = [
     },
   },
   {
-    accessorKey: "address.displayAddress",
+    accessorKey: "address",
     header: ({ column }) => {
       return (
         <Button
@@ -54,8 +56,8 @@ export const columns: ColumnDef<PropertydApi>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const { id } = row.original;
-      const href = `documentos/${id}`;
+      const { mlsid } = row.original;
+      const href = `documentos/${mlsid}`;
 
       return (
         <DropdownMenu>
@@ -72,6 +74,13 @@ export const columns: ColumnDef<PropertydApi>[] = [
                 Ver
               </DropdownMenuItem>
             </Link>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => onLinkAuthorization(mlsid)}
+            >
+              <Link2 className="h-4 w-4 mr-2" />
+              Vincular Autorización
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

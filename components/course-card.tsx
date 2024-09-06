@@ -33,7 +33,7 @@ export const CourseCard = ({
             fill
             className="object-cover"
             alt={title}
-            src={imageUrl || "/placeholder.png"}
+            src={imageUrl?.slice(7) || "/placeholder.png"}
           />
         </div>
         <div className="flex flex-col pt-2">

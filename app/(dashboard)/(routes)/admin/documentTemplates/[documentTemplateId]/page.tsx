@@ -31,6 +31,15 @@ const api = {
     );
     return response;
   },
+  async deleteDocumentTemplate(documentTemplateId: string) {
+    const response = await fetch(
+      `/api/documents/documentTemplate/${documentTemplateId}`,
+      {
+        method: "DELETE",
+      }
+    );
+    return response;
+  },
 };
 
 const EditDocumentTemplatePage = ({
@@ -49,10 +58,8 @@ const EditDocumentTemplatePage = ({
         let documentToSend: DocumentToSend = {
           title: document.title,
           description: document.description,
-          content: document.content,
-          variablesIds: document.variables.map(
-            (variable: DocumentVariable) => variable.id
-          ),
+          templateBlocks: document.templateBlocks,
+          category: document.category,
         };
         setDocument(documentToSend);
       });
@@ -69,7 +76,6 @@ const EditDocumentTemplatePage = ({
       if (res.ok) {
         await res.json();
         toast.success("Plantilla editada con éxito");
-        // console.log("Data received:", data);
         router.push("/admin/documentTemplates");
       } else {
         toast.error("Error al editar la plantilla");
@@ -85,6 +91,21 @@ const EditDocumentTemplatePage = ({
       setIsLoading(false);
     }
   };
+
+  const onDelete = async () => {
+    try {
+      setIsLoading(true);
+      await api.deleteDocumentTemplate(
+        params.documentTemplateId
+      );
+      toast.success("Plantilla eliminada");
+      router.push("/admin/documentTemplates");
+    } catch {
+      toast.error("Error al eliminar la plantilla");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       {isLoading && <LoadingOverlay />}
@@ -92,6 +113,8 @@ const EditDocumentTemplatePage = ({
         <DocumentTemplateEditor
           onEdit={onEdit}
           documentTemplateState={document}
+          documentTemplateId={params.documentTemplateId}
+          onDelete={onDelete}
         />
       )}
     </>

@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["utfs.io", "sistema.remaxup.com.ar"],
+    domains: [
+      "utfs.io",
+      "sistema.remaxup.com.ar",
+      "remaxup.com.ar",
+    ],
     unoptimized: true,
   },
 };

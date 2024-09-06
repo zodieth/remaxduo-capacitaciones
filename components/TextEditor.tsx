@@ -4,9 +4,8 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
-// import { DocumentVariable } from "@prisma/client";
-import LoadingSpinner from "./ui/loadingSpinner";
 import { DocumentVariable } from "@/types/next-auth";
+import { DocumentVariableSelect } from "./DocumentVariableSelect";
 
 const TextEditor = ({
   documentVariables,
@@ -14,21 +13,22 @@ const TextEditor = ({
   content,
   hideControls,
   disableEditing,
+  createDocumentVariable,
 }: {
   documentVariables: DocumentVariable[];
   updateDocumentContent: (html: string) => void;
   content?: string;
   hideControls?: boolean;
   disableEditing?: boolean;
+  createDocumentVariable?: (
+    data: Omit<
+      DocumentVariable,
+      "id" | "createdAt" | "updatedAt"
+    >
+  ) => Promise<void>;
 }) => {
-  // state used for adding variables to the editor
-  const [selectedVariable, setSelectedVariable] = useState(
-    documentVariables[0]?.value
-  );
-
-  useEffect(() => {
-    setSelectedVariable(documentVariables[0]?.value);
-  }, [documentVariables]);
+  const [selectedVariable, setSelectedVariable] =
+    useState<DocumentVariable | null>(null);
 
   const documentContent =
     content ||
@@ -44,7 +44,6 @@ const TextEditor = ({
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
 
-      console.log(html);
       updateDocumentContent(html);
     },
   });
@@ -64,7 +63,13 @@ const TextEditor = ({
   const italicIsActive = editor?.isActive("italic");
 
   const insertVariable = () => {
-    editor.chain().focus().insertContent(selectedVariable).run();
+    if (selectedVariable) {
+      editor
+        .chain()
+        .focus()
+        .insertContent(selectedVariable.value)
+        .run();
+    }
   };
 
   // ---------- END EDITOR SETUP ----------
@@ -95,22 +100,19 @@ const TextEditor = ({
             </div>
             <div className="flex justify-between items-center w-1/2">
               {documentVariables.length > 0 && (
-                <select
-                  value={selectedVariable}
-                  onChange={e =>
-                    setSelectedVariable(e.target.value)
-                  }
-                  className="border border-gray-300 rounded p-1 w-1/2"
-                >
-                  {documentVariables.map(variable => (
-                    <option
-                      key={variable.name}
-                      value={variable.value}
-                    >
-                      {variable.name}
-                    </option>
-                  ))}
-                </select>
+                <>
+                  <DocumentVariableSelect
+                    documentVariables={documentVariables}
+                    selectedDocumentVariable={selectedVariable}
+                    setSelectedDocumentVariable={variable =>
+                      setSelectedVariable(variable)
+                    }
+                    createDocumentVariable={async data => {
+                      createDocumentVariable &&
+                        (await createDocumentVariable(data));
+                    }}
+                  />
+                </>
               )}
               <Button onClick={insertVariable} className="m-2">
                 Insertar Variable
