@@ -206,6 +206,7 @@ model Document {
   content     String           @db.MediumText
   category    DocumentCategory @default(OTROS)
   createdBy   String           @default("system")
+  approved   Boolean          @default(true)
 
   propertyId String?
   property   Property? @relation(fields: [propertyId], references: [mlsid])

@@ -400,6 +400,7 @@ export type DocumentFromTemplate = {
   propertyId: string;
   createdAt: Date;
   updatedAt: Date;
+  approved: boolean;
 };
 
 export type PropertyCreateDTO = {

@@ -110,9 +110,11 @@ const convertHtmlToPdfText = (html: string) => {
 const PdfGenerator = ({
   content,
   title,
+  disabled = false,
 }: {
   content: string;
   title?: string;
+  disabled?: boolean;
 }) => {
   const [isClient, setIsClient] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -131,7 +133,7 @@ const PdfGenerator = ({
     return null; // Evita renderizar en el servidor
   }
   return (
-    <Button>
+    <Button disabled={disabled}>
       <PDFDownloadLink
         document={
           <Document>
