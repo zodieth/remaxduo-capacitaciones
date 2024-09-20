@@ -62,3 +62,46 @@ export async function DELETE(
     });
   }
 }
+
+// update document
+export async function PUT(
+  req: Request,
+  {
+    params,
+  }: {
+    params: { documentId: string };
+  }
+) {
+  const body = await req.json();
+
+  try {
+    const { userId, role } = await getServerSessionFunc();
+
+    if (!userId || !isAdmin(role)) {
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
+    }
+
+    const edittingText =
+      body.status === "APPROVED" ? "" : body.whyIsEditting;
+
+    const document = await db.document.update({
+      where: {
+        id: params.documentId as string,
+      },
+      data: {
+        content: body.content ? body.content : undefined,
+        status: body.status,
+        whyIsEditting: edittingText,
+      },
+    });
+
+    return NextResponse.json(document);
+  } catch (error) {
+    console.log("[DOCUMENT]", error);
+    return new NextResponse("Internal Error", {
+      status: 500,
+    });
+  }
+}

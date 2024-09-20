@@ -1,27 +1,40 @@
-const { PrismaClient } = require("@prisma/client");
-
-const database = new PrismaClient();
+import { db } from "@/lib/db";
+import * as bcrypt from "bcryptjs";
 
 async function main() {
-  try {
-    await database.category.createMany({
-      data: [{ name: "General" }],
-    });
+  const email = "mail@mail.com";
+  const password = "12345";
 
-    await database.user.create({
-      data: {
-        email: "test@testuser.com",
-        name: "Test",
-        password: "12345",
-        role: "ADMIN",
-      },
-    });
-    console.log("Success");
-  } catch (error) {
-    console.log("Error seeding the database: ", error);
-  } finally {
-    await database.$disconnect();
+  const existingUser = await db.user.findUnique({
+    where: { email },
+  });
+  if (existingUser) {
+    console.log(`El usuario con email ${email} ya existe.`);
+    return;
   }
+
+  // Encriptar la contraseña
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Crear el usuario
+  const user = await db.user.create({
+    data: {
+      name: "Usuario seed",
+      email,
+      role: "ADMIN",
+      password: hashedPassword,
+      // agentId: "ID_DEL_AGENTE",
+    },
+  });
+
+  console.log("Usuario creado exitosamente:", user);
 }
 
-main();
+main()
+  .catch(e => {
+    console.error("Error al crear el usuario:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await db.$disconnect();
+  });

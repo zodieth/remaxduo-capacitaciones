@@ -206,6 +206,8 @@ model Document {
   content     String           @db.MediumText
   category    DocumentCategory @default(OTROS)
   createdBy   String           @default("system")
+  status DocumentStatus @default(APPROVED)
+  whyIsEditting String? @db.MediumText
 
   propertyId String?
   property   Property? @relation(fields: [propertyId], references: [mlsid])
@@ -214,6 +216,12 @@ model Document {
   updatedAt DateTime @updatedAt
 
   @@index([propertyId])
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum DocumentCategory {

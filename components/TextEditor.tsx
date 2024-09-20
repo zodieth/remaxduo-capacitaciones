@@ -12,14 +12,14 @@ const TextEditor = ({
   updateDocumentContent,
   content,
   hideControls,
-  disableEditing,
+  isEditable,
   createDocumentVariable,
 }: {
   documentVariables: DocumentVariable[];
   updateDocumentContent: (html: string) => void;
   content?: string;
   hideControls?: boolean;
-  disableEditing?: boolean;
+  isEditable?: boolean;
   createDocumentVariable?: (
     data: Omit<
       DocumentVariable,
@@ -39,7 +39,7 @@ const TextEditor = ({
   const editor = useEditor({
     extensions: [StarterKit],
     content: documentContent,
-    editable: disableEditing ? false : true,
+    editable: isEditable,
 
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
@@ -53,6 +53,14 @@ const TextEditor = ({
       editor.commands.setContent(content || "");
     }
   }, [content, editor]);
+
+  useEffect(() => {
+    if (editor) {
+      editor.setOptions({
+        editable: isEditable, // Actualiza la opción editable del editor cuando isEditable cambia
+      });
+    }
+  }, [isEditable, editor]);
 
   if (!editor) {
     return null;

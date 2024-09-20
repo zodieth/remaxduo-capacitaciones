@@ -166,7 +166,7 @@ export const EditorBlockComponent = ({
             updateBlockContent(block.id, newContent)
           }
           hideControls={true}
-          disableEditing={true}
+          isEditable={false}
         />
         <div className="flex flex-row gap-2 mt-2 ml-2">
           {block.isDuplicable && (

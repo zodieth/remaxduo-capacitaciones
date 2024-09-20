@@ -81,7 +81,7 @@ const MultiTextEditor = ({
             }
             content={editor.content}
             hideControls={false}
-            disableEditing={false}
+            isEditable={true}
           />
           <button onClick={() => removeEditor(editor.id)}>
             Eliminar Editor
