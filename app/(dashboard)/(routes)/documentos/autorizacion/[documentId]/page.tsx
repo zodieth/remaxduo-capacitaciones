@@ -102,7 +102,7 @@ const AuthorizationDocumentPage = ({
                 documentVariables={[]}
                 updateDocumentContent={() => {}}
                 hideControls={true}
-                disableEditing={true}
+                isEditable={false}
               />
             </div>
           )}

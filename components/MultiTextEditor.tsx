@@ -120,7 +120,7 @@ const MultiTextEditor = ({
               }
               content={editor.content}
               hideControls={false}
-              disableEditing={false}
+              isEditable={true}
             />
             <div className="flex items-center space-x-4 mt-2 ml-10">
               <label className="flex items-center mr-2">

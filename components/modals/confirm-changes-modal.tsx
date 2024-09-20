@@ -15,29 +15,36 @@ import {
 interface ConfirmModalProps {
   children: React.ReactNode;
   onConfirm: () => void;
+  title: string;
+  description: string;
+  confirmText?: string;
+  cancelText?: string;
 }
 
 export const ConfirmChangesModal = ({
   children,
   onConfirm,
+  title,
+  description,
+  confirmText,
+  cancelText,
 }: ConfirmModalProps) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Desea Guardar los cambios?
-          </AlertDialogTitle>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>
-            Si continua, se enviará el documento a revisión y no
-            podrá descargarlo hasta que se apruebe.
+            {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel>
+            {cancelText || "Cancelar"}
+          </AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm}>
-            Continuar
+            {confirmText || "Continuar"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

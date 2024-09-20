@@ -400,8 +400,15 @@ export type DocumentFromTemplate = {
   propertyId: string;
   createdAt: Date;
   updatedAt: Date;
-  approved: boolean;
+  status: DocumentStatus;
+  whyIsEditting?: string;
 };
+
+export enum DocumentStatus {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+}
 
 export type PropertyCreateDTO = {
   mlsid: string;

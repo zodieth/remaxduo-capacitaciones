@@ -63,7 +63,7 @@ export async function DELETE(
   }
 }
 
-// update content and approved
+// update document
 export async function PUT(
   req: Request,
   {
@@ -83,13 +83,17 @@ export async function PUT(
       });
     }
 
+    const edittingText =
+      body.status === "APPROVED" ? "" : body.whyIsEditting;
+
     const document = await db.document.update({
       where: {
         id: params.documentId as string,
       },
       data: {
-        content: body.content,
-        approved: body.approved,
+        content: body.content ? body.content : undefined,
+        status: body.status,
+        whyIsEditting: edittingText,
       },
     });
 

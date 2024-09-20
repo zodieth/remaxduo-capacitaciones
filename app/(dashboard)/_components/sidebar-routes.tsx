@@ -8,6 +8,7 @@ import {
   Settings,
   Link,
   User,
+  Pencil,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -55,6 +56,11 @@ const adminRoutes = [
     icon: FileStack,
     label: "Plantillas",
     href: "/admin/documentTemplates",
+  },
+  {
+    icon: Pencil,
+    label: "Solicitudes de Edición",
+    href: "/admin/editRequests",
   },
 ];
 
