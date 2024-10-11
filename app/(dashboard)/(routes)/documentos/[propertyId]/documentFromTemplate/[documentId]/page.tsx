@@ -72,6 +72,7 @@ const DocumentFromTemplatePage = ({
   const [originalContent, setOriginalContent] = useState("");
   const [actualContent, setActualContent] = useState("");
   const [whyIsEditting, setWhyIsEditting] = useState("");
+  const [rejectedReason, setRejectedReason] = useState("");
   const [isEditActive, setIsEditActive] = useState(false);
   const [isDownloadable, setIsDownloadable] = useState(false);
 
@@ -82,6 +83,7 @@ const DocumentFromTemplatePage = ({
       setDocumentFromTemplate(document);
       setOriginalContent(document.content);
       setActualContent(document.content);
+      setRejectedReason(document.rejectedReason);
       setIsDownloadable(
         document.status === DocumentStatus.APPROVED
       );
@@ -192,6 +194,7 @@ const DocumentFromTemplatePage = ({
                         DocumentStatus.REJECTED &&
                         "Este documento ha sido rechazado. Prueba a editarlo de nuevo y enviarlo a revisión"}
                     </p>
+
                     <p className="text-yellow-500 mr-10">
                       {documentFromTemplate?.status ===
                         DocumentStatus.PENDING &&
@@ -248,12 +251,22 @@ const DocumentFromTemplatePage = ({
                     </div>
                   )}
                 </div>
+
                 <PdfGenerator
                   disabled={!isDownloadable || isEditActive}
                   content={originalContent}
                   title={documentFromTemplate?.title}
                 />
               </div>
+              {documentFromTemplate?.status ===
+                DocumentStatus.REJECTED && (
+                <div className="flex flex-col bg-gray-100 p-4 rounded-md m-7">
+                  <h3 className="font-bold mb-4">
+                    Motivo de rechazo:
+                  </h3>
+                  <span>{rejectedReason}</span>
+                </div>
+              )}
               {isEditActive ? (
                 <TextEditor
                   content={actualContent}

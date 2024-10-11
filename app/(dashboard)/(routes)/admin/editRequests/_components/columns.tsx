@@ -82,7 +82,7 @@ export const createColumns = (
     },
   },
   {
-    accessorKey: "description",
+    accessorKey: "userName",
     header: ({ column }) => {
       return (
         <Button
@@ -91,7 +91,7 @@ export const createColumns = (
             column.toggleSorting(column.getIsSorted() === "asc")
           }
         >
-          Descripción
+          Solicitado por
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );

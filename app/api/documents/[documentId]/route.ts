@@ -86,6 +86,9 @@ export async function PUT(
     const edittingText =
       body.status === "APPROVED" ? "" : body.whyIsEditting;
 
+    const rejectedText =
+      body.status === "REJECTED" ? body?.rejectedReason : "";
+
     const document = await db.document.update({
       where: {
         id: params.documentId as string,
@@ -94,6 +97,7 @@ export async function PUT(
         content: body.content ? body.content : undefined,
         status: body.status,
         whyIsEditting: edittingText,
+        rejectedReason: rejectedText ? rejectedText : "",
       },
     });
 

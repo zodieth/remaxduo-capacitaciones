@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DocumentFromTemplate } from "@/types/next-auth";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export const createColumns = (
   propertyId: string
@@ -45,6 +47,40 @@ export const createColumns = (
           Nombre del documento
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() =>
+            column.toggleSorting(column.getIsSorted() === "asc")
+          }
+        >
+          Estado
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const status = row.original.status;
+
+      return (
+        <Badge
+          className={cn(
+            "bg-slate-500",
+            status === "APPROVED" && "bg-green-500",
+            status === "PENDING" && "bg-yellow-500",
+            status === "REJECTED" && "bg-red-500"
+          )}
+        >
+          {(status === "PENDING" && "Pendiente") ||
+            (status === "REJECTED" && "Rechazado") ||
+            (status === "APPROVED" && "Aprobado")}
+        </Badge>
       );
     },
   },

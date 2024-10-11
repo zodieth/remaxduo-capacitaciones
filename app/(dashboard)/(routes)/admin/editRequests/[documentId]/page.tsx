@@ -24,9 +24,11 @@ const api = {
   async updateDocument({
     documentId,
     status,
+    rejectedReason,
   }: {
     documentId: string;
     status: DocumentStatus;
+    rejectedReason: string;
   }) {
     const response = await fetch(
       `/api/documents/${documentId}`,
@@ -37,6 +39,7 @@ const api = {
         },
         body: JSON.stringify({
           status,
+          rejectedReason,
         }),
       }
     );
@@ -66,13 +69,17 @@ const DocumentViewRequest = ({
     setIsLoading(false);
   }, [documentId]);
 
-  const onSubmit = async (selectedStatus: DocumentStatus) => {
+  const onSubmit = async (
+    selectedStatus: DocumentStatus,
+    rejectedReason: string = ""
+  ) => {
     setIsLoading(true);
 
     try {
       const res = await api.updateDocument({
         documentId,
         status: selectedStatus,
+        rejectedReason,
       });
 
       console.log("res", res);
@@ -122,19 +129,17 @@ const DocumentViewRequest = ({
           ) : (
             <div>
               <div className="flex justify-start ml-7 gap-5">
-                <ConfirmChangesModal
-                  onConfirm={() =>
-                    onSubmit(DocumentStatus.REJECTED)
+                <DialogWithTextarea
+                  onSubmit={value =>
+                    onSubmit(DocumentStatus.REJECTED, value)
                   }
-                  title={"Desea rechazar la solicitud?"}
-                  description={
-                    "Al recharzar la solicitud, se deberá volver a enviar la solicitud de edición"
-                  }
-                  confirmText="Rechazar solicitud"
+                  title="Por favor, indique por qué está rechazando este documento"
+                  description="Por favor, complete el siguiente campo. Es obligatorio para continuar."
+                  submitText="Rechazar solicitud"
                   cancelText="Cancelar"
                 >
-                  <Button variant={"secondary"}>Rechazar</Button>
-                </ConfirmChangesModal>
+                  <Button variant="secondary">Rechazar</Button>
+                </DialogWithTextarea>
 
                 <ConfirmChangesModal
                   onConfirm={() =>

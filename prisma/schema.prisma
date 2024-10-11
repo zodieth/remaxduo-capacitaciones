@@ -175,8 +175,8 @@ model DocumentVariable {
   value       String
   description String? @db.Text
 
-  templates      DocumentTemplate[] @relation("DocumentToVariables")
-  templateBlocks TemplateBlock[]    @relation("BlockToVariables")
+  templates      DocumentTemplate[]        @relation("DocumentToVariables")
+  templateBlocks TemplateBlock[]           @relation("BlockToVariables")
   profiles       ProfileDocumentVariable[]
 
   createdAt DateTime @default(now())
@@ -199,15 +199,16 @@ model DocumentTemplate {
 }
 
 model Document {
-  id          String           @id @unique @default(uuid())
-  title       String
-  documentName String?
-  description String?          @db.Text
-  content     String           @db.MediumText
-  category    DocumentCategory @default(OTROS)
-  createdBy   String           @default("system")
-  status DocumentStatus @default(APPROVED)
-  whyIsEditting String? @db.MediumText
+  id             String           @id @unique @default(uuid())
+  title          String
+  documentName   String?
+  description    String?          @db.Text
+  content        String           @db.MediumText
+  category       DocumentCategory @default(OTROS)
+  createdBy      String           @default("system")
+  status         DocumentStatus   @default(APPROVED)
+  whyIsEditting  String?          @db.MediumText
+  rejectedReason String?          @db.MediumText
 
   propertyId String?
   property   Property? @relation(fields: [propertyId], references: [mlsid])
@@ -232,12 +233,12 @@ enum DocumentCategory {
 }
 
 model TemplateBlock {
-  id      String @id @default(uuid())
-  content String @db.MediumText
-  isDuplicable Boolean @default(false)
+  id              String  @id @default(uuid())
+  content         String  @db.MediumText
+  isDuplicable    Boolean @default(false)
   containsProfile Boolean @default(false)
-  canBeDeleted Boolean @default(false)
-  index Int
+  canBeDeleted    Boolean @default(false)
+  index           Int
 
   documentTemplateId String
   documentTemplate   DocumentTemplate @relation(fields: [documentTemplateId], references: [id])
@@ -251,32 +252,32 @@ model TemplateBlock {
 }
 
 model Property {
-  mlsid   String @id @unique
-  title   String
-  address String
-  photos  String @db.MediumText // Almacena JSON serializado
+  mlsid              String  @id @unique
+  title              String
+  address            String
+  photos             String  @db.MediumText // Almacena JSON serializado
   isTemporalProperty Boolean @default(false)
 
-  profiles   Profile[]
-  documents  Document[]
+  profiles  Profile[]
+  documents Document[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Profile {
-  id          String @id @default(uuid())
+  id          String          @id @default(uuid())
   name        String
-  description String? @db.Text
+  description String?         @db.Text
   category    ProfileCategory @default(OTRO)
 
-  variables   ProfileDocumentVariable[]
+  variables ProfileDocumentVariable[]
 
-  property    Property @relation(fields: [propertyId], references: [mlsid], onDelete: Cascade)
-  propertyId  String
+  property   Property @relation(fields: [propertyId], references: [mlsid], onDelete: Cascade)
+  propertyId String
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([propertyId])
 }
@@ -290,16 +291,16 @@ enum ProfileCategory {
 }
 
 model ProfileDocumentVariable {
-  id                 String           @id @default(uuid())
-  value              String           @db.Text
+  id    String @id @default(uuid())
+  value String @db.Text
 
-  profile            Profile?          @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile            Profile?         @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId          String
   documentVariable   DocumentVariable @relation(fields: [documentVariableId], references: [id], onDelete: Cascade)
   documentVariableId String
 
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([profileId, documentVariableId])
   @@index([documentVariableId])

@@ -33,8 +33,6 @@ const EditRequests = () => {
   const user = session?.user;
   const [loading, setLoading] = useState(true);
 
-  const propertyId = "49";
-
   const columns = useMemo(() => createColumns(), []);
 
   const [documents, setDocuments] = useState<
