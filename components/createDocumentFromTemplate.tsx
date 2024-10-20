@@ -11,8 +11,9 @@ import {
 import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
 import { EditorBlockComponent } from "./EditorBlockComponent";
-import { ProfileCategory } from "@prisma/client";
+import { DocumentStatus, ProfileCategory } from "@prisma/client";
 import { Input } from "./ui/input";
+import { ConfirmChangesModal } from "./modals/confirm-changes-modal";
 
 export type Block = {
   id: number;
@@ -43,12 +44,16 @@ const api = {
     template: DocumentTemplate,
     blocks: Block[],
     propertyId: string | undefined,
-    documentName: string
+    documentName: string,
+    isDraft: boolean = false
   ) {
     const response = await fetch("/api/documents/fromTemplate", {
       method: "POST",
       body: JSON.stringify({
-        template,
+        // objeto template, pero si isDraft es true, entonces el statuses es Draft, sino Approved
+        template: isDraft
+          ? { ...template, status: DocumentStatus.DRAFT }
+          : { ...template, status: DocumentStatus.APPROVED },
         blocks,
         propertyId,
         documentName,
@@ -122,7 +127,6 @@ export const CreateDocumentFromTemplate = ({
   const [editorBlocks, setEditorBlocks] = useState<Block[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  console.log("profiles: ", profiles);
   const [documentName, setDocumentName] = useState<string>("");
 
   useEffect(() => {
@@ -240,8 +244,7 @@ export const CreateDocumentFromTemplate = ({
     return profile;
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const createDocument = async (isDraft: boolean) => {
     setIsLoading(true);
     try {
       if (!selectedDocumentTemplate) {
@@ -270,15 +273,14 @@ export const CreateDocumentFromTemplate = ({
         }
       );
 
-      const profileDocumentVariablesResponse = await Promise.all(
-        profileDocumentVariablesPromises.flat()
-      );
+      await Promise.all(profileDocumentVariablesPromises.flat());
 
       const response = await api.createDocumentFromTemplate(
         selectedDocumentTemplate,
         editorBlocks,
         propertyId,
-        documentName
+        documentName,
+        isDraft
       );
 
       if (response.ok) {
@@ -420,6 +422,10 @@ export const CreateDocumentFromTemplate = ({
     setEditorBlocks(updatedBlocks);
   };
 
+  const hasEmptyVariables = editorBlocks.some(block =>
+    block.variables.some(variable => !variable.value.trim())
+  );
+
   return (
     <div className="m-4">
       <h1 className="font-bold text-2xl m-4">
@@ -440,12 +446,28 @@ export const CreateDocumentFromTemplate = ({
       </div>
 
       {selectedDocumentTemplate && (
-        <form
-          onSubmit={onSubmit}
-          className="flex justify-end mb-4"
-        >
-          <Button type="submit">Crear Documento</Button>
-        </form>
+        <div className="flex justify-end mb-4">
+          {hasEmptyVariables ? (
+            <ConfirmChangesModal
+              onConfirm={() => createDocument(true)} // Crear documento en modo borrador
+              title="Hay variables sin completar"
+              description="No todas las variables han sido rellenadas. Si continúa, el documento se creará en modo borrador. Luego deberá enviarlo a revisión. ¿Desea continuar?"
+              confirmText="Crear borrador"
+              cancelText="Cancelar"
+            >
+              <Button disabled={isLoading}>
+                Crear Documento
+              </Button>
+            </ConfirmChangesModal>
+          ) : (
+            <Button
+              onClick={() => createDocument(false)}
+              disabled={isLoading}
+            >
+              Crear Documento
+            </Button>
+          )}
+        </div>
       )}
 
       {selectedDocumentTemplate && (

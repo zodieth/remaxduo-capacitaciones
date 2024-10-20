@@ -387,6 +387,7 @@ export type DocumentTemplate = {
   description?: string;
   templateBlocks: TemplateBlock[];
   variables: DocumentVariable[];
+  status: DocumentStatus;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -406,6 +407,7 @@ export type DocumentFromTemplate = {
 
 export enum DocumentStatus {
   PENDING = "PENDING",
+  DRAFT = "DRAFT",
   APPROVED = "APPROVED",
   REJECTED = "REJECTED",
 }

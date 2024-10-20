@@ -60,14 +60,13 @@ export async function POST(req: Request) {
     ""
   );
 
-  console.log("finalContent", finalContent);
-
   const document = await db.document.create({
     data: {
       title: template.title,
       content: finalContent,
       description: template.description,
       category: template.category,
+      status: template.status,
       propertyId: propertyId,
       documentName: documentName,
       createdBy: userId,

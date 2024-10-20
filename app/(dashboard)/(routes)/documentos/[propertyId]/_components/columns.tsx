@@ -74,12 +74,14 @@ export const createColumns = (
             "bg-slate-500",
             status === "APPROVED" && "bg-green-500",
             status === "PENDING" && "bg-yellow-500",
-            status === "REJECTED" && "bg-red-500"
+            status === "REJECTED" && "bg-red-500",
+            status === "DRAFT" && "bg-gray-500"
           )}
         >
           {(status === "PENDING" && "Pendiente") ||
             (status === "REJECTED" && "Rechazado") ||
-            (status === "APPROVED" && "Aprobado")}
+            (status === "APPROVED" && "Aprobado") ||
+            (status === "DRAFT" && "Borrador")}
         </Badge>
       );
     },

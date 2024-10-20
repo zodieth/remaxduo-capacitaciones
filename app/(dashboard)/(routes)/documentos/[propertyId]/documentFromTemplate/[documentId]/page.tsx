@@ -200,6 +200,12 @@ const DocumentFromTemplatePage = ({
                         DocumentStatus.PENDING &&
                         "Este documento está pendiente de revisión"}
                     </p>
+
+                    <p className="text-gray-500 mr-10">
+                      {documentFromTemplate?.status ===
+                        DocumentStatus.DRAFT &&
+                        "Este documento está en modo borrador. Para poder descargarlo, debe editarlo y enviarlo a revisión"}
+                    </p>
                   </>
                 )}
                 <div className="mr-5">

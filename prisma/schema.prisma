@@ -206,7 +206,7 @@ model Document {
   content        String           @db.MediumText
   category       DocumentCategory @default(OTROS)
   createdBy      String           @default("system")
-  status         DocumentStatus   @default(APPROVED)
+  status         DocumentStatus   @default(DRAFT)
   whyIsEditting  String?          @db.MediumText
   rejectedReason String?          @db.MediumText
 
@@ -221,6 +221,7 @@ model Document {
 
 enum DocumentStatus {
   PENDING
+  DRAFT
   APPROVED
   REJECTED
 }
