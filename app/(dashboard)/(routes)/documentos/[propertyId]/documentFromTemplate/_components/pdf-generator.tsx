@@ -68,13 +68,22 @@ const styles = StyleSheet.create({
     right: 0,
     textAlign: "center",
   },
+  paragraph: {
+    marginBottom: 10, // Ajusta este valor según tus necesidades
+    fontSize: 11,
+    textAlign: "justify",
+    fontFamily: "Roboto",
+  },
+  emptyParagraph: {
+    height: 10, // Altura para el espacio entre líneas
+  },
 });
 
 // Función para convertir el HTML en un árbol de elementos de react-pdf
 const convertHtmlToPdfText = (html: string) => {
   const elements = htmlParser(html);
 
-  // Procesar el HTML para manejar etiquetas como <strong>
+  // Procesar el HTML para manejar etiquetas como <strong> o empty <p>
   const processElement = (element: any) => {
     if (typeof element === "string") {
       return <Text>{element}</Text>;
@@ -86,6 +95,26 @@ const convertHtmlToPdfText = (html: string) => {
           {element.props.children}
         </Text>
       );
+    }
+
+    if (element.type === "p") {
+      const hasChildren =
+        element.props.children &&
+        React.Children.count(element.props.children) > 0;
+
+      if (!hasChildren) {
+        // Etiqueta <p></p> vacía, insertar un espacio
+        return <View style={styles.emptyParagraph} />;
+      } else {
+        return (
+          <Text style={styles.paragraph}>
+            {React.Children.map(
+              element.props.children,
+              processElement
+            )}
+          </Text>
+        );
+      }
     }
 
     // Si es otro tipo de elemento, lo procesamos recursivamente
