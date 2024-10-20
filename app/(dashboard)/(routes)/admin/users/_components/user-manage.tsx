@@ -90,7 +90,6 @@ const api = {
         toast.dismiss(tokenToast);
     }
 
-    console.log("token", token);
     try {
       const response = await fetch(AGENTES_API_URL, {
         headers: {
@@ -166,10 +165,7 @@ export const UserManagement = ({
       // si estoy creando un user, busco los agentes de remax, y busco si el email del user coincide con algun agente
       // si coincide, le asigno el id del agente a la propiedad agentId del user
       const agents = await api.getRemaxAgents();
-      console.log("agents", agents);
       const registrationEmail = data.email;
-      console.log("data", data);
-      console.log("registrationEmail", registrationEmail);
 
       const foundAgent =
         agents &&

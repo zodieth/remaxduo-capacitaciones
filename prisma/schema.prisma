@@ -258,6 +258,7 @@ model Property {
   address            String
   photos             String  @db.MediumText // Almacena JSON serializado
   isTemporalProperty Boolean @default(false)
+  agentId            String @default("system")
 
   profiles  Profile[]
   documents Document[]

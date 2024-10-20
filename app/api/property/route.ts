@@ -34,11 +34,13 @@ export async function POST(req: Request) {
           documents: property.documents,
           photos: JSON.stringify(photos),
           updatedAt: new Date(),
+          agentId: property.agentId,
         },
         create: {
           mlsid: property.mlsid,
           title: property.title,
           address: property.address,
+          agentId: property.agentId,
           photos: JSON.stringify(photos),
           updatedAt: new Date(),
         },
@@ -62,35 +64,6 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(properties);
-  } catch (error) {
-    console.log("[PROPERTY]", error);
-    return new NextResponse("Internal Error", {
-      status: 500,
-    });
-  }
-}
-
-export async function GET(req: Request) {
-  try {
-    const { userId, role: userRole } =
-      await getServerSessionFunc();
-
-    if (!userId) {
-      return new NextResponse("Unauthorized", {
-        status: 401,
-      });
-    }
-
-    const properties = await db.property.findMany();
-
-    const propertiesWithPhotos = properties.map(property => {
-      return {
-        ...property,
-        photos: JSON.parse(property.photos),
-      };
-    });
-
-    return NextResponse.json(propertiesWithPhotos);
   } catch (error) {
     console.log("[PROPERTY]", error);
     return new NextResponse("Internal Error", {

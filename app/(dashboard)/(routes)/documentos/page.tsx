@@ -26,8 +26,12 @@ const PROPIEDADES_API_URL =
   process.env.NEXT_PUBLIC_REMAX_API_PROPIEDADES_URL;
 
 const api = {
-  fetchProperties: async (): Promise<Property[]> => {
-    const response = await fetch("/api/property");
+  fetchProperties: async (
+    agentId: string
+  ): Promise<Property[]> => {
+    const response = await fetch(
+      `/api/property/byAgent/${agentId}`
+    );
     if (!response.ok) {
       toast.error("Error al cargar las propiedades");
       throw new Error("Error al cargar las propiedades");
@@ -143,7 +147,8 @@ const Propiedades = () => {
       try {
         const propiedadesData = await fetchPropiedades(agentId);
 
-        const propiedadesDB = await api.fetchProperties();
+        const propiedadesDB =
+          agentId && (await api.fetchProperties(agentId));
 
         if (propiedadesDB) {
           const properties = propiedadesDB.filter(
@@ -166,6 +171,7 @@ const Propiedades = () => {
                 ),
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                agentId: agentId,
               };
             }
           );

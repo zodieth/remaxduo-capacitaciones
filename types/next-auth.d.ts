@@ -417,6 +417,7 @@ export type PropertyCreateDTO = {
   title: string;
   address: string;
   photos: string[];
+  agentId: string;
   isTemporalProperty?: boolean;
 };
 
