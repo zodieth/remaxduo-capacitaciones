@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PropertyCreateDTO } from "@/types/next-auth";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
+import { useSession } from "next-auth/react";
 
 const api = {
   postPropertie: async (
@@ -30,6 +31,8 @@ const CreateAuthorizationDocumentFromTemplate = ({
 }: {
   params: { authId: string };
 }) => {
+  const { data: session } = useSession();
+  const agentId = session?.user?.agentId || "";
   const [temporalProperty, setTemporalProperty] =
     useState<any>(undefined);
 
@@ -43,13 +46,14 @@ const CreateAuthorizationDocumentFromTemplate = ({
           address: "Dirección temporal",
           photos: [],
           isTemporalProperty: true,
+          agentId: agentId,
         },
         propertyId
       );
       setTemporalProperty(newProperty);
     };
     createProperty();
-  }, [params.authId]);
+  }, [params.authId, agentId]);
 
   if (!temporalProperty) {
     return <LoadingOverlay />;
