@@ -193,18 +193,22 @@ const PdfGenerator = ({
           </Document>
         }
         fileName={`${title}.pdf` || "documento.pdf"} // Nombre del archivo PDF descargable
-        // eslint-disable-next-line react/no-children-prop
-        children={({
-          blob,
-          url,
-          loading,
-          error,
-        }: BlobProviderParams) => (
-          <>
-            {loading ? "Cargando documento..." : "Descargar PDF"}
-          </>
-        )}
-      />
+      >
+        {
+          (({
+            blob,
+            url,
+            loading,
+            error,
+          }: BlobProviderParams) => (
+            <>
+              {loading
+                ? "Cargando documento..."
+                : "Descargar PDF"}
+            </>
+          )) as unknown as React.ReactNode
+        }
+      </PDFDownloadLink>
       {/* {({ blob, url, loading, error }: UsePDFInstance) => (
           <>
             {loading ? "Cargando documento..." : "Descargar PDF"}
