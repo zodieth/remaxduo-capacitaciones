@@ -186,9 +186,23 @@ const PdfGenerator = ({
         }
         fileName={`${title}.pdf` || "documento.pdf"} // Nombre del archivo PDF descargable
       >
-        {({ blob, url, loading, error }) =>
+        {({
+          blob,
+          url,
+          loading,
+          error,
+        }: {
+          blob: Blob | null;
+          url: string | null;
+          loading: boolean;
+          error: Error | null;
+        }): React.ReactNode =>
           loading ? "Cargando documento..." : "Descargar PDF"
         }
+
+        {/* {({ blob, url, loading, error }) =>
+          loading ? "Cargando documento..." : "Descargar PDF"
+        } */}
       </PDFDownloadLink>
     </Button>
   );
