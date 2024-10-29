@@ -11,6 +11,7 @@ import {
   PDFDownloadLink,
   Image,
   Font,
+  BlobProviderParams,
 } from "@react-pdf/renderer";
 import htmlParser from "html-react-parser";
 import { Button } from "@/components/ui/button";
@@ -192,13 +193,24 @@ const PdfGenerator = ({
           </Document>
         }
         fileName={`${title}.pdf` || "documento.pdf"} // Nombre del archivo PDF descargable
-      >
-        {({ blob, url, loading, error }: UsePDFInstance) => (
+        // eslint-disable-next-line react/no-children-prop
+        children={({
+          blob,
+          url,
+          loading,
+          error,
+        }: BlobProviderParams) => (
           <>
             {loading ? "Cargando documento..." : "Descargar PDF"}
           </>
         )}
-        {/* {({
+      />
+      {/* {({ blob, url, loading, error }: UsePDFInstance) => (
+          <>
+            {loading ? "Cargando documento..." : "Descargar PDF"}
+          </>
+        )} */}
+      {/* {({
           blob,
           url,
           loading,
@@ -212,10 +224,9 @@ const PdfGenerator = ({
           loading ? "Cargando documento..." : "Descargar PDF"
         } */}
 
-        {/* {({ blob, url, loading, error }) =>
+      {/* {({ blob, url, loading, error }) =>
           loading ? "Cargando documento..." : "Descargar PDF"
         } */}
-      </PDFDownloadLink>
     </Button>
   );
 };
