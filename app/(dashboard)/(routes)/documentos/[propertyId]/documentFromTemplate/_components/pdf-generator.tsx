@@ -16,6 +16,13 @@ import htmlParser from "html-react-parser";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
+interface UsePDFInstance {
+  loading: boolean;
+  blob: Blob | null;
+  url: string | null;
+  error: Error | null;
+}
+
 // Registrar la fuente en varios pesos (normal y bold)
 Font.register({
   family: "Roboto",
@@ -186,7 +193,12 @@ const PdfGenerator = ({
         }
         fileName={`${title}.pdf` || "documento.pdf"} // Nombre del archivo PDF descargable
       >
-        {({
+        {({ blob, url, loading, error }: UsePDFInstance) => (
+          <>
+            {loading ? "Cargando documento..." : "Descargar PDF"}
+          </>
+        )}
+        {/* {({
           blob,
           url,
           loading,
@@ -198,7 +210,7 @@ const PdfGenerator = ({
           error: Error | null;
         }): React.ReactNode =>
           loading ? "Cargando documento..." : "Descargar PDF"
-        }
+        } */}
 
         {/* {({ blob, url, loading, error }) =>
           loading ? "Cargando documento..." : "Descargar PDF"
