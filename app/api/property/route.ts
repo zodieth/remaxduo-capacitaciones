@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       await getServerSessionFunc();
     const properties = await req.json();
 
-    if (!userId || !isAdmin(userRole)) {
+    if (!userId) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });

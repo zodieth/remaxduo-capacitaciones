@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/isAdminCheck";
 import { getServerSessionFunc } from "@/app/api/auth/_components/getSessionFunction";
 
 export async function POST(req: Request) {
@@ -8,7 +7,7 @@ export async function POST(req: Request) {
     const { userId, role } = await getServerSessionFunc();
     const { authId, propertyId } = await req.json();
 
-    if (!userId || !isAdmin(role)) {
+    if (!userId) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
