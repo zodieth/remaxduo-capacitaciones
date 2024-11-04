@@ -11,7 +11,7 @@ export async function GET(
   try {
     const { userId, role } = await getServerSessionFunc();
 
-    if (!userId || !isAdmin(role)) {
+    if (!userId) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });

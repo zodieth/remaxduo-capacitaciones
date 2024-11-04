@@ -12,7 +12,7 @@ export async function GET(
       await getServerSessionFunc();
     const { mlsid } = params;
 
-    if (!userId || !isAdmin(userRole)) {
+    if (!userId) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
@@ -52,7 +52,7 @@ export async function POST(
       await getServerSessionFunc();
     const property = await req.json();
 
-    if (!userId || !isAdmin(userRole)) {
+    if (!userId) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });

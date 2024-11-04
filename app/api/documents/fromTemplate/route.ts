@@ -8,7 +8,7 @@ import { getServerSessionFunc } from "../../auth/_components/getSessionFunction"
 export async function POST(req: Request) {
   const { userId, role } = await getServerSessionFunc();
 
-  if (!userId || !isAdmin(role)) {
+  if (!userId) {
     return new NextResponse("Unauthorized", {
       status: 401,
     });

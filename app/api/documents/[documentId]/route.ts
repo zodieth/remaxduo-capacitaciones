@@ -11,7 +11,7 @@ export async function GET(
   try {
     const { userId, role } = await getServerSessionFunc();
 
-    if (!userId || !isAdmin(role)) {
+    if (!userId) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
@@ -40,7 +40,7 @@ export async function DELETE(
   try {
     const { userId, role } = await getServerSessionFunc();
 
-    if (!userId || !isAdmin(role)) {
+    if (!userId) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
@@ -77,7 +77,7 @@ export async function PUT(
   try {
     const { userId, role } = await getServerSessionFunc();
 
-    if (!userId || !isAdmin(role)) {
+    if (!userId) {
       return new NextResponse("Unauthorized", {
         status: 401,
       });
