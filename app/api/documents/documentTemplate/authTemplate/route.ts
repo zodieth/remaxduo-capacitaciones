@@ -9,7 +9,7 @@ import { DocumentCategory } from "@prisma/client";
 export async function GET(req: Request) {
   const { userId, role } = await getServerSessionFunc();
 
-  if (!userId || !isAdmin(role)) {
+  if (!userId) {
     return new NextResponse("Unauthorized", {
       status: 401,
     });
