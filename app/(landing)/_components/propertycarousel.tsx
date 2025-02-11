@@ -169,7 +169,7 @@ export function PropertyCarousel() {
                 })
               : ""}
           <div className="flex items-center justify-center p-6 w-[20rem]">
-            <Link href="https://www.remax.com.ar/listings/buy?page=0&pageSize=24&sort=-createdAt&in:operationId=1,2,3&officeid=AR.42.170&officeName=RE%2FMAX%20Up&filterCount=0&viewMode=listViewMode">
+            <Link href="https://www.remax.com.ar/up">
               <Button
                 variant="secondary"
                 size="lg"
